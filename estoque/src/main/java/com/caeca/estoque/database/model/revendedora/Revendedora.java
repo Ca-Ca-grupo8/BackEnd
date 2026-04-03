@@ -1,0 +1,114 @@
+package com.caeca.estoque.database.model.revendedora;
+
+import com.caeca.estoque.database.model.Endereco;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
+import java.time.LocalDate;
+
+@Entity
+public class Revendedora {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @NotBlank
+    private String nome;
+
+    @NotBlank
+    @Email
+    private String email;
+
+    @NotBlank
+    @Size(max = 11, min = 11)
+    private String telefone;
+
+    @Column(name = "is_ativo")
+    private boolean ativo;
+
+    @NotNull
+    @OneToOne
+    @JoinColumn(name = "fk_endereco")
+    private Endereco endereco;
+
+    private LocalDate dataCadastro;
+    private LocalDate dataAtualizacao;
+
+    public Revendedora() {
+    }
+
+    public Revendedora(Integer id, String nome, String email, String telefone, boolean ativo, Endereco endereco, LocalDate dataCadastro, LocalDate dataAtualizacao) {
+        this.id = id;
+        this.nome = nome;
+        this.email = email;
+        this.telefone = telefone;
+        this.ativo = ativo;
+        this.endereco = endereco;
+        this.dataCadastro = dataCadastro;
+        this.dataAtualizacao = dataAtualizacao;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
+    }
+
+    public LocalDate getDataCadastro() {
+        return dataCadastro;
+    }
+
+    public void setDataCadastro(LocalDate dataCadastro) {
+        this.dataCadastro = dataCadastro;
+    }
+
+    public LocalDate getDataAtualizacao() {
+        return dataAtualizacao;
+    }
+
+    public void setDataAtualizacao(LocalDate dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
+    }
+}
