@@ -17,4 +17,14 @@ public class RevendedoraService {
     public RevendedoraService(RevendedoraRepository revendedoraRepository) {
         this.revendedoraRepository = revendedoraRepository;
     }
+
+    public List<RevendedoraResponse> listar() {
+        List<Revendedora> response = revendedoraRepository.findAll();
+        return RevendedoraMapper.toResponseList(response);
+    }
+
+    public Optional<RevendedoraResponse> buscarPorId(Integer id){
+        return revendedoraRepository.findById(id)
+                .map(RevendedoraMapper::toResponse);
+    }
 }
