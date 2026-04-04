@@ -1,17 +1,10 @@
 package com.caeca.estoque.dto.revendedora;
 
 import com.caeca.estoque.database.model.Endereco;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
-public class RevendedoraResponse {
+public class RevendedoraResponseDto {
     private Integer id;
     private String nome;
     private String email;
@@ -21,10 +14,10 @@ public class RevendedoraResponse {
     private LocalDate dataCadastro;
     private LocalDate dataAtualizacao;
 
-    public RevendedoraResponse() {
+    public RevendedoraResponseDto() {
     }
 
-    public RevendedoraResponse(Integer id, String nome, String email, String telefone, boolean ativo, Endereco endereco, LocalDate dataCadastro, LocalDate dataAtualizacao) {
+    public RevendedoraResponseDto(Integer id, String nome, String email, String telefone, boolean ativo, Endereco endereco, LocalDate dataCadastro, LocalDate dataAtualizacao) {
         this.id = id;
         this.nome = nome;
         this.email = email;

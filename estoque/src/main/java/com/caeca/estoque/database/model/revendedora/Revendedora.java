@@ -3,6 +3,8 @@ package com.caeca.estoque.database.model.revendedora;
 import com.caeca.estoque.database.model.Endereco;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
 
@@ -31,7 +33,11 @@ public class Revendedora {
     @JoinColumn(name = "fk_endereco")
     private Endereco endereco;
 
+    @CreatedDate
+    @Column(updatable = false)
     private LocalDate dataCadastro;
+
+    @LastModifiedDate
     private LocalDate dataAtualizacao;
 
     public Revendedora() {
