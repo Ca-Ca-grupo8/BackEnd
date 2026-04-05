@@ -6,6 +6,7 @@ import com.caeca.estoque.dto.revendedora.RevendedoraMapper;
 import com.caeca.estoque.dto.revendedora.RevendedoraPatchDto;
 import com.caeca.estoque.dto.revendedora.RevendedoraRequestDto;
 import com.caeca.estoque.dto.revendedora.RevendedoraResponseDto;
+import com.caeca.estoque.exception.NotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,8 +29,9 @@ public class RevendedoraService {
         return revendedoraRepository.findAll();
     }
 
-    public Optional<Revendedora> buscarPorId(Integer id){
-        return revendedoraRepository.findById(id);
+    public Revendedora buscarPorId(Integer id) {
+        return revendedoraRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Revendedora com ID " + id + " não encontrada"));
     }
 
     public Revendedora cadastrar(RevendedoraRequestDto request){
@@ -37,9 +39,9 @@ public class RevendedoraService {
         return revendedoraRepository.save(RevendedoraMapper.toEntity(request, endereco));
     }
 
-    public Revendedora atualizarPorCompleto(RevendedoraRequestDto request, Integer id) {
+    public Revendedora atualizarPorCompleto(RevendedoraRequestDto request, Integer id){
         if(!revendedoraRepository.existsById(id)){
-            return null;
+            throw new NotFoundException("Revendedora com ID " + id + " não encontrada");
         }
 
         Endereco endereco = enderecoService.buscarPorId(request.getEnderecoId());
@@ -48,9 +50,9 @@ public class RevendedoraService {
         return revendedoraRepository.save(entity);
     }
 
-    public Revendedora atualizarParcialmente(Integer id, RevendedoraPatchDto dto) {
+    public Revendedora atualizarParcialmente(Integer id, RevendedoraPatchDto dto){
         Revendedora entity = revendedoraRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Revendedora não encontrada"));
+                .orElseThrow(() -> new NotFoundException("Revendedora com ID " + id + " não encontrada"));
 
         if (dto.getNome() != null) {
             entity.setNome(dto.getNome());
