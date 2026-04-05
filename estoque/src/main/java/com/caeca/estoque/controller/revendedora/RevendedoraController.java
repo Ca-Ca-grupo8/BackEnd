@@ -5,6 +5,7 @@ import com.caeca.estoque.dto.revendedora.RevendedoraMapper;
 import com.caeca.estoque.dto.revendedora.RevendedoraPatchDto;
 import com.caeca.estoque.dto.revendedora.RevendedoraRequestDto;
 import com.caeca.estoque.dto.revendedora.RevendedoraResponseDto;
+import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.revendedora.RevendedoraService;
 import jakarta.validation.Valid;
 import org.apache.commons.lang3.ObjectUtils;
@@ -35,19 +36,12 @@ class RevendedoraController {
 
     @GetMapping("/{id}")
     public ResponseEntity<RevendedoraResponseDto> buscarPorId(@PathVariable Integer id){
-        return revendedoraService.buscarPorId(id)
-                .map(RevendedoraMapper::toResponse)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(RevendedoraMapper.toResponse(revendedoraService.buscarPorId(id)));
     }
 
     @PostMapping
     public ResponseEntity<RevendedoraResponseDto> cadastrar(@Valid @RequestBody RevendedoraRequestDto request){
         Revendedora revendedora = revendedoraService.cadastrar(request);
-
-        if(revendedora == null) {
-            return ResponseEntity.badRequest().build();
-        }
 
         return ResponseEntity.created(null).body(RevendedoraMapper.toResponse(revendedora));
     }
