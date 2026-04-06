@@ -6,6 +6,7 @@ import com.caeca.estoque.dto.revendedora.RevendedoraMapper;
 import com.caeca.estoque.dto.revendedora.RevendedoraPatchDto;
 import com.caeca.estoque.dto.revendedora.RevendedoraRequestDto;
 import com.caeca.estoque.dto.revendedora.RevendedoraResponseDto;
+import com.caeca.estoque.exception.ConflictException;
 import com.caeca.estoque.exception.NotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,10 @@ public class RevendedoraService {
     }
 
     public Revendedora cadastrar(RevendedoraRequestDto request){
+        validarDadosDuplicados(request);
+
         Endereco endereco = enderecoService.buscarPorId(request.getEnderecoId());
+
         return revendedoraRepository.save(RevendedoraMapper.toEntity(request, endereco));
     }
 
@@ -43,6 +47,8 @@ public class RevendedoraService {
         if(!revendedoraRepository.existsById(id)){
             throw new NotFoundException("Revendedora com ID " + id + " não encontrada");
         }
+
+        validarDadosDuplicados(request);
 
         Endereco endereco = enderecoService.buscarPorId(request.getEnderecoId());
         Revendedora entity = RevendedoraMapper.toEntity(request, endereco);
@@ -58,18 +64,47 @@ public class RevendedoraService {
             entity.setNome(dto.getNome());
         }
         if (dto.getEmail() != null) {
+            validarEmailDuplicado(dto.getEmail());
             entity.setEmail(dto.getEmail());
         }
         if (dto.getTelefone() != null) {
+            validarTelefoneDuplicado(dto.getTelefone());
             entity.setTelefone(dto.getTelefone());
         }
         if (dto.getAtivo() != null) {
             entity.setAtivo(dto.getAtivo());
         }
         if (dto.getEnderecoId() != null) {
+            validarEnderecoDuplicado(dto.getEnderecoId());
             entity.setEndereco(enderecoService.buscarPorId(dto.getEnderecoId()));
         }
 
         return revendedoraRepository.save(entity);
+    }
+
+    private void validarDadosDuplicados(RevendedoraRequestDto request) {
+        validarEmailDuplicado(request.getEmail());
+
+        validarTelefoneDuplicado(request.getTelefone());
+
+        validarEnderecoDuplicado(request.getEnderecoId());
+    }
+
+    private void validarEmailDuplicado(String email){
+        if (revendedoraRepository.existsByEmail(email)) {
+            throw new ConflictException("Email " + email + " já cadastrado");
+        }
+    }
+
+    private void validarTelefoneDuplicado(String telefone){
+        if (revendedoraRepository.existsByTelefone(telefone)) {
+            throw new ConflictException("Telefone " + telefone + " já cadastrado");
+        }
+    }
+
+    private void validarEnderecoDuplicado(Integer enderecoId){
+        if (revendedoraRepository.existsByEnderecoId(enderecoId)) {
+            throw new ConflictException("Este endereço já está em uso por outra revendedora");
+        }
     }
 }
