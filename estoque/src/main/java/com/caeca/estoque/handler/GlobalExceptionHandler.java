@@ -1,5 +1,6 @@
 package com.caeca.estoque.handler;
 
+import com.caeca.estoque.exception.ConflictException;
 import com.caeca.estoque.exception.ErrorResponse;
 import com.caeca.estoque.exception.NotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -14,5 +15,13 @@ public class GlobalExceptionHandler {
                 404, exception.getMessage()
         );
         return ResponseEntity.status(404).body(response);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handlerConflict(ConflictException exception){
+        ErrorResponse response = new ErrorResponse(
+                409, exception.getMessage()
+        );
+        return ResponseEntity.status(409).body(response);
     }
 }
