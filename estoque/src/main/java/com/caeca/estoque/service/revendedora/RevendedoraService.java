@@ -36,7 +36,7 @@ public class RevendedoraService {
     }
 
     public Revendedora cadastrar(RevendedoraRequestDto request){
-        validarDadosDuplicados(request);
+        validarDadosDuplicados(request, null);
 
         Endereco endereco = enderecoService.buscarPorId(request.getEnderecoId());
 
@@ -48,7 +48,7 @@ public class RevendedoraService {
             throw new NotFoundException("Revendedora com ID " + id + " não encontrada");
         }
 
-        validarDadosDuplicados(request);
+        validarDadosDuplicados(request, id);
 
         Endereco endereco = enderecoService.buscarPorId(request.getEnderecoId());
         Revendedora entity = RevendedoraMapper.toEntity(request, endereco);
@@ -64,47 +64,72 @@ public class RevendedoraService {
             entity.setNome(dto.getNome());
         }
         if (dto.getEmail() != null) {
-            validarEmailDuplicado(dto.getEmail());
+            validarEmailDuplicado(dto.getEmail(), id);
             entity.setEmail(dto.getEmail());
         }
         if (dto.getTelefone() != null) {
-            validarTelefoneDuplicado(dto.getTelefone());
+            validarTelefoneDuplicado(dto.getTelefone(), id);
             entity.setTelefone(dto.getTelefone());
         }
         if (dto.getAtivo() != null) {
             entity.setAtivo(dto.getAtivo());
         }
         if (dto.getEnderecoId() != null) {
-            validarEnderecoDuplicado(dto.getEnderecoId());
+            validarEnderecoDuplicado(dto.getEnderecoId(), id);
             entity.setEndereco(enderecoService.buscarPorId(dto.getEnderecoId()));
         }
 
         return revendedoraRepository.save(entity);
     }
 
-    private void validarDadosDuplicados(RevendedoraRequestDto request) {
-        validarEmailDuplicado(request.getEmail());
+    private void validarDadosDuplicados(RevendedoraRequestDto request, Integer id) {
+        validarEmailDuplicado(request.getEmail(), id);
 
-        validarTelefoneDuplicado(request.getTelefone());
+        validarTelefoneDuplicado(request.getTelefone(), id);
 
-        validarEnderecoDuplicado(request.getEnderecoId());
+        validarEnderecoDuplicado(request.getEnderecoId(), id);
     }
 
-    private void validarEmailDuplicado(String email){
-        if (revendedoraRepository.existsByEmail(email)) {
-            throw new ConflictException("Email " + email + " já cadastrado");
+    private void validarEmailDuplicado(String email, Integer id){
+        if(id != null){
+            revendedoraRepository.findByEmail(email).ifPresent(revendedora -> {
+                if(!revendedora.getId().equals(id)) {
+                    throw new ConflictException("Email " + email + " já cadastrado");
+                }
+            });
+        } else {
+            if (revendedoraRepository.existsByEmail(email)) {
+                throw new ConflictException("Email " + email + " já cadastrado");
+            }
+        }
+
+    }
+
+    private void validarTelefoneDuplicado(String telefone, Integer id){
+        if(id != null){
+            revendedoraRepository.findByTelefone(telefone).ifPresent(revendedora -> {
+                if(!revendedora.getId().equals(id)) {
+                    throw new ConflictException("Telefone " + telefone + " já cadastrado");
+                }
+            });
+        } else {
+            if (revendedoraRepository.existsByTelefone(telefone)) {
+                throw new ConflictException("Telefone " + telefone + " já cadastrado");
+            }
         }
     }
 
-    private void validarTelefoneDuplicado(String telefone){
-        if (revendedoraRepository.existsByTelefone(telefone)) {
-            throw new ConflictException("Telefone " + telefone + " já cadastrado");
-        }
-    }
-
-    private void validarEnderecoDuplicado(Integer enderecoId){
-        if (revendedoraRepository.existsByEnderecoId(enderecoId)) {
-            throw new ConflictException("Este endereço já está em uso por outra revendedora");
+    private void validarEnderecoDuplicado(Integer enderecoId, Integer id){
+        if(id != null){
+            revendedoraRepository.findByEnderecoId(enderecoId).ifPresent(revendedora -> {
+                if(!revendedora.getId().equals(id)) {
+                    throw new ConflictException("Endereco " + enderecoId + " já cadastrado");
+                }
+            });
+        } else {
+            if (revendedoraRepository.existsByEnderecoId(enderecoId)) {
+                throw new ConflictException("Este endereço já está em uso por outra revendedora");
+            }
         }
     }
 }
