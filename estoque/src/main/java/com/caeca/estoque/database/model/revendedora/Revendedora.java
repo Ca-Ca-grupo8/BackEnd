@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 public class Revendedora {
@@ -39,6 +40,9 @@ public class Revendedora {
 
     @LastModifiedDate
     private LocalDate dataAtualizacao;
+
+    @OneToMany(mappedBy = revendedora)
+    private List<MovimentacaoRevendedora> vendas;
 
     public Revendedora() {
     }
