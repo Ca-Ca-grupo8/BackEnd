@@ -41,13 +41,13 @@ public class Revendedora {
     @LastModifiedDate
     private LocalDate dataAtualizacao;
 
-    @OneToMany(mappedBy = revendedora)
+    @OneToMany(mappedBy = "revendedora")
     private List<MovimentacaoRevendedora> vendas;
 
     public Revendedora() {
     }
 
-    public Revendedora(Integer id, String nome, String email, String telefone, boolean ativo, Endereco endereco, LocalDate dataCadastro, LocalDate dataAtualizacao) {
+    public Revendedora(Integer id, String nome, String email, String telefone, boolean ativo, Endereco endereco, LocalDate dataCadastro, LocalDate dataAtualizacao, List<MovimentacaoRevendedora> vendas) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -56,6 +56,7 @@ public class Revendedora {
         this.endereco = endereco;
         this.dataCadastro = dataCadastro;
         this.dataAtualizacao = dataAtualizacao;
+        this.vendas = vendas;
     }
 
     public Integer getId() {
@@ -120,5 +121,13 @@ public class Revendedora {
 
     public void setDataAtualizacao(LocalDate dataAtualizacao) {
         this.dataAtualizacao = dataAtualizacao;
+    }
+
+    public List<MovimentacaoRevendedora> getVendas() {
+        return vendas;
+    }
+
+    public void setVendas(List<MovimentacaoRevendedora> vendas) {
+        this.vendas = vendas;
     }
 }
