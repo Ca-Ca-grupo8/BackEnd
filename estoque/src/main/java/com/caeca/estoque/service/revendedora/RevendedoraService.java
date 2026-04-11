@@ -30,7 +30,7 @@ public class RevendedoraService {
         return revendedoraRepository.findAll();
     }
 
-    public Revendedora buscarPorId(Integer id) {
+    public Revendedora buscarPorId(Long id) {
         return revendedoraRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Revendedora com ID " + id + " não encontrada"));
     }
@@ -43,7 +43,7 @@ public class RevendedoraService {
         return revendedoraRepository.save(RevendedoraMapper.toEntity(request, endereco));
     }
 
-    public Revendedora atualizarPorCompleto(RevendedoraRequestDto request, Integer id){
+    public Revendedora atualizarPorCompleto(RevendedoraRequestDto request, Long id){
         if(!revendedoraRepository.existsById(id)){
             throw new NotFoundException("Revendedora com ID " + id + " não encontrada");
         }
@@ -82,7 +82,7 @@ public class RevendedoraService {
         return revendedoraRepository.save(entity);
     }
 
-    private void validarDadosDuplicados(RevendedoraRequestDto request, Integer id) {
+    private void validarDadosDuplicados(RevendedoraRequestDto request, Long id) {
         validarEmailDuplicado(request.getEmail(), id);
 
         validarTelefoneDuplicado(request.getTelefone(), id);
@@ -90,7 +90,7 @@ public class RevendedoraService {
         validarEnderecoDuplicado(request.getEnderecoId(), id);
     }
 
-    private void validarEmailDuplicado(String email, Integer id){
+    private void validarEmailDuplicado(String email, Long id){
         if(id != null){
             revendedoraRepository.findByEmail(email).ifPresent(revendedora -> {
                 if(!revendedora.getId().equals(id)) {
@@ -105,7 +105,7 @@ public class RevendedoraService {
 
     }
 
-    private void validarTelefoneDuplicado(String telefone, Integer id){
+    private void validarTelefoneDuplicado(String telefone, Long id){
         if(id != null){
             revendedoraRepository.findByTelefone(telefone).ifPresent(revendedora -> {
                 if(!revendedora.getId().equals(id)) {
@@ -119,7 +119,7 @@ public class RevendedoraService {
         }
     }
 
-    private void validarEnderecoDuplicado(Integer enderecoId, Integer id){
+    private void validarEnderecoDuplicado(Integer enderecoId, Long id){
         if(id != null){
             revendedoraRepository.findByEnderecoId(enderecoId).ifPresent(revendedora -> {
                 if(!revendedora.getId().equals(id)) {

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 public class Revendedora {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @NotBlank
     private String nome;
@@ -47,7 +48,7 @@ public class Revendedora {
     public Revendedora() {
     }
 
-    public Revendedora(Integer id, String nome, String email, String telefone, boolean ativo, Endereco endereco, LocalDate dataCadastro, LocalDate dataAtualizacao, List<MovimentacaoRevendedora> vendas) {
+    public Revendedora(Long id, String nome, String email, String telefone, boolean ativo, Endereco endereco, LocalDate dataCadastro, LocalDate dataAtualizacao, List<MovimentacaoRevendedora> vendas) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -59,11 +60,11 @@ public class Revendedora {
         this.vendas = vendas;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
