@@ -1,0 +1,47 @@
+package com.caeca.estoque.service.endereco;
+
+import com.caeca.estoque.dto.endereco.ViaCepResponseDTO;
+import com.caeca.estoque.exception.CepNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+
+@Slf4j
+@Component
+public class ViaCepClient {
+
+    private static final String VIA_CEP_URL = "https://viacep.com.br/ws/{cep}/json/";
+
+    private final RestTemplate restTemplate;
+
+    public ViaCepClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    public ViaCepResponseDTO buscarPorCep(String cep) {
+        String cepLimpo = cep.replaceAll("[^0-9]", "");
+
+        try {
+            ViaCepResponseDTO resposta = restTemplate.getForObject(
+                    VIA_CEP_URL, ViaCepResponseDTO.class, cepLimpo
+            );
+
+            if (resposta == null || resposta.isErro()) {
+                throw new CepNotFoundException("CEP não encontrado.");
+            }
+
+            return resposta;
+
+        } catch (HttpClientErrorException.NotFound e) {
+            throw new CepNotFoundException("CEP não encontrado.");
+        } catch (CepNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Erro ao consultar ViaCEP para o CEP {}: {}", cepLimpo, e.getMessage());
+            throw new RuntimeException("Erro ao consultar o serviço de CEP. Tente novamente.");
+        }
+    }
+
+}
