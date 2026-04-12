@@ -1,4 +1,4 @@
-package com.caeca.estoque.dto;
+package com.caeca.estoque.dto.tipoMovimentacao;
 
 public class TipoMovimentacaoResponseDto {
 

@@ -1,9 +1,9 @@
-package com.caeca.estoque.service;
+package com.caeca.estoque.service.tipoMovimentacao;
 
-import com.caeca.estoque.database.model.TipoMovimentacao;
-import com.caeca.estoque.database.repository.TipoMovimentacaoRepository;
-import com.caeca.estoque.dto.TipoMovimentacaoMapper;
-import com.caeca.estoque.dto.TipoMovimentacaoRequestDto;
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
+import com.caeca.estoque.database.repository.tipoMovimentacao.TipoMovimentacaoRepository;
+import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoMapper;
+import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoRequestDto;
 import com.caeca.estoque.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

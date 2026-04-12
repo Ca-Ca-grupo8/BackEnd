@@ -1,4 +1,4 @@
-package com.caeca.estoque.dto;
+package com.caeca.estoque.dto.banho;
 
 public class BanhoResponseDto {
 

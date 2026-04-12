@@ -1,11 +1,11 @@
-package com.caeca.estoque.controller;
+package com.caeca.estoque.controller.tipoMovimentacao;
 
-import com.caeca.estoque.database.model.TipoMovimentacao;
-import com.caeca.estoque.dto.TipoMovimentacaoMapper;
-import com.caeca.estoque.dto.TipoMovimentacaoRequestDto;
-import com.caeca.estoque.dto.TipoMovimentacaoResponseDto;
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
+import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoMapper;
+import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoRequestDto;
+import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoResponseDto;
 import com.caeca.estoque.exception.NotFoundException;
-import com.caeca.estoque.service.TipoMovimentacaoService;
+import com.caeca.estoque.service.tipoMovimentacao.TipoMovimentacaoService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

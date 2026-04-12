@@ -1,6 +1,6 @@
-package com.caeca.estoque.dto;
+package com.caeca.estoque.dto.banho;
 
-import com.caeca.estoque.database.model.Banho;
+import com.caeca.estoque.database.model.banho.Banho;
 
 import java.util.List;
 
