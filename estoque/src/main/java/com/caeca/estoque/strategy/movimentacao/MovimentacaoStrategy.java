@@ -1,6 +1,7 @@
 package com.caeca.estoque.strategy.movimentacao;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
 
 public interface MovimentacaoStrategy {

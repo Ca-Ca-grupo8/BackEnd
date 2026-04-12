@@ -1,5 +1,7 @@
 package com.caeca.estoque.dto.movimentacao;
 
+import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoResponseDto;
+import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResponseDto;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;

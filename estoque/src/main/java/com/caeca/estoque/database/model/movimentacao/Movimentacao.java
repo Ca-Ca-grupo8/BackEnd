@@ -1,5 +1,6 @@
 package com.caeca.estoque.database.model.movimentacao;
 
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
