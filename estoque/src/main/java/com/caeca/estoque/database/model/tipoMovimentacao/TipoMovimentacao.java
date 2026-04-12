@@ -1,4 +1,4 @@
-package com.caeca.estoque.database.model;
+package com.caeca.estoque.database.model.tipoMovimentacao;
 
 import jakarta.persistence.*;
 

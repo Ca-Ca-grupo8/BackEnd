@@ -1,4 +1,4 @@
-package com.caeca.estoque.dto;
+package com.caeca.estoque.dto.banho;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

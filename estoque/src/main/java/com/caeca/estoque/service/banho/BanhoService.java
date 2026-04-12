@@ -1,9 +1,9 @@
-package com.caeca.estoque.service;
+package com.caeca.estoque.service.banho;
 
-import com.caeca.estoque.database.model.Banho;
-import com.caeca.estoque.database.repository.BanhoRepository;
-import com.caeca.estoque.dto.BanhoMapper;
-import com.caeca.estoque.dto.BanhoRequestDto;
+import com.caeca.estoque.database.model.banho.Banho;
+import com.caeca.estoque.database.repository.banho.BanhoRepository;
+import com.caeca.estoque.dto.banho.BanhoMapper;
+import com.caeca.estoque.dto.banho.BanhoRequestDto;
 import com.caeca.estoque.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

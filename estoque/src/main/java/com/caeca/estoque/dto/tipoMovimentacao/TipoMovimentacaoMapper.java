@@ -1,6 +1,7 @@
-package com.caeca.estoque.dto;
+package com.caeca.estoque.dto.tipoMovimentacao;
 
-import com.caeca.estoque.database.model.TipoMovimentacao;
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
+
 import java.util.List;
 
 public class TipoMovimentacaoMapper {
