@@ -1,6 +1,6 @@
 package com.caeca.estoque.database.repository.endereco;
 
-import com.caeca.estoque.database.model.Endereco;
+import com.caeca.estoque.database.model.endereco.Endereco;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

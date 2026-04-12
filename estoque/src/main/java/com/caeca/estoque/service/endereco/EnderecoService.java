@@ -1,7 +1,8 @@
 package com.caeca.estoque.service.endereco;
 
 
-import com.caeca.estoque.database.model.Endereco;
+import com.caeca.estoque.client.ViaCepClient;
+import com.caeca.estoque.database.model.endereco.Endereco;
 import com.caeca.estoque.database.repository.endereco.EnderecoRepository;
 import com.caeca.estoque.dto.endereco.EnderecoRequestDTO;
 import com.caeca.estoque.dto.endereco.EnderecoResponseDTO;

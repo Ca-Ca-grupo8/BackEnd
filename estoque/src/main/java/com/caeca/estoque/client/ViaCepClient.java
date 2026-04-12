@@ -1,4 +1,4 @@
-package com.caeca.estoque.service.endereco;
+package com.caeca.estoque.client;
 
 import com.caeca.estoque.dto.endereco.ViaCepResponseDTO;
 import com.caeca.estoque.exception.CepNotFoundException;
