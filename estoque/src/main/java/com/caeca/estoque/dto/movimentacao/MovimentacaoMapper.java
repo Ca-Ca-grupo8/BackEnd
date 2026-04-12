@@ -1,6 +1,8 @@
 package com.caeca.estoque.dto.movimentacao;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
+import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoMapper;
+import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraMapper;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

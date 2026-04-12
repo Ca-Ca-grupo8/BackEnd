@@ -1,15 +1,26 @@
 package com.caeca.estoque.strategy.movimentacao;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
 import com.caeca.estoque.exception.NotFoundException;
+import com.caeca.estoque.service.movimentacaoRevendedora.MovimentacaoRevendedoraService;
+import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
+import com.caeca.estoque.service.tipoMovimentacao.TipoMovimentacaoService;
 
 public class ReentradaStrategy implements MovimentacaoStrategy{
     private final JoiaService joiaService;
     private final TipoMovimentacaoService tipoService;
     private final UsuarioService usuarioService;
     private final MovimentacaoRevendedoraService mrService;
+
+    public ReentradaStrategy(JoiaService joiaService, TipoMovimentacaoService tipoService, UsuarioService usuarioService, MovimentacaoRevendedoraService mrService) {
+        this.joiaService = joiaService;
+        this.tipoService = tipoService;
+        this.usuarioService = usuarioService;
+        this.mrService = mrService;
+    }
 
     @Override
     public boolean suporta(TipoMovimentacao tipoMovimentacao) {
@@ -25,15 +36,18 @@ public class ReentradaStrategy implements MovimentacaoStrategy{
 
         Usuario usuario = usuarioService.X();
 
-        MovimentacaoRevendedora movimentacaoRevendedora = mrService.buscarVendaPorRevendedoraJoia(
-                dto.getIdRevendedora(),
-                dto.getIdJoia());
+
 
         Movimentacao movimentacao = MovimentacaoMapper.toEntity(dto);
         movimentacao.setJoia(joia);
         movimentacao.setTipoMovimentacao(tipo);
         movimentacao.setUsuario(usuario);
-        movimentacao.setMovimentacaoRevendedora(movimentacaoRevendedora);
+
+        if(dto.getIdRevendedora() != null){
+            MovimentacaoRevendedora movimentacaoRevendedora = mrService.buscarVendaAbertaPorRevendedora(
+                    dto.getIdRevendedora());
+            movimentacao.setMovimentacaoRevendedora(movimentacaoRevendedora);
+        }
 
         return movimentacao;
     }

@@ -1,10 +1,14 @@
 package com.caeca.estoque.strategy.movimentacao;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
+import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraRequestDto;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.exception.QtdInsuficienteException;
+import com.caeca.estoque.service.movimentacaoRevendedora.MovimentacaoRevendedoraService;
+import com.caeca.estoque.service.tipoMovimentacao.TipoMovimentacaoService;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -48,7 +52,8 @@ public class SaidaStrategy implements MovimentacaoStrategy {
         movimentacao.setUsuario(usuario);
 
         if(tipo.getDescricao().toLowerCase().contains("venda")){
-            movimentacao.setMovimentacaoRevendedora(mrService.buscarOuCriarVendaPorRevendedora(dto.getIdRevendedora());
+            movimentacao.setMovimentacaoRevendedora(mrService.buscarOuCriarVendaPorRevendedora(
+                    new MovimentacaoRevendedoraRequestDto(dto.getIdRevendedora()));
         }
 
         return movimentacao;

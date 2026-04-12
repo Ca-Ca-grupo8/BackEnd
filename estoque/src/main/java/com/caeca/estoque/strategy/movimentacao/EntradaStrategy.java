@@ -1,9 +1,11 @@
 package com.caeca.estoque.strategy.movimentacao;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
 import com.caeca.estoque.exception.NotFoundException;
+import com.caeca.estoque.service.tipoMovimentacao.TipoMovimentacaoService;
 import org.springframework.stereotype.Component;
 
 @Component
