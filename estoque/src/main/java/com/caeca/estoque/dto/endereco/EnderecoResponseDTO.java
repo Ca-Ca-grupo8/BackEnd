@@ -1,5 +1,9 @@
 package com.caeca.estoque.dto.endereco;
 
+import jdk.jshell.Snippet;
+import lombok.Builder;
+
+@Builder
 public class EnderecoResponseDTO {
     private Long id;
     private String cep;
