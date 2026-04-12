@@ -3,9 +3,9 @@ package com.caeca.estoque.dto.movimentacao;
 import com.caeca.estoque.dto.fornecedor.FornecedorResponseDTO;
 import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
 import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoResponseDto;
-import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResponseDto;
 import com.caeca.estoque.dto.usuario.UsuarioListarDto;
 import jakarta.validation.constraints.NotNull;
+import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResponseDto
 
 import java.math.BigDecimal;
 
@@ -16,13 +16,13 @@ public class MovimentacaoResponseDto {
     private JoiaSaidaDTO joia;
     private TipoMovimentacaoResponseDto tipoMovimentacao;
     private UsuarioListarDto usuario;
-    private FornecedorResponseDTO fornecedor;
+    private FornecedorResponseDto fornecedor;
     private movimentacaoRevendedoraResponseDto movimentacaoRevendedora;
 
     public MovimentacaoResponseDto() {
     }
 
-    public MovimentacaoResponseDto(Long id, Integer quantidade, Double precoSaida, JoiaSaidaDTO joia, TipoMovimentacaoResponseDto tipoMovimentacao, UsuarioListarDto usuario, FornecedorResponseDTO fornecedor, movimentacaoRevendedoraResponseDto movimentacaoRevendedora) {
+    public MovimentacaoResponseDto(Long id, Integer quantidade, Double precoSaida, JoiaSaidaDTO joia, TipoMovimentacaoResponseDto tipoMovimentacao, UsuarioListarDto usuario, FornecedorResponseDto fornecedor, movimentacaoRevendedoraResponseDto movimentacaoRevendedora) {
         this.id = id;
         this.quantidade = quantidade;
         this.precoSaida = precoSaida;
@@ -81,11 +81,11 @@ public class MovimentacaoResponseDto {
         this.usuario = usuario;
     }
 
-    public FornecedorResponseDTO getFornecedor() {
+    public FornecedorResponseDto getFornecedor() {
         return fornecedor;
     }
 
-    public void setFornecedor(FornecedorResponseDTO fornecedor) {
+    public void setFornecedor(FornecedorResponseDto fornecedor) {
         this.fornecedor = fornecedor;
     }
 

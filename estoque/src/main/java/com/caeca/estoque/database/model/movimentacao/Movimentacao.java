@@ -11,7 +11,6 @@ import org.hibernate.annotations.ManyToAny;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import com.caeca.estoque.database.model.movimentacaoRevendedora.movimentacaoRevendedora;
 
 @Entity
 public class Movimentacao {
