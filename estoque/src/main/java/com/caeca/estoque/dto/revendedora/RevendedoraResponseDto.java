@@ -1,6 +1,7 @@
 package com.caeca.estoque.dto.revendedora;
 
 import com.caeca.estoque.database.model.endereco.Endereco;
+import com.caeca.estoque.dto.endereco.EnderecoResponseDTO;
 
 import java.time.LocalDate;
 
@@ -10,14 +11,14 @@ public class RevendedoraResponseDto {
     private String email;
     private String telefone;
     private boolean ativo;
-    private Endereco endereco;
+    private EnderecoResponseDTO endereco;
     private LocalDate dataCadastro;
     private LocalDate dataAtualizacao;
 
     public RevendedoraResponseDto() {
     }
 
-    public RevendedoraResponseDto(Long id, String nome, String email, String telefone, boolean ativo, Endereco endereco, LocalDate dataCadastro, LocalDate dataAtualizacao) {
+    public RevendedoraResponseDto(Long id, String nome, String email, String telefone, boolean ativo, EnderecoResponseDTO endereco, LocalDate dataCadastro, LocalDate dataAtualizacao) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -68,11 +69,11 @@ public class RevendedoraResponseDto {
         this.ativo = ativo;
     }
 
-    public Endereco getEndereco() {
+    public EnderecoResponseDTO getEndereco() {
         return endereco;
     }
 
-    public void setEndereco(Endereco endereco) {
+    public void setEndereco(EnderecoResponseDTO endereco) {
         this.endereco = endereco;
     }
 

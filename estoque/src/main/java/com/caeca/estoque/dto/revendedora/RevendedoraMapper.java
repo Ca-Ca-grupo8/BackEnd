@@ -2,6 +2,7 @@ package com.caeca.estoque.dto.revendedora;
 
 import com.caeca.estoque.database.model.endereco.Endereco;
 import com.caeca.estoque.database.model.revendedora.Revendedora;
+import com.caeca.estoque.dto.endereco.EnderecoMapper;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,7 +15,7 @@ public class RevendedoraMapper {
                 entity.getEmail(),
                 entity.getTelefone(),
                 entity.isAtivo(),
-                entity.getEndereco(),
+                EnderecoMapper.toResponse(entity.getEndereco()),
                 entity.getDataCadastro(),
                 entity.getDataAtualizacao()
         );
