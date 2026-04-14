@@ -35,7 +35,7 @@ class RevendedoraController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RevendedoraResponseDto> buscarPorId(@PathVariable Integer id){
+    public ResponseEntity<RevendedoraResponseDto> buscarPorId(@PathVariable Long id){
         return ResponseEntity.ok(RevendedoraMapper.toResponse(revendedoraService.buscarPorId(id)));
     }
 
@@ -49,14 +49,14 @@ class RevendedoraController {
     @PutMapping("/{id}")
     public ResponseEntity<RevendedoraResponseDto> atualizarPorCompleto(
             @Valid @RequestBody RevendedoraRequestDto request,
-            @PathVariable Integer id){
+            @PathVariable Long id){
         return ResponseEntity.ok(RevendedoraMapper.toResponse(revendedoraService.atualizarPorCompleto(request, id)));
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<RevendedoraResponseDto> atualizarParcialmente(
             @RequestBody RevendedoraPatchDto dto,
-            @PathVariable Integer id
+            @PathVariable Long id
     ){
         return ResponseEntity.ok(RevendedoraMapper.toResponse(revendedoraService.atualizarParcialmente(id, dto)));
     }
