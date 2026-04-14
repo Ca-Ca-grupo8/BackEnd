@@ -29,13 +29,20 @@ public class MovimentacaoRevendedora {
     public MovimentacaoRevendedora() {
     }
 
-    public MovimentacaoRevendedora(Long idMovimentacaoRevendedora, boolean isFinalizada, Revendedora revendedora, List<Movimentacao> movimentacoes, LocalDateTime data) {
+    public MovimentacaoRevendedora(Long idMovimentacaoRevendedora, boolean isFinalizada, Revendedora revendedora, LocalDateTime data) {
         this.idMovimentacaoRevendedora = idMovimentacaoRevendedora;
         this.isFinalizada = isFinalizada;
         this.revendedora = revendedora;
-        this.movimentacoes = movimentacoes;
         this.data = data;
     }
+
+    //    public MovimentacaoRevendedora(Long idMovimentacaoRevendedora, boolean isFinalizada, Revendedora revendedora, List<Movimentacao> movimentacoes, LocalDateTime data) {
+//        this.idMovimentacaoRevendedora = idMovimentacaoRevendedora;
+//        this.isFinalizada = isFinalizada;
+//        this.revendedora = revendedora;
+//        this.movimentacoes = movimentacoes;
+//        this.data = data;
+//    }
 
     public Long getIdMovimentacaoRevendedora() {
         return idMovimentacaoRevendedora;
@@ -61,13 +68,13 @@ public class MovimentacaoRevendedora {
         this.revendedora = revendedora;
     }
 
-    public List<Movimentacao> getMovimentacoes() {
-        return movimentacoes;
-    }
+//    public List<Movimentacao> getMovimentacoes() {
+//        return movimentacoes;
+//    }
 
-    public void setMovimentacoes(List<Movimentacao> movimentacoes) {
-        this.movimentacoes = movimentacoes;
-    }
+//    public void setMovimentacoes(List<Movimentacao> movimentacoes) {
+//        this.movimentacoes = movimentacoes;
+//    }
 
     public LocalDateTime getData() {
         return data;
