@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MovimentacaoRevendedoraRepository extends JpaRepository<MovimentacaoRevendedora, Long> {
-    Optional<MovimentacaoRevendedora> findByRevendedoraIdRevendedoraAndIsFinalizadaFalse(long idRevendedora);
+    Optional<MovimentacaoRevendedora> findByRevendedoraIdAndIsFinalizadaFalse(long idRevendedora);
 
-    List<MovimentacaoRevendedora> findByRevendedoraIdRevendedora();
+    List<MovimentacaoRevendedora> findByRevendedoraId(long idRevendedora);
 }

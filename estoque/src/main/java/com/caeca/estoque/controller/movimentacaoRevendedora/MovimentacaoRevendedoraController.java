@@ -42,4 +42,13 @@ public class MovimentacaoRevendedoraController {
             @RequestBody MovimentacaoRevendedoraPatchDto patch){
         return ResponseEntity.ok(MovimentacaoRevendedoraMapper.toResponse(mrService.atualizarFinalizacao(id, patch)));
     }
+
+    @PostMapping()
+    public ResponseEntity<MovimentacaoRevendedoraResponseDto> cadastrar(
+            @RequestBody MovimentacaoRevendedoraRequestDto requestDto){
+        return ResponseEntity.created(null).body(
+                MovimentacaoRevendedoraMapper.toResponse(
+                        mrService.criar(requestDto)
+                ));
+    }
 }
