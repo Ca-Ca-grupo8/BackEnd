@@ -1,5 +1,7 @@
 package com.caeca.estoque.controller.endereco;
 
+import com.caeca.estoque.database.model.endereco.Endereco;
+import com.caeca.estoque.dto.endereco.EnderecoMapper;
 import com.caeca.estoque.dto.endereco.EnderecoRequestDTO;
 import com.caeca.estoque.dto.endereco.EnderecoResponseDTO;
 import com.caeca.estoque.dto.endereco.ViaCepResponseDTO;
@@ -9,12 +11,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/enderecos")
 @RequiredArgsConstructor
 public class EnderecoController {
 
     private final EnderecoService enderecoService;
+
+    @GetMapping
+    public ResponseEntity<List<EnderecoResponseDTO>> listar(){
+        return ResponseEntity.ok(enderecoService.listarTodos()
+                .stream()
+                .map(EnderecoMapper::toResponse)
+                .toList());
+    }
 
     @GetMapping("/cep/{cep}")
     public ResponseEntity<ViaCepResponseDTO> consultarCep(@PathVariable String cep) {
@@ -25,14 +37,14 @@ public class EnderecoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<EnderecoResponseDTO> buscarPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(enderecoService.buscarPorId(id));
+        return ResponseEntity.ok(EnderecoMapper.toResponse(enderecoService.buscarPorId(id)));
     }
 
 
     @PostMapping
     public ResponseEntity<EnderecoResponseDTO> criar(@RequestBody EnderecoRequestDTO dto) {
-        EnderecoResponseDTO criado = enderecoService.criar(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(criado);
+        Endereco criado = enderecoService.criar(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(EnderecoMapper.toResponse(criado));
     }
 
 
@@ -40,7 +52,7 @@ public class EnderecoController {
     public ResponseEntity<EnderecoResponseDTO> atualizar(
             @PathVariable Long id,
             @RequestBody EnderecoRequestDTO dto) {
-        return ResponseEntity.ok(enderecoService.atualizar(id, dto));
+        return ResponseEntity.ok(EnderecoMapper.toResponse(enderecoService.atualizar(id, dto)));
     }
 
 

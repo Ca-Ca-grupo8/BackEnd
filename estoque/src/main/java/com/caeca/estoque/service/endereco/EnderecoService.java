@@ -4,6 +4,7 @@ package com.caeca.estoque.service.endereco;
 import com.caeca.estoque.client.ViaCepClient;
 import com.caeca.estoque.database.model.endereco.Endereco;
 import com.caeca.estoque.database.repository.endereco.EnderecoRepository;
+import com.caeca.estoque.dto.endereco.EnderecoMapper;
 import com.caeca.estoque.dto.endereco.EnderecoRequestDTO;
 import com.caeca.estoque.dto.endereco.EnderecoResponseDTO;
 import com.caeca.estoque.dto.endereco.ViaCepResponseDTO;
@@ -30,31 +31,28 @@ public class EnderecoService {
 
     // GET /enderecos
     @Transactional(readOnly = true)
-    public List<EnderecoResponseDTO> listarTodos() {
-        return enderecoRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+    public List<Endereco> listarTodos() {
+        return enderecoRepository.findAll();
     }
 
     // GET /enderecos/:id
     @Transactional(readOnly = true)
-    public EnderecoResponseDTO buscarPorId(Long id) {
+    public Endereco buscarPorId(Long id) {
         Endereco endereco = enderecoRepository.findById(id)
                 .orElseThrow(() -> new EnderecoNotFoundException(id));
-        return toResponse(endereco);
+        return endereco;
     }
 
     // POST /enderecos
     @Transactional
-    public EnderecoResponseDTO criar(EnderecoRequestDTO dto) {
-        Endereco endereco = toEntity(dto);
-        return toResponse(enderecoRepository.save(endereco));
+    public Endereco criar(EnderecoRequestDTO dto) {
+        Endereco endereco = EnderecoMapper.toEntity(dto);
+        return enderecoRepository.save(endereco);
     }
 
     // PUT /enderecos/:id
     @Transactional
-    public EnderecoResponseDTO atualizar(Long id, EnderecoRequestDTO dto) {
+    public Endereco atualizar(Long id, EnderecoRequestDTO dto) {
         Endereco endereco = enderecoRepository.findById(id)
                 .orElseThrow(() -> new EnderecoNotFoundException(id));
 
@@ -66,7 +64,7 @@ public class EnderecoService {
         endereco.setCidade(dto.getCidade());
         endereco.setUf(dto.getUf());
 
-        return toResponse(enderecoRepository.save(endereco));
+        return enderecoRepository.save(endereco);
     }
 
     // DELETE /enderecos/:id
@@ -76,32 +74,5 @@ public class EnderecoService {
             throw new EnderecoNotFoundException(id);
         }
         enderecoRepository.deleteById(id);
-    }
-
-    // --- Mappers ---
-
-    private EnderecoResponseDTO toResponse(Endereco e) {
-        return EnderecoResponseDTO.builder()
-                .id(e.getId())
-                .cep(e.getCep())
-                .logradouro(e.getLogradouro())
-                .numero(e.getNumero())
-                .complemento(e.getComplemento())
-                .bairro(e.getBairro())
-                .cidade(e.getCidade())
-                .uf(e.getUf())
-                .build();
-    }
-
-    private Endereco toEntity(EnderecoRequestDTO dto) {
-        return Endereco.builder()
-                .cep(dto.getCep())
-                .logradouro(dto.getLogradouro())
-                .numero(dto.getNumero())
-                .complemento(dto.getComplemento())
-                .bairro(dto.getBairro())
-                .cidade(dto.getCidade())
-                .uf(dto.getUf())
-                .build();
     }
 }
