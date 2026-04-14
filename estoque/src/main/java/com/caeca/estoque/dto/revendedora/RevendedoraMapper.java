@@ -1,5 +1,6 @@
 package com.caeca.estoque.dto.revendedora;
 
+import com.caeca.estoque.database.model.endereco.Endereco;
 import com.caeca.estoque.database.model.revendedora.Revendedora;
 
 import java.time.LocalDate;

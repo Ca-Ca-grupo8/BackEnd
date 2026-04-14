@@ -10,11 +10,11 @@ public interface RevendedoraRepository extends JpaRepository<Revendedora, Long> 
 
     boolean existsByTelefone(String telefone);
 
-    boolean existsByEnderecoId(Integer enderecoId);
+    boolean existsByEnderecoId(Long enderecoId);
 
     Optional<Revendedora> findByEmail(String email);
 
     Optional<Revendedora> findByTelefone(String telefone);
 
-    Optional<Revendedora> findByEnderecoId(Integer enderecoId);
+    Optional<Revendedora> findByEnderecoId(Long enderecoId);
 }
