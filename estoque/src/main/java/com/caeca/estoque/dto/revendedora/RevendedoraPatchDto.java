@@ -12,12 +12,12 @@ public class RevendedoraPatchDto {
     @Size(min = 11, max = 11)
     private String telefone;
     private Boolean ativo;
-    private Integer enderecoId;
+    private Long enderecoId;
 
     public RevendedoraPatchDto() {
     }
 
-    public RevendedoraPatchDto(String nome, String email, String telefone, Boolean ativo, Integer enderecoId) {
+    public RevendedoraPatchDto(String nome, String email, String telefone, Boolean ativo, Long enderecoId) {
         this.nome = nome;
         this.email = email;
         this.telefone = telefone;
@@ -57,11 +57,11 @@ public class RevendedoraPatchDto {
         this.ativo = ativo;
     }
 
-    public Integer getEnderecoId() {
+    public Long getEnderecoId() {
         return enderecoId;
     }
 
-    public void setEnderecoId(Integer enderecoId) {
+    public void setEnderecoId(Long enderecoId) {
         this.enderecoId = enderecoId;
     }
 }

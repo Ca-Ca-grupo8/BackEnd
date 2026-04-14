@@ -20,12 +20,12 @@ public class RevendedoraRequestDto {
     private String telefone;
 
     @NotNull
-    private Integer enderecoId;
+    private Long enderecoId;
 
     public RevendedoraRequestDto() {
     }
 
-    public RevendedoraRequestDto(String nome, String email, String telefone, Integer enderecoId) {
+    public RevendedoraRequestDto(String nome, String email, String telefone, Long enderecoId) {
         this.nome = nome;
         this.email = email;
         this.telefone = telefone;
@@ -56,11 +56,11 @@ public class RevendedoraRequestDto {
         this.telefone = telefone;
     }
 
-    public Integer getEnderecoId() {
+    public Long getEnderecoId() {
         return enderecoId;
     }
 
-    public void setEnderecoId(Integer enderecoId) {
+    public void setEnderecoId(Long enderecoId) {
         this.enderecoId = enderecoId;
     }
 }

@@ -1,5 +1,6 @@
 package com.caeca.estoque.service.revendedora;
 
+import com.caeca.estoque.database.model.endereco.Endereco;
 import com.caeca.estoque.database.model.revendedora.Revendedora;
 import com.caeca.estoque.database.repository.revendedora.RevendedoraRepository;
 import com.caeca.estoque.dto.revendedora.RevendedoraMapper;
@@ -8,6 +9,7 @@ import com.caeca.estoque.dto.revendedora.RevendedoraRequestDto;
 import com.caeca.estoque.dto.revendedora.RevendedoraResponseDto;
 import com.caeca.estoque.exception.ConflictException;
 import com.caeca.estoque.exception.NotFoundException;
+import com.caeca.estoque.service.endereco.EnderecoService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -56,7 +58,7 @@ public class RevendedoraService {
         return revendedoraRepository.save(entity);
     }
 
-    public Revendedora atualizarParcialmente(Integer id, RevendedoraPatchDto dto){
+    public Revendedora atualizarParcialmente(Long id, RevendedoraPatchDto dto){
         Revendedora entity = revendedoraRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Revendedora com ID " + id + " não encontrada"));
 
@@ -119,7 +121,7 @@ public class RevendedoraService {
         }
     }
 
-    private void validarEnderecoDuplicado(Integer enderecoId, Long id){
+    private void validarEnderecoDuplicado(Long enderecoId, Long id){
         if(id != null){
             revendedoraRepository.findByEnderecoId(enderecoId).ifPresent(revendedora -> {
                 if(!revendedora.getId().equals(id)) {

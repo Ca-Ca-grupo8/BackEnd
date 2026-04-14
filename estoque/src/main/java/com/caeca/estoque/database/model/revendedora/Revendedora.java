@@ -1,12 +1,11 @@
 package com.caeca.estoque.database.model.revendedora;
 
-import com.caeca.estoque.database.model.Endereco;
+import com.caeca.estoque.database.model.endereco.Endereco;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
-
 import java.time.LocalDate;
 import java.util.List;
 
