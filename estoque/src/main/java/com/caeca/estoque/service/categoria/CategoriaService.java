@@ -1,7 +1,7 @@
-package com.caeca.estoque.service;
+package com.caeca.estoque.service.categoria;
 
 import com.caeca.estoque.database.model.categoria.Categoria;
-import com.caeca.estoque.database.repository.CategoriaRepository;
+import com.caeca.estoque.database.repository.categoria.CategoriaRepository;
 import com.caeca.estoque.dto.categoria.CategoriaMapper;
 import com.caeca.estoque.dto.categoria.CategoriaSaidaDTO;
 import org.springframework.http.HttpStatusCode;
