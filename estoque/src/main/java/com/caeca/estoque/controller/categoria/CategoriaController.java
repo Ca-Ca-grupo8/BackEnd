@@ -4,7 +4,7 @@ import com.caeca.estoque.database.model.categoria.Categoria;
 import com.caeca.estoque.dto.categoria.CategoriaEntradaDTO;
 import com.caeca.estoque.dto.categoria.CategoriaMapper;
 import com.caeca.estoque.dto.categoria.CategoriaSaidaDTO;
-import com.caeca.estoque.service.CategoriaService;
+import com.caeca.estoque.service.categoria.CategoriaService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
