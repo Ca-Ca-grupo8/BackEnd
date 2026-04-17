@@ -6,10 +6,12 @@ import com.caeca.estoque.dto.material.MaterialMapper;
 import com.caeca.estoque.dto.material.MaterialRequestDto;
 import com.caeca.estoque.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+@Service
 public class MaterialService {
 
     private final MaterialRepository materialRepository;
