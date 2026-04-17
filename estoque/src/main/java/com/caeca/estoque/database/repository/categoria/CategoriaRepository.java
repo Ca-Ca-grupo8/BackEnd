@@ -1,4 +1,4 @@
-package com.caeca.estoque.database.repository;
+package com.caeca.estoque.database.repository.categoria;
 
 import com.caeca.estoque.database.model.categoria.Categoria;
 import org.springframework.data.jpa.repository.JpaRepository;
