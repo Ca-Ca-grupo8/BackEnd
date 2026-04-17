@@ -27,6 +27,7 @@ public class Joia {
     @Column(nullable = false)
     private Double precoOriginal;
 
+    @Column(nullable = false)
     private Double multiplicador;
 
     @Column(nullable = false)

@@ -29,6 +29,17 @@ public class CategoriaController {
         return ResponseEntity.status(200).body(categorias);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CategoriaSaidaDTO> listarCategoriaPorId(@PathVariable Long id) {
+
+        Categoria categoria = categoriaService.listarCategoriaPorId(id);
+
+        CategoriaSaidaDTO categoriaSaidaDTO = CategoriaMapper.toResponse(categoria);
+
+        return ResponseEntity.status(200).body(categoriaSaidaDTO);
+    }
+
+
     @PostMapping
     public ResponseEntity<CategoriaSaidaDTO> criarCategoria(@RequestBody @Valid CategoriaEntradaDTO categoriaEntradaDTO) {
 

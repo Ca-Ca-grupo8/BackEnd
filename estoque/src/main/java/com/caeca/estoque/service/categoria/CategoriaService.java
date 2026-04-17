@@ -32,6 +32,14 @@ public class CategoriaService {
         return categoriasSaidaDTO;
     }
 
+    public Categoria listarCategoriaPorId(Long id) {
+
+        Categoria categoria = categoriaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Nenhuma categoria encontrada"));
+
+        return categoria;
+    }
+
     public CategoriaSaidaDTO criarCategoria(Categoria categoria) {
 
         if (categoria.getNome().isBlank()) {
