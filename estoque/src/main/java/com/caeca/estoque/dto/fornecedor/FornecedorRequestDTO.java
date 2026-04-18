@@ -18,7 +18,7 @@ public class FornecedorRequestDTO {
 
     private String telefone;
 
-
+    @NotNull
     private EnderecoRequestDTO endereco;
 
     public FornecedorRequestDTO() {
