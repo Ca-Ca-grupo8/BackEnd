@@ -68,4 +68,11 @@ public class UsuarioService {
         return usuariosEncontrados.stream().map(UsuarioMapper::of).toList();
 
     }
+
+    public Usuario getUsuarioLogado() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(404, "Usuário logado não encontrado", null));
+    }
 }

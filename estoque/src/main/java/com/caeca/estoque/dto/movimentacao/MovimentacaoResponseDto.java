@@ -1,7 +1,9 @@
 package com.caeca.estoque.dto.movimentacao;
 
+import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
 import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoResponseDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResponseDto;
+import com.caeca.estoque.dto.usuario.UsuarioListarDto;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
@@ -9,17 +11,17 @@ import java.math.BigDecimal;
 public class MovimentacaoResponseDto {
     private Long id;
     private Integer quantidade;
-    private BigDecimal precoSaida;
-    private JoiaResponseDto joia;
+    private Double precoSaida;
+    private JoiaSaidaDTO joia;
     private TipoMovimentacaoResponseDto tipoMovimentacao;
-    private UsuarioResponseDto usuario;
+    private UsuarioListarDto usuario;
     private FornecedorResponseDto fornecedor;
     private movimentacaoRevendedoraResponseDto movimentacaoRevendedora;
 
     public MovimentacaoResponseDto() {
     }
 
-    public MovimentacaoResponseDto(Long id, Integer quantidade, BigDecimal precoSaida, JoiaResponseDto joia, TipoMovimentacaoResponseDto tipoMovimentacao, UsuarioResponseDto usuario, FornecedorResponseDto fornecedor, movimentacaoRevendedoraResponseDto movimentacaoRevendedora) {
+    public MovimentacaoResponseDto(Long id, Integer quantidade, Double precoSaida, JoiaSaidaDTO joia, TipoMovimentacaoResponseDto tipoMovimentacao, UsuarioListarDto usuario, FornecedorResponseDto fornecedor, movimentacaoRevendedoraResponseDto movimentacaoRevendedora) {
         this.id = id;
         this.quantidade = quantidade;
         this.precoSaida = precoSaida;
@@ -46,19 +48,19 @@ public class MovimentacaoResponseDto {
         this.quantidade = quantidade;
     }
 
-    public BigDecimal getPrecoSaida() {
+    public Double getPrecoSaida() {
         return precoSaida;
     }
 
-    public void setPrecoSaida(BigDecimal precoSaida) {
+    public void setPrecoSaida(Double precoSaida) {
         this.precoSaida = precoSaida;
     }
 
-    public JoiaResponseDto getJoia() {
+    public JoiaSaidaDTO getJoia() {
         return joia;
     }
 
-    public void setJoia(JoiaResponseDto joia) {
+    public void setJoia(JoiaSaidaDTO joia) {
         this.joia = joia;
     }
 
@@ -70,11 +72,11 @@ public class MovimentacaoResponseDto {
         this.tipoMovimentacao = tipoMovimentacao;
     }
 
-    public UsuarioResponseDto getUsuario() {
+    public UsuarioListarDto getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(UsuarioResponseDto usuario) {
+    public void setUsuario(UsuarioListarDto usuario) {
         this.usuario = usuario;
     }
 

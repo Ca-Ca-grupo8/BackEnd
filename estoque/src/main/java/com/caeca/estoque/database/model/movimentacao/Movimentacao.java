@@ -1,6 +1,8 @@
 package com.caeca.estoque.database.model.movimentacao;
 
+import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
+import com.caeca.estoque.database.model.usuario.Usuario;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
@@ -22,7 +24,7 @@ public class Movimentacao {
 
     private Integer quantidade;
 
-    private BigDecimal precoSaida;
+    private Double precoSaida;
 
     @ManyToOne()
     private Joia joia;
@@ -42,7 +44,7 @@ public class Movimentacao {
     public Movimentacao() {
     }
 
-    public Movimentacao(Long idMovimentacao, LocalDateTime data, Integer quantidade, BigDecimal precoSaida, Joia joia, TipoMovimentacao tipoMovimentacao, Usuario usuario, Fornecedor fornecedor, MovimentacaoRevendedora movimentacaoRevendedora) {
+    public Movimentacao(Long idMovimentacao, LocalDateTime data, Integer quantidade, Double precoSaida, Joia joia, TipoMovimentacao tipoMovimentacao, Usuario usuario, Fornecedor fornecedor, MovimentacaoRevendedora movimentacaoRevendedora) {
         this.idMovimentacao = idMovimentacao;
         this.data = data;
         this.quantidade = quantidade;
@@ -78,11 +80,11 @@ public class Movimentacao {
         this.quantidade = quantidade;
     }
 
-    public BigDecimal getPrecoSaida() {
+    public Double getPrecoSaida() {
         return precoSaida;
     }
 
-    public void setPrecoSaida(BigDecimal precoSaida) {
+    public void setPrecoSaida(Double precoSaida) {
         this.precoSaida = precoSaida;
     }
 

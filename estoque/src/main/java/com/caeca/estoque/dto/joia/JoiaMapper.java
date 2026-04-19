@@ -51,4 +51,5 @@ public class JoiaMapper {
                 .map(JoiaMapper::toResponse)
                 .toList();
     }
+
 }
