@@ -1,6 +1,7 @@
 package com.caeca.estoque.dto.fornecedor;
 
 import com.caeca.estoque.dto.endereco.EnderecoRequestDTO;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,27 +9,25 @@ import jakarta.validation.constraints.Size;
 
 public class FornecedorRequestDTO {
 
+    @Schema(example = "Joias Brasil Ltda", description = "Nome do fornecedor")
     @NotBlank
     private String nome;
 
-    @Email
+    @Schema(example = "11999990000", description = "Telefone do fornecedor")
     @NotBlank
-    private String email;
-
-
     private String telefone;
 
-    @NotNull
-    private EnderecoRequestDTO endereco;
+    @Schema(example = "@joiasbrasil", description = "Instagram do fornecedor")
+    @Size(max = 100)
+    private String instagram;
 
     public FornecedorRequestDTO() {
     }
 
-    public FornecedorRequestDTO(String nome, String email, String telefone, EnderecoRequestDTO endereco) {
+    public FornecedorRequestDTO(String nome, String telefone, String instagram) {
         this.nome = nome;
-        this.email = email;
         this.telefone = telefone;
-        this.endereco = endereco;
+        this.instagram = instagram;
     }
 
     public String getNome() {
@@ -39,14 +38,6 @@ public class FornecedorRequestDTO {
         this.nome = nome;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getTelefone() {
         return telefone;
     }
@@ -55,11 +46,11 @@ public class FornecedorRequestDTO {
         this.telefone = telefone;
     }
 
-    public EnderecoRequestDTO getEndereco() {
-        return endereco;
+    public String getInstagram() {
+        return instagram;
     }
 
-    public void setEndereco(EnderecoRequestDTO endereco) {
-        this.endereco = endereco;
+    public void setInstagram(String instagram) {
+        this.instagram = instagram;
     }
 }
