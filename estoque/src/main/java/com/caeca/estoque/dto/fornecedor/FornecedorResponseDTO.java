@@ -7,23 +7,24 @@ import java.time.LocalDateTime;
 public class FornecedorResponseDTO {
     private Long idFornecedor;
     private String nome;
-    private String email;
+    private String instagram;
     private String telefone;
     private Boolean isAtivo;
     private LocalDateTime dataCadastro;
-    private EnderecoResponseDTO endereco;
 
-    public FornecedorResponseDTO(Long idFornecedor, String nome, String email, String telefone, Boolean isAtivo, LocalDateTime dataCadastro, EnderecoResponseDTO endereco) {
+    public FornecedorResponseDTO(Long idFornecedor, String nome,String instagram,String telefone, Boolean isAtivo, LocalDateTime dataCadastro, EnderecoResponseDTO endereco) {
         this.idFornecedor = idFornecedor;
         this.nome = nome;
-        this.email = email;
         this.telefone = telefone;
         this.isAtivo = isAtivo;
         this.dataCadastro = dataCadastro;
-        this.endereco = endereco;
+        this.instagram = instagram;
     }
 
     public FornecedorResponseDTO() {
+    }
+
+    public FornecedorResponseDTO(Long id, String nome, String telefone, String instagram, Boolean isAtivo, LocalDateTime dataCadastro) {
     }
 
     public Long getIdFornecedor() {
@@ -42,13 +43,7 @@ public class FornecedorResponseDTO {
         this.nome = nome;
     }
 
-    public String getEmail() {
-        return email;
-    }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getTelefone() {
         return telefone;
@@ -74,11 +69,11 @@ public class FornecedorResponseDTO {
         this.dataCadastro = dataCadastro;
     }
 
-    public EnderecoResponseDTO getEndereco() {
-        return endereco;
+    public String getInstagram() {
+        return instagram;
     }
 
-    public void setEndereco(EnderecoResponseDTO endereco) {
-        this.endereco = endereco;
+    public void setInstagram(String instagram) {
+        this.instagram = instagram;
     }
 }
