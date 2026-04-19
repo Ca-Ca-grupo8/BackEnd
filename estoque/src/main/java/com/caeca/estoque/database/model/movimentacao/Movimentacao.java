@@ -38,7 +38,7 @@ public class Movimentacao {
     @ManyToOne()
     private Fornecedor fornecedor;
 
-    @ManyToAny()
+    @ManyToOne()
     private MovimentacaoRevendedora movimentacaoRevendedora;
 
     public Movimentacao() {

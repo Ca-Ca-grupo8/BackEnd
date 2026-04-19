@@ -5,6 +5,8 @@ import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoResponseDto;
 import com.caeca.estoque.service.movimentacao.MovimentacaoService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/movimentacoes")
+@SecurityRequirement(name = "Bearer")
+@Tag(name = "Movimentação", description = "Gerenciamento de movimentações do sistema (entrada, saída, reentrada, etc)")
 public class MovimentacaoController {
 
     private final MovimentacaoService movimentacaoService;
