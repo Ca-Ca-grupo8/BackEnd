@@ -1,14 +1,18 @@
 package com.caeca.estoque.dto.movimentacao;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 public class MovimentacaoRequestDto {
+    @Schema(example = "2", description = "Quantidade de jóias envolvidas na movimentação")
     @NotNull
     private Integer quantidade;
 
+    @Schema(example = "1", description = "Id da jóia")
     @NotNull
     private Long idJoia;
 
+    @Schema(example = "1", description = "Id do tipo de movimentação (Entrada, saída, etc)")
     @NotNull
     private Integer idTipoMovimentacao;
 
