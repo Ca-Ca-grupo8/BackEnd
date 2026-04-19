@@ -16,11 +16,11 @@ public class Fornecedor {
     @Column(name = "nome", length = 45)
     private String nome;
 
-    @Column(name = "email", length = 45)
-    private String email;
-
     @Column(name = "telefone", length = 45)
     private String telefone;
+
+    @Column(name = "instagram", length = 100)
+    private String instagram;
 
     @Column(name = "is_ativo", nullable = false)
     private Boolean isAtivo;
@@ -31,23 +31,19 @@ public class Fornecedor {
     @Column(name = "data_atualizacao", nullable = false)
     private LocalDateTime dataAtualizacao;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_endereco", nullable = false)
-    private Endereco endereco;
 
     public Fornecedor() {}
 
-    public Fornecedor(Long id, String nome, String email, String telefone,
+    public Fornecedor(Long id, String nome, String telefone,
                       Boolean isAtivo, LocalDateTime dataCadastro,
-                      LocalDateTime dataAtualizacao, Endereco endereco) {
+                      LocalDateTime dataAtualizacao, String instagram) {
         this.id = id;
         this.nome = nome;
-        this.email = email;
         this.telefone = telefone;
         this.isAtivo = isAtivo;
         this.dataCadastro = dataCadastro;
         this.dataAtualizacao = dataAtualizacao;
-        this.endereco = endereco;
+        this.instagram = instagram;
     }
 
     @PrePersist
@@ -68,9 +64,6 @@ public class Fornecedor {
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
     public String getTelefone() { return telefone; }
     public void setTelefone(String telefone) { this.telefone = telefone; }
 
@@ -83,6 +76,11 @@ public class Fornecedor {
     public LocalDateTime getDataAtualizacao() { return dataAtualizacao; }
     public void setDataAtualizacao(LocalDateTime dataAtualizacao) { this.dataAtualizacao = dataAtualizacao; }
 
-    public Endereco getEndereco() { return endereco; }
-    public void setEndereco(Endereco endereco) { this.endereco = endereco; }
+    public String getInstagram() {
+        return instagram;
+    }
+
+    public void setInstagram(String instagram) {
+        this.instagram = instagram;
+    }
 }
