@@ -1,5 +1,6 @@
 package com.caeca.estoque.dto.revendedora;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,17 +9,21 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 public class RevendedoraRequestDto {
+    @Schema(example = "Ana Beatriz", description = "Nome completo da revendedora")
     @NotBlank
     private String nome;
 
+    @Schema(example = "ana@email.com", description = "Email da revendedora")
     @NotBlank
     @Email
     private String email;
 
+    @Schema(example = "11123456789", description = "Telefone da revendedora [DDD+Número]")
     @NotBlank
     @Size(min = 11, max = 11)
     private String telefone;
 
+    @Schema(example = "1", description = "Id do endereço da revendedora")
     @NotNull
     private Long enderecoId;
 
