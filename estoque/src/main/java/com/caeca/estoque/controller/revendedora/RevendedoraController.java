@@ -7,6 +7,7 @@ import com.caeca.estoque.dto.revendedora.RevendedoraRequestDto;
 import com.caeca.estoque.dto.revendedora.RevendedoraResponseDto;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.revendedora.RevendedoraService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/revendedoras")
+@SecurityRequirement(name = "Bearer")
+@Tag(name = "Revendedoras", description = "Gerenciamento de revendedoras do sistema")
 class RevendedoraController {
     private final RevendedoraService revendedoraService;
 
