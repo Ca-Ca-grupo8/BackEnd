@@ -2,6 +2,8 @@ package com.caeca.estoque.controller.fornecedor;
 
 import com.caeca.estoque.dto.fornecedor.*;
 import com.caeca.estoque.service.fornecedor.FornecedorService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/fornecedores")
+@SecurityRequirement(name = "Bearer")
+@Tag(name = "Fornecedores", description = "Gerenciamento de fornecedores")
 public class FornecedorController {
 
     private final FornecedorService fornecedorService;
