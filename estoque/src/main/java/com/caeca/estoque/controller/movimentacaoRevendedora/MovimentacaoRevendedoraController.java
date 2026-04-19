@@ -6,6 +6,8 @@ import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraPatc
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraRequestDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResponseDto;
 import com.caeca.estoque.service.movimentacaoRevendedora.MovimentacaoRevendedoraService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +15,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/vendas")
+@SecurityRequirement(name = "Bearer")
+@Tag(name = "Movimentação por Revendedoras", description = "Gerenciamento das saídas destinadas a revendedoras")
 public class MovimentacaoRevendedoraController {
     private MovimentacaoRevendedoraService mrService;
 
