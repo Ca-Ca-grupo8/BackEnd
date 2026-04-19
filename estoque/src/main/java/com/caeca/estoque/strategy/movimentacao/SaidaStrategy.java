@@ -1,14 +1,18 @@
 package com.caeca.estoque.strategy.movimentacao;
 
+import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
+import com.caeca.estoque.database.model.usuario.Usuario;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraRequestDto;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.exception.QtdInsuficienteException;
+import com.caeca.estoque.service.JoiaService;
 import com.caeca.estoque.service.movimentacaoRevendedora.MovimentacaoRevendedoraService;
 import com.caeca.estoque.service.tipoMovimentacao.TipoMovimentacaoService;
+import com.caeca.estoque.service.usuario.UsuarioService;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -33,16 +37,15 @@ public class SaidaStrategy implements MovimentacaoStrategy {
 
     @Override
     public Movimentacao realizarMovimentacao(MovimentacaoRequestDto dto) {
-        Joia joia = joiaService.findById(dto.getFkJoia())
-                .orElseThrow(() -> new NotFoundException("Joia não encontrada."));
+        Joia joia = joiaService.obterEntityJoiaPorId(dto.getIdJoia());
 
         if(joia.getQuantidade() < dto.getQuantidade()) {
             throw new QtdInsuficienteException("Quantidade da jóia " + joia.getNome() + " no estoque é insufiente");
         }
 
-        TipoMovimentacao tipo = tipoService.buscarPorId(dto.getFkTipoMovimentacao());
+        TipoMovimentacao tipo = tipoService.buscarPorId(dto.getIdTipoMovimentacao());
 
-        Usuario usuario = usuarioService.X();
+        Usuario usuario = usuarioService.getUsuarioLogado();
 
 
         Movimentacao movimentacao = MovimentacaoMapper.toEntity(dto);
@@ -61,6 +64,6 @@ public class SaidaStrategy implements MovimentacaoStrategy {
 
     @Override
     public void atualizarEstoque(Movimentacao movimentacao) {
-        joiaService.removerEstoque(movimentacao.getJoia().getIdJoia(), movimentacao.getQuantidade());
+        joiaService.diminuirEstoque(movimentacao.getJoia().getId(), movimentacao.getQuantidade());
     }
 }

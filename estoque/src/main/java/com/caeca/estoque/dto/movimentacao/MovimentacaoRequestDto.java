@@ -7,19 +7,19 @@ public class MovimentacaoRequestDto {
     private Integer quantidade;
 
     @NotNull
-    private Integer idJoia;
+    private Long idJoia;
 
     @NotNull
     private Integer idTipoMovimentacao;
 
-    private Integer idFornecedor;
+    private Long idFornecedor;
 
-    private Integer idRevendedora;
+    private Long idRevendedora;
 
     public MovimentacaoRequestDto() {
     }
 
-    public MovimentacaoRequestDto(Integer quantidade, Integer idJoia, Integer idTipoMovimentacao, Integer idFornecedor, Integer idRevendedora) {
+    public MovimentacaoRequestDto(Integer quantidade, Long idJoia, Integer idTipoMovimentacao, Long idFornecedor, Long idRevendedora) {
         this.quantidade = quantidade;
         this.idJoia = idJoia;
         this.idTipoMovimentacao = idTipoMovimentacao;
@@ -35,11 +35,11 @@ public class MovimentacaoRequestDto {
         this.quantidade = quantidade;
     }
 
-    public Integer getIdJoia() {
+    public Long getIdJoia() {
         return idJoia;
     }
 
-    public void setIdJoia(Integer idJoia) {
+    public void setIdJoia(Long idJoia) {
         this.idJoia = idJoia;
     }
 
@@ -51,19 +51,19 @@ public class MovimentacaoRequestDto {
         this.idTipoMovimentacao = idTipoMovimentacao;
     }
 
-    public Integer getIdFornecedor() {
+    public Long getIdFornecedor() {
         return idFornecedor;
     }
 
-    public void setIdFornecedor(Integer idFornecedor) {
+    public void setIdFornecedor(Long idFornecedor) {
         this.idFornecedor = idFornecedor;
     }
 
-    public Integer getIdRevendedora() {
+    public Long getIdRevendedora() {
         return idRevendedora;
     }
 
-    public void setIdRevendedora(Integer idRevendedora) {
+    public void setIdRevendedora(Long idRevendedora) {
         this.idRevendedora = idRevendedora;
     }
 }

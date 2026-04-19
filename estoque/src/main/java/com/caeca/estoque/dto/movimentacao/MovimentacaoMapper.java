@@ -1,8 +1,10 @@
 package com.caeca.estoque.dto.movimentacao;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
+import com.caeca.estoque.dto.joia.JoiaMapper;
 import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoMapper;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraMapper;
+import com.caeca.estoque.dto.usuario.UsuarioMapper;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -15,7 +17,7 @@ public class MovimentacaoMapper {
         dto.setPrecoSaida(entity.getPrecoSaida());
         dto.setJoia(JoiaMapper.toResponse(entity.getJoia()));
         dto.setTipoMovimentacao(TipoMovimentacaoMapper.toResponse(entity.getTipoMovimentacao()));
-        dto.setUsuario(UsuarioMapper.toResponse(entity.getUsuario()));
+        dto.setUsuario(UsuarioMapper.of(entity.getUsuario()));
         dto.setFornecedor(FornecedorMapper.toResponse(entity.getFornecedor()));
         dto.setMovimentacaoRevendedora(MovimentacaoRevendedoraMapper.toResponse(entity.getMovimentacaoRevendedora()));
     }
