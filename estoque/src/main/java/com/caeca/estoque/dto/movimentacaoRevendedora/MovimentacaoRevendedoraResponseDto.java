@@ -1,5 +1,7 @@
 package com.caeca.estoque.dto.movimentacaoRevendedora;
 
+import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,7 +11,7 @@ public class MovimentacaoRevendedoraResponseDto {
     private boolean isFinalizada;
     private RevendedoraMovimentacaoDto revendedora;
     private List<MovimentacaoItemDto> movimentacoes;
-    private BigDecimal totalVenda;
+    private Double totalVenda;
     private LocalDateTime data;
 
     public static class RevendedoraMovimentacaoDto{
@@ -43,14 +45,14 @@ public class MovimentacaoRevendedoraResponseDto {
 
     public static class MovimentacaoItemDto {
         private Long idMovimentacao;
-        private JoiaResumoDto joia;
+        private JoiaSaidaDTO joia;
         private Integer quantidade;
-        private BigDecimal precoSaida;
+        private Double precoSaida;
 
         public MovimentacaoItemDto() {
         }
 
-        public MovimentacaoItemDto(Long idMovimentacao, JoiaResumoDto joia, Integer decimal, BigDecimal precoSaida) {
+        public MovimentacaoItemDto(Long idMovimentacao, JoiaSaidaDTO joia, Integer decimal, Double precoSaida) {
             this.idMovimentacao = idMovimentacao;
             this.joia = joia;
             this.quantidade = decimal;
@@ -65,11 +67,11 @@ public class MovimentacaoRevendedoraResponseDto {
             this.idMovimentacao = idMovimentacao;
         }
 
-        public JoiaResumoDto getJoia() {
+        public JoiaSaidaDTO getJoia() {
             return joia;
         }
 
-        public void setJoia(JoiaResumoDto joia) {
+        public void setJoia(JoiaSaidaDTO joia) {
             this.joia = joia;
         }
 
@@ -81,11 +83,11 @@ public class MovimentacaoRevendedoraResponseDto {
             this.quantidade = quantidade;
         }
 
-        public BigDecimal getPrecoSaida() {
+        public Double getPrecoSaida() {
             return precoSaida;
         }
 
-        public void setPrecoSaida(BigDecimal precoSaida) {
+        public void setPrecoSaida(Double precoSaida) {
             this.precoSaida = precoSaida;
         }
     }
@@ -93,7 +95,7 @@ public class MovimentacaoRevendedoraResponseDto {
     public MovimentacaoRevendedoraResponseDto() {
     }
 
-    public MovimentacaoRevendedoraResponseDto(Long idMovimentacaoRevendedora, boolean isFinalizada, RevendedoraMovimentacaoDto revendedora, List<MovimentacaoItemDto> movimentacoes, BigDecimal totalVenda, LocalDateTime data) {
+    public MovimentacaoRevendedoraResponseDto(Long idMovimentacaoRevendedora, boolean isFinalizada, RevendedoraMovimentacaoDto revendedora, List<MovimentacaoItemDto> movimentacoes, Double totalVenda, LocalDateTime data) {
         this.idMovimentacaoRevendedora = idMovimentacaoRevendedora;
         this.isFinalizada = isFinalizada;
         this.revendedora = revendedora;
@@ -126,11 +128,11 @@ public class MovimentacaoRevendedoraResponseDto {
         this.movimentacoes = movimentacoes;
     }
 
-    public BigDecimal getTotalVenda() {
+    public Double getTotalVenda() {
         return totalVenda;
     }
 
-    public void setTotalVenda(BigDecimal totalVenda) {
+    public void setTotalVenda(Double totalVenda) {
         this.totalVenda = totalVenda;
     }
 

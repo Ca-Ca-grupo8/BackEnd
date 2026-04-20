@@ -8,6 +8,7 @@ import com.caeca.estoque.dto.banho.BanhoMapper;
 import com.caeca.estoque.dto.banho.BanhoResponseDto;
 import com.caeca.estoque.dto.categoria.CategoriaMapper;
 import com.caeca.estoque.dto.categoria.CategoriaSaidaDTO;
+import com.caeca.estoque.dto.joia.JoiaEntradaDTO;
 import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
 import com.caeca.estoque.dto.material.MaterialMapper;
 import com.caeca.estoque.dto.material.MaterialResponseDto;
@@ -56,15 +57,8 @@ public class JoiaController {
     }
 
     @PostMapping
-    public ResponseEntity<JoiaSaidaDTO> criarJoia(@RequestBody Joia joia, @RequestParam Long categoriaId, @RequestParam Integer banhoId, @RequestParam Integer materialId) throws NotFoundException {
-
-        Categoria categoria = categoriaService.listarCategoriaPorId(categoriaId);
-
-        Banho banho = banhoService.buscarPorId(banhoId);
-
-        Material material = materialService.listarPorId(materialId);
-
-        JoiaSaidaDTO joiaSaidaDTO = joiaService.criarJoia(joia, categoria, banho, material);
+    public ResponseEntity<JoiaSaidaDTO> criarJoia(@RequestBody JoiaEntradaDTO joia) throws NotFoundException {
+        JoiaSaidaDTO joiaSaidaDTO = joiaService.criarJoia(joia);
 
         return ResponseEntity.status(201).body(joiaSaidaDTO);
     }

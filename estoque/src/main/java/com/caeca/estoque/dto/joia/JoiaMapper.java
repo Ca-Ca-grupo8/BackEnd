@@ -6,23 +6,21 @@ import java.util.List;
 
 public class JoiaMapper {
 
-    public static Joia toEntity(JoiaEntradaDTO joiaEntradaDTO) {
+    public static Joia toEntity(JoiaEntradaDTO dto) {
 
-        if (joiaEntradaDTO == null) {
+        if (dto == null) {
             return null;
         }
 
         Joia joia = new Joia();
 
-        joia.setNome(joiaEntradaDTO.getNome());
-        joia.setQuantidade(joiaEntradaDTO.getQuantidade());
-        joia.setPeso(joiaEntradaDTO.getPeso());
-        joia.setPrecoOriginal(joiaEntradaDTO.getPrecoOriginal());
-        joia.setMultiplicador(joiaEntradaDTO.getMultiplicador());
-        joia.setQuantidadeMinima(joiaEntradaDTO.getQuantidadeMinima());
-        joia.setCategoria(joiaEntradaDTO.getCategoria());
-        joia.setBanho(joia.getBanho());
-        joia.setMaterial(joiaEntradaDTO.getMaterial());
+        joia.setNome(dto.getNome());
+        joia.setQuantidade(dto.getQuantidade());
+        joia.setPeso(dto.getPeso());
+        joia.setPrecoOriginal(dto.getPrecoOriginal());
+        joia.setMultiplicador(dto.getMultiplicador());
+        joia.setQuantidadeMinima(dto.getQuantidadeMinima());
+        joia.setPrecoBanho(dto.getPrecoBanho());
 
         return joia;
     }

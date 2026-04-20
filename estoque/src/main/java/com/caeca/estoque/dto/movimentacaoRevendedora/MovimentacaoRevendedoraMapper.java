@@ -1,8 +1,7 @@
 package com.caeca.estoque.dto.movimentacaoRevendedora;
 
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
-
-import java.math.BigDecimal;
+import com.caeca.estoque.dto.joia.JoiaMapper;
 import java.util.List;
 
 public class MovimentacaoRevendedoraMapper {
@@ -16,19 +15,24 @@ public class MovimentacaoRevendedoraMapper {
                 )
         );
         dto.setMovimentacoes(entity.getMovimentacoes()
-                .forEach(movimentacao -> {
-                    new MovimentacaoRevendedoraResponseDto.MovimentacaoItemDto(
-                            movimentacao.getIdMovimentacao(),
-                            JoiaMapper.toResumo(movimentacao.getJoia()),
-                            movimentacao.getQuantidade(),
-                            movimentacao.getPrecoSaida()
-                    );
-                }));
-
-        BigDecimal total = dto.getMovimentacoes()
                 .stream()
-                .map(MovimentacaoRevendedoraResponseDto.MovimentacaoItemDto::getPrecoSaida)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(movimentacao -> new MovimentacaoRevendedoraResponseDto.MovimentacaoItemDto(
+                        movimentacao.getIdMovimentacao(),
+                        JoiaMapper.toResponse(movimentacao.getJoia()),
+                        movimentacao.getQuantidade(),
+                        movimentacao.getPrecoSaida()
+                ))
+                .toList());
+
+        Double total = dto.getMovimentacoes()
+                .stream()
+                .mapToDouble(item -> {
+                    Double preco = item.getPrecoSaida() != null ? item.getPrecoSaida() : 0.0;
+                    Integer qtd = item.getQuantidade() != null ? item.getQuantidade() : 0;
+
+                    return preco * qtd;
+                })
+                .sum();
 
         dto.setTotalVenda(total);
         dto.setData(entity.getData());

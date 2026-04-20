@@ -2,6 +2,7 @@ package com.caeca.estoque.service.movimentacaoRevendedora;
 
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
 import com.caeca.estoque.database.repository.movimentacaoRevendedora.MovimentacaoRevendedoraRepository;
+import com.caeca.estoque.database.repository.revendedora.RevendedoraRepository;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraMapper;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraPatchDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraRequestDto;
@@ -16,10 +17,12 @@ public class MovimentacaoRevendedoraService {
 
     private final MovimentacaoRevendedoraRepository mrRepository;
     private final RevendedoraService revendedoraService;
+    private final RevendedoraRepository revendedoraRepository;
 
-    public MovimentacaoRevendedoraService(MovimentacaoRevendedoraRepository mrRepository, RevendedoraService revendedoraService) {
+    public MovimentacaoRevendedoraService(MovimentacaoRevendedoraRepository mrRepository, RevendedoraService revendedoraService, RevendedoraRepository revendedoraRepository) {
         this.mrRepository = mrRepository;
         this.revendedoraService = revendedoraService;
+        this.revendedoraRepository = revendedoraRepository;
     }
 
     public List<MovimentacaoRevendedora> listar() {
@@ -33,7 +36,11 @@ public class MovimentacaoRevendedoraService {
 
     public MovimentacaoRevendedora buscarOuCriarVendaPorRevendedora(MovimentacaoRevendedoraRequestDto requestDto){
         return mrRepository.findByRevendedoraIdAndIsFinalizadaFalse(requestDto.getIdRevendedora())
-                .orElse(mrRepository.save(MovimentacaoRevendedoraMapper.toEntity(requestDto)));
+                .orElseGet(() -> {
+                    MovimentacaoRevendedora movimentacaoRevendedora = MovimentacaoRevendedoraMapper.toEntity(requestDto);
+                    movimentacaoRevendedora.setRevendedora(revendedoraService.buscarPorId(requestDto.getIdRevendedora()));
+                    return mrRepository.save(movimentacaoRevendedora);
+                });
     }
 
     public MovimentacaoRevendedora buscarVendaAbertaPorRevendedora(Long idRevendedora) {
