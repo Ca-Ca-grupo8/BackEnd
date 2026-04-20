@@ -1,5 +1,6 @@
 package com.caeca.estoque.database.model.movimentacao;
 
+import com.caeca.estoque.database.model.fornecedores.Fornecedor;
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
 import com.caeca.estoque.database.model.usuario.Usuario;

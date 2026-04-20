@@ -1,10 +1,13 @@
 package com.caeca.estoque.strategy.movimentacao;
 
+import com.caeca.estoque.database.model.fornecedores.Fornecedor;
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
 import com.caeca.estoque.database.model.usuario.Usuario;
+import com.caeca.estoque.database.repository.fornecedor.FornecedorRepository;
 import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
+import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
 import com.caeca.estoque.exception.NotFoundException;
@@ -16,15 +19,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class EntradaStrategy implements MovimentacaoStrategy {
     private final JoiaService joiaService;
-    private final FornecedorService fornecedorService;
-    private final TipoMovimentacaoService tipoService;
-    private final UsuarioService usuarioService;
+    private final FornecedorRepository fornecedorRepository;
 
-    public EntradaStrategy(JoiaService joiaService, FornecedorService fornecedorService, TipoMovimentacaoService tipoService, UsuarioService usuarioService) {
+    public EntradaStrategy(JoiaService joiaService, FornecedorRepository fornecedorRepository) {
         this.joiaService = joiaService;
-        this.fornecedorService = fornecedorService;
-        this.tipoService = tipoService;
-        this.usuarioService = usuarioService;
+        this.fornecedorRepository = fornecedorRepository;
     }
 
     @Override
@@ -33,22 +32,15 @@ public class EntradaStrategy implements MovimentacaoStrategy {
     }
 
     @Override
-    public Movimentacao realizarMovimentacao(MovimentacaoRequestDto dto) {
-        Joia joia = joiaService.obterEntityJoiaPorId(dto.getIdJoia());
-
-
-        Fornecedor fornecedor = fornecedorService.findById(dto.getFkFornecedor())
+    public Movimentacao realizarMovimentacao(MovimentacaoContextDto dto) {
+        Fornecedor fornecedor = fornecedorRepository.findById(dto.dadosOriginais().getIdFornecedor())
                 .orElseThrow(() -> new NotFoundException("Fornecedor não encontrado."));
 
-        TipoMovimentacao tipo = tipoService.buscarPorId(dto.getIdTipoMovimentacao());
-
-        Usuario usuario = usuarioService.getUsuarioLogado();
-
-        Movimentacao movimentacao = MovimentacaoMapper.toEntity(dto);
-        movimentacao.setJoia(joia);
-        movimentacao.setTipoMovimentacao(tipo);
+        Movimentacao movimentacao = MovimentacaoMapper.toEntity(dto.dadosOriginais());
+        movimentacao.setJoia(dto.joia());
+        movimentacao.setTipoMovimentacao(dto.tipo());
         movimentacao.setFornecedor(fornecedor);
-        movimentacao.setUsuario(usuario);
+        movimentacao.setUsuario(dto.usuario());
 
         return movimentacao;
     }
