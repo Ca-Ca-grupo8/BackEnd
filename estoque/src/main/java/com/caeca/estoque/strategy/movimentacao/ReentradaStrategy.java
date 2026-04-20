@@ -3,10 +3,8 @@ package com.caeca.estoque.strategy.movimentacao;
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
-import com.caeca.estoque.database.model.usuario.Usuario;
+import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
-import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
-import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.JoiaService;
 import com.caeca.estoque.service.movimentacaoRevendedora.MovimentacaoRevendedoraService;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
@@ -15,14 +13,10 @@ import com.caeca.estoque.service.usuario.UsuarioService;
 
 public class ReentradaStrategy implements MovimentacaoStrategy{
     private final JoiaService joiaService;
-    private final TipoMovimentacaoService tipoService;
-    private final UsuarioService usuarioService;
     private final MovimentacaoRevendedoraService mrService;
 
-    public ReentradaStrategy(JoiaService joiaService, TipoMovimentacaoService tipoService, UsuarioService usuarioService, MovimentacaoRevendedoraService mrService) {
+    public ReentradaStrategy(JoiaService joiaService, MovimentacaoRevendedoraService mrService) {
         this.joiaService = joiaService;
-        this.tipoService = tipoService;
-        this.usuarioService = usuarioService;
         this.mrService = mrService;
     }
 
@@ -32,23 +26,15 @@ public class ReentradaStrategy implements MovimentacaoStrategy{
     }
 
     @Override
-    public Movimentacao realizarMovimentacao(MovimentacaoRequestDto dto) {
-        Joia joia = joiaService.obterEntityJoiaPorId(dto.getIdJoia());
+    public Movimentacao realizarMovimentacao(MovimentacaoContextDto dto) {
+        Movimentacao movimentacao = MovimentacaoMapper.toEntity(dto.dadosOriginais());
+        movimentacao.setJoia(dto.joia());
+        movimentacao.setTipoMovimentacao(dto.tipo());
+        movimentacao.setUsuario(dto.usuario());
 
-        TipoMovimentacao tipo = tipoService.buscarPorId(dto.getIdTipoMovimentacao());
-
-        Usuario usuario = usuarioService.getUsuarioLogado();
-
-
-
-        Movimentacao movimentacao = MovimentacaoMapper.toEntity(dto);
-        movimentacao.setJoia(joia);
-        movimentacao.setTipoMovimentacao(tipo);
-        movimentacao.setUsuario(usuario);
-
-        if(dto.getIdRevendedora() != null){
+        if(dto.dadosOriginais().getIdRevendedora() != null){
             MovimentacaoRevendedora movimentacaoRevendedora = mrService.buscarVendaAbertaPorRevendedora(
-                    dto.getIdRevendedora());
+                    dto.dadosOriginais().getIdRevendedora());
             movimentacao.setMovimentacaoRevendedora(movimentacaoRevendedora);
         }
 

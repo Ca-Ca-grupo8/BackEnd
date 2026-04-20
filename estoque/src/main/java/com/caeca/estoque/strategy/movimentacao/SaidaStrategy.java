@@ -1,13 +1,10 @@
 package com.caeca.estoque.strategy.movimentacao;
 
-import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
-import com.caeca.estoque.database.model.usuario.Usuario;
+import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
-import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraRequestDto;
-import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.exception.QtdInsuficienteException;
 import com.caeca.estoque.service.JoiaService;
 import com.caeca.estoque.service.movimentacaoRevendedora.MovimentacaoRevendedoraService;
@@ -18,14 +15,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class SaidaStrategy implements MovimentacaoStrategy {
     private final JoiaService joiaService;
-    private final TipoMovimentacaoService tipoService;
-    private final UsuarioService usuarioService;
     private final MovimentacaoRevendedoraService mrService;
 
-    public SaidaStrategy(JoiaService joiaService, TipoMovimentacaoService tipoService, UsuarioService usuarioService, MovimentacaoRevendedoraService mrService) {
+    public SaidaStrategy(JoiaService joiaService, MovimentacaoRevendedoraService mrService) {
         this.joiaService = joiaService;
-        this.tipoService = tipoService;
-        this.usuarioService = usuarioService;
         this.mrService = mrService;
     }
 
@@ -36,27 +29,21 @@ public class SaidaStrategy implements MovimentacaoStrategy {
     }
 
     @Override
-    public Movimentacao realizarMovimentacao(MovimentacaoRequestDto dto) {
-        Joia joia = joiaService.obterEntityJoiaPorId(dto.getIdJoia());
-
-        if(joia.getQuantidade() < dto.getQuantidade()) {
-            throw new QtdInsuficienteException("Quantidade da jóia " + joia.getNome() + " no estoque é insufiente");
+    public Movimentacao realizarMovimentacao(MovimentacaoContextDto dto) {
+        if(dto.joia().getQuantidade() < dto.dadosOriginais().getQuantidade()) {
+            throw new QtdInsuficienteException("Quantidade da jóia " + dto.joia().getNome() + " no estoque é insufiente");
         }
 
-        TipoMovimentacao tipo = tipoService.buscarPorId(dto.getIdTipoMovimentacao());
+        Movimentacao movimentacao = MovimentacaoMapper.toEntity(dto.dadosOriginais());
+        movimentacao.setJoia(dto.joia());
+        movimentacao.setTipoMovimentacao(dto.tipo());
+        movimentacao.setPrecoSaida(dto.joia().getPreco());
+        movimentacao.setUsuario(dto.usuario());
 
-        Usuario usuario = usuarioService.getUsuarioLogado();
-
-
-        Movimentacao movimentacao = MovimentacaoMapper.toEntity(dto);
-        movimentacao.setJoia(joia);
-        movimentacao.setTipoMovimentacao(tipo);
-        movimentacao.setPrecoSaida(joia.getPreco());
-        movimentacao.setUsuario(usuario);
-
-        if(tipo.getDescricao().toLowerCase().contains("venda")){
+        if(dto.tipo().getDescricao().toLowerCase().contains("venda") &&
+                dto.dadosOriginais().getIdRevendedora() != null){
             movimentacao.setMovimentacaoRevendedora(mrService.buscarOuCriarVendaPorRevendedora(
-                    new MovimentacaoRevendedoraRequestDto(dto.getIdRevendedora()));
+                    new MovimentacaoRevendedoraRequestDto(dto.dadosOriginais().getIdRevendedora()));
         }
 
         return movimentacao;

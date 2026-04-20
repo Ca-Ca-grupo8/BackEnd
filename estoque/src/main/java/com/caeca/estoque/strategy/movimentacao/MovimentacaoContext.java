@@ -1,6 +1,7 @@
 package com.caeca.estoque.strategy.movimentacao;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
+import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
 
 public class MovimentacaoContext {
@@ -10,7 +11,7 @@ public class MovimentacaoContext {
         this.strategy = strategy;
     }
 
-    public Movimentacao executar(MovimentacaoRequestDto dto){
+    public Movimentacao executar(MovimentacaoContextDto dto){
         return strategy.realizarMovimentacao(dto);
     }
 
