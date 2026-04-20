@@ -1,15 +1,19 @@
 package com.caeca.estoque.database.model.revendedora;
 
 import com.caeca.estoque.database.model.endereco.Endereco;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Revendedora {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,6 +45,7 @@ public class Revendedora {
     @LastModifiedDate
     private LocalDate dataAtualizacao;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "revendedora")
     private List<MovimentacaoRevendedora> vendas;
 

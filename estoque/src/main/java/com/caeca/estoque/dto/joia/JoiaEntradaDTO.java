@@ -6,6 +6,7 @@ import com.caeca.estoque.database.model.material.Material;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 public class JoiaEntradaDTO {
 
@@ -13,7 +14,7 @@ public class JoiaEntradaDTO {
     private String nome;
 
     @NotNull
-    @Positive
+    @PositiveOrZero
     private Integer quantidade;
 
     @NotNull
@@ -30,30 +31,33 @@ public class JoiaEntradaDTO {
 
     @NotNull
     @Positive
+    private Double precoBanho;
+
+    @NotNull
+    @Positive
     private Integer quantidadeMinima;
 
     @NotNull
-    private Categoria categoria;
+    private Long categoria;
 
     @NotNull
-    private Banho banho;
+    private Integer banho;
 
     @NotNull
-    private Material material;
+    private Integer material;
 
-    public JoiaEntradaDTO(String nome, Integer quantidade, Double peso, Double precoOriginal, Double multiplicador, Integer quantidadeMinima, Categoria categoria, Banho banho, Material material) {
+    public JoiaEntradaDTO(String nome, Integer quantidade, Double peso, Double precoOriginal, Double multiplicador, Double precoBanho, Integer quantidadeMinima, Long categoria, Integer banho, Integer material) {
         this.nome = nome;
         this.quantidade = quantidade;
         this.peso = peso;
         this.precoOriginal = precoOriginal;
         this.multiplicador = multiplicador;
+        this.precoBanho = precoBanho;
         this.quantidadeMinima = quantidadeMinima;
         this.categoria = categoria;
         this.banho = banho;
         this.material = material;
     }
-
-    public JoiaEntradaDTO() {}
 
     public String getNome() {
         return nome;
@@ -95,6 +99,14 @@ public class JoiaEntradaDTO {
         this.multiplicador = multiplicador;
     }
 
+    public Double getPrecoBanho() {
+        return precoBanho;
+    }
+
+    public void setPrecoBanho(Double precoBanho) {
+        this.precoBanho = precoBanho;
+    }
+
     public Integer getQuantidadeMinima() {
         return quantidadeMinima;
     }
@@ -103,27 +115,27 @@ public class JoiaEntradaDTO {
         this.quantidadeMinima = quantidadeMinima;
     }
 
-    public Categoria getCategoria() {
+    public Long getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(Categoria categoria) {
+    public void setCategoria(Long categoria) {
         this.categoria = categoria;
     }
 
-    public Banho getBanho() {
+    public Integer getBanho() {
         return banho;
     }
 
-    public void setBanho(Banho banho) {
+    public void setBanho(Integer banho) {
         this.banho = banho;
     }
 
-    public Material getMaterial() {
+    public Integer getMaterial() {
         return material;
     }
 
-    public void setMaterial(Material material) {
+    public void setMaterial(Integer material) {
         this.material = material;
     }
 }

@@ -8,6 +8,7 @@ import com.caeca.estoque.dto.revendedora.RevendedoraResponseDto;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.revendedora.RevendedoraService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;

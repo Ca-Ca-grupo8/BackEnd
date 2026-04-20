@@ -2,6 +2,7 @@ package com.caeca.estoque.database.model.movimentacao;
 
 import com.caeca.estoque.database.model.fornecedores.Fornecedor;
 import com.caeca.estoque.database.model.joia.Joia;
+import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
 import com.caeca.estoque.database.model.usuario.Usuario;
 import jakarta.persistence.*;
@@ -11,7 +12,6 @@ import org.hibernate.annotations.ManyToAny;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import com.caeca.estoque.database.model.movimentacaoRevendedora.movimentacaoRevendedora;
 
 @Entity
 public class Movimentacao {
