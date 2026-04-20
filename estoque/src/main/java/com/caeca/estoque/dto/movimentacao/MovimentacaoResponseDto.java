@@ -1,5 +1,6 @@
 package com.caeca.estoque.dto.movimentacao;
 
+import com.caeca.estoque.dto.fornecedor.FornecedorResponseDTO;
 import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
 import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoResponseDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResponseDto;
@@ -15,13 +16,13 @@ public class MovimentacaoResponseDto {
     private JoiaSaidaDTO joia;
     private TipoMovimentacaoResponseDto tipoMovimentacao;
     private UsuarioListarDto usuario;
-    private FornecedorResponseDto fornecedor;
+    private FornecedorResponseDTO fornecedor;
     private movimentacaoRevendedoraResponseDto movimentacaoRevendedora;
 
     public MovimentacaoResponseDto() {
     }
 
-    public MovimentacaoResponseDto(Long id, Integer quantidade, Double precoSaida, JoiaSaidaDTO joia, TipoMovimentacaoResponseDto tipoMovimentacao, UsuarioListarDto usuario, FornecedorResponseDto fornecedor, movimentacaoRevendedoraResponseDto movimentacaoRevendedora) {
+    public MovimentacaoResponseDto(Long id, Integer quantidade, Double precoSaida, JoiaSaidaDTO joia, TipoMovimentacaoResponseDto tipoMovimentacao, UsuarioListarDto usuario, FornecedorResponseDTO fornecedor, movimentacaoRevendedoraResponseDto movimentacaoRevendedora) {
         this.id = id;
         this.quantidade = quantidade;
         this.precoSaida = precoSaida;
@@ -80,11 +81,11 @@ public class MovimentacaoResponseDto {
         this.usuario = usuario;
     }
 
-    public FornecedorResponseDto getFornecedor() {
+    public FornecedorResponseDTO getFornecedor() {
         return fornecedor;
     }
 
-    public void setFornecedor(FornecedorResponseDto fornecedor) {
+    public void setFornecedor(FornecedorResponseDTO fornecedor) {
         this.fornecedor = fornecedor;
     }
 

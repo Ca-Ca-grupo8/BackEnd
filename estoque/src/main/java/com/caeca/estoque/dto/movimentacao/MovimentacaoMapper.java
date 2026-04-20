@@ -1,6 +1,7 @@
 package com.caeca.estoque.dto.movimentacao;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
+import com.caeca.estoque.dto.fornecedor.FornecedorMapper;
 import com.caeca.estoque.dto.joia.JoiaMapper;
 import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoMapper;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraMapper;
@@ -18,7 +19,7 @@ public class MovimentacaoMapper {
         dto.setJoia(JoiaMapper.toResponse(entity.getJoia()));
         dto.setTipoMovimentacao(TipoMovimentacaoMapper.toResponse(entity.getTipoMovimentacao()));
         dto.setUsuario(UsuarioMapper.of(entity.getUsuario()));
-        dto.setFornecedor(FornecedorMapper.toResponse(entity.getFornecedor()));
+        dto.setFornecedor(FornecedorMapper.toResponseDTO(entity.getFornecedor()));
         dto.setMovimentacaoRevendedora(MovimentacaoRevendedoraMapper.toResponse(entity.getMovimentacaoRevendedora()));
     }
 
