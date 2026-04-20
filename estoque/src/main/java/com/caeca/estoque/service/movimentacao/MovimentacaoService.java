@@ -1,6 +1,7 @@
 package com.caeca.estoque.service.movimentacao;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
+import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
 import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
@@ -14,6 +15,7 @@ import com.caeca.estoque.strategy.movimentacao.MovimentacaoContext;
 import com.caeca.estoque.strategy.movimentacao.MovimentacaoStrategy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -43,27 +45,44 @@ public class MovimentacaoService {
     }
 
     public Movimentacao cadastrar(MovimentacaoRequestDto request) {
-        TipoMovimentacao tipoMovimentacao = tipoService.buscarPorId(request.getIdTipoMovimentacao());
+        try {
+            System.out.println("Buscando tipo...");
+            TipoMovimentacao tipoMovimentacao = tipoService.buscarPorId(request.getIdTipoMovimentacao());
+            System.out.println("Tipo encontrado: " + tipoMovimentacao.getDescricao());
+            MovimentacaoContextDto movimentacaoContextDto = new MovimentacaoContextDto(
+                    joiaService.obterEntityJoiaPorId(request.getIdJoia()),
+                    tipoMovimentacao,
+                    usuarioService.getUsuarioLogado(),
+                    request
+            );
 
-        MovimentacaoContextDto movimentacaoContextDto = new MovimentacaoContextDto(
-                joiaService.obterEntityJoiaPorId(request.getIdJoia()),
-                tipoMovimentacao,
-                usuarioService.getUsuarioLogado(),
-                request
-        );
+            MovimentacaoContext context = new MovimentacaoContext(movimentacaoStrategies
+                    .stream()
+                    .filter(m -> m.suporta(tipoMovimentacao))
+                    .findFirst()
+                    .orElseThrow(() -> new BadRequestException("Tipo de movimentação inválido")));
 
-        MovimentacaoContext context = new MovimentacaoContext(movimentacaoStrategies
-                .stream()
-                .filter(m -> m.suporta(tipoMovimentacao))
-                .findFirst()
-                .orElseThrow(() -> new BadRequestException("Tipo de movimentação inválido")));
+            Movimentacao movimentacao = context.executar(movimentacaoContextDto);
 
-        Movimentacao movimentacao = context.executar(movimentacaoContextDto);
+            movimentacaoRepository.save(movimentacao);
 
-        movimentacaoRepository.save(movimentacao);
+            context.atualizarEstoque(movimentacao);
 
-        context.atualizarEstoque(movimentacao);
+            MovimentacaoRevendedora sessao = movimentacao.getMovimentacaoRevendedora();
+            if (sessao != null) {
+                if (sessao.getMovimentacoes() == null) {
+                    sessao.setMovimentacoes(new ArrayList<>());
+                }
+                sessao.getMovimentacoes().add(movimentacao);
+            }
 
-        return movimentacao;
+            movimentacaoRepository.flush();
+
+            return movimentacao;
+        } catch (Exception e) {
+            System.err.println("ERRO IDENTIFICADO: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

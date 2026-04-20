@@ -12,19 +12,16 @@ public class FornecedorResponseDTO {
     private Boolean isAtivo;
     private LocalDateTime dataCadastro;
 
-    public FornecedorResponseDTO(Long idFornecedor, String nome,String instagram,String telefone, Boolean isAtivo, LocalDateTime dataCadastro, EnderecoResponseDTO endereco) {
-        this.idFornecedor = idFornecedor;
-        this.nome = nome;
-        this.telefone = telefone;
-        this.isAtivo = isAtivo;
-        this.dataCadastro = dataCadastro;
-        this.instagram = instagram;
-    }
-
     public FornecedorResponseDTO() {
     }
 
-    public FornecedorResponseDTO(Long id, String nome, String telefone, String instagram, Boolean isAtivo, LocalDateTime dataCadastro) {
+    public FornecedorResponseDTO(Long idFornecedor, String nome, String instagram, String telefone, Boolean isAtivo, LocalDateTime dataCadastro) {
+        this.idFornecedor = idFornecedor;
+        this.nome = nome;
+        this.instagram = instagram;
+        this.telefone = telefone;
+        this.isAtivo = isAtivo;
+        this.dataCadastro = dataCadastro;
     }
 
     public Long getIdFornecedor() {

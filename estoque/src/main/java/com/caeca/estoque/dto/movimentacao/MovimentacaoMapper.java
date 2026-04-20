@@ -19,8 +19,16 @@ public class MovimentacaoMapper {
         dto.setJoia(JoiaMapper.toResponse(entity.getJoia()));
         dto.setTipoMovimentacao(TipoMovimentacaoMapper.toResponse(entity.getTipoMovimentacao()));
         dto.setUsuario(UsuarioMapper.of(entity.getUsuario()));
-        dto.setFornecedor(FornecedorMapper.toResponseDTO(entity.getFornecedor()));
-        dto.setMovimentacaoRevendedora(MovimentacaoRevendedoraMapper.toResponse(entity.getMovimentacaoRevendedora()));
+
+        dto.setFornecedor(entity.getFornecedor() != null
+                ? FornecedorMapper.toResponseDTO(entity.getFornecedor())
+                : null);
+
+        dto.setMovimentacaoRevendedora(entity.getMovimentacaoRevendedora() != null
+                ? MovimentacaoRevendedoraMapper.toResponse(entity.getMovimentacaoRevendedora())
+                : null);
+
+        return dto;
     }
 
     public static List<MovimentacaoResponseDto> toReponseList(List<Movimentacao> listar) {
