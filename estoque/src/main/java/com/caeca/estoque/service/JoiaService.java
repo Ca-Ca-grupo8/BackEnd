@@ -42,6 +42,13 @@ public class JoiaService {
         return JoiaMapper.toResponse(joia);
     }
 
+    public Joia obterEntityJoiaPorId(Long id){
+        Joia joia = joiaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Nenhuma jóia foi encontrada com este id"));
+
+        return joia;
+    }
+
     public JoiaSaidaDTO criarJoia(Joia joia, Categoria categoria, Banho banho, Material material) {
 
         if (joia.getNome() == null || joia.getNome().isBlank()) {
@@ -160,5 +167,17 @@ public class JoiaService {
         Joia joiaAtualizada = joiaRepository.save(joia);
 
         return JoiaMapper.toResponse(joiaAtualizada);
+    }
+
+    public void adicionarEstoque(Long id, Integer quantidade) {
+        Joia joia = obterEntityJoiaPorId(id);
+        joia.setQuantidade(joia.getQuantidade() + quantidade);
+        joiaRepository.save(joia);
+    }
+
+    public void diminuirEstoque(Long id, Integer quantidade) {
+        Joia joia = obterEntityJoiaPorId(id);
+        joia.setQuantidade(joia.getQuantidade() - quantidade);
+        joiaRepository.save(joia);
     }
 }
