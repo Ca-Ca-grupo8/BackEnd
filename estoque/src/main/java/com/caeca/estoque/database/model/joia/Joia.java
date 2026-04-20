@@ -4,6 +4,8 @@ import com.caeca.estoque.database.model.banho.Banho;
 import com.caeca.estoque.database.model.categoria.Categoria;
 import com.caeca.estoque.database.model.material.Material;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -44,13 +46,15 @@ public class Joia {
     @ManyToOne
     private Material material;
 
+    @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime dataAtualizacao;
 
     @Column(nullable = false)
     private Boolean isAtivo;
 
-    @Column(nullable = false)
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime dataCadastro;
 
     @Column(nullable = false)

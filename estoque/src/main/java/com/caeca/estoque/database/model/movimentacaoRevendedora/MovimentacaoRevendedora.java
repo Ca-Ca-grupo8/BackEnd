@@ -2,6 +2,7 @@ package com.caeca.estoque.database.model.movimentacaoRevendedora;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.revendedora.Revendedora;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -16,10 +17,11 @@ public class MovimentacaoRevendedora {
 
     private boolean isFinalizada = false;
 
+    @JsonBackReference
     @ManyToOne
     private Revendedora revendedora;
 
-    @OneToMany
+    @OneToMany(mappedBy = "movimentacaoRevendedora", fetch = FetchType.LAZY)
     private List<Movimentacao> movimentacoes;
 
     @CreationTimestamp
@@ -36,13 +38,13 @@ public class MovimentacaoRevendedora {
         this.data = data;
     }
 
-    //    public MovimentacaoRevendedora(Long idMovimentacaoRevendedora, boolean isFinalizada, Revendedora revendedora, List<Movimentacao> movimentacoes, LocalDateTime data) {
-//        this.idMovimentacaoRevendedora = idMovimentacaoRevendedora;
-//        this.isFinalizada = isFinalizada;
-//        this.revendedora = revendedora;
-//        this.movimentacoes = movimentacoes;
-//        this.data = data;
-//    }
+        public MovimentacaoRevendedora(Long idMovimentacaoRevendedora, boolean isFinalizada, Revendedora revendedora, List<Movimentacao> movimentacoes, LocalDateTime data) {
+        this.idMovimentacaoRevendedora = idMovimentacaoRevendedora;
+        this.isFinalizada = isFinalizada;
+        this.revendedora = revendedora;
+        this.movimentacoes = movimentacoes;
+        this.data = data;
+    }
 
     public Long getIdMovimentacaoRevendedora() {
         return idMovimentacaoRevendedora;
@@ -68,13 +70,13 @@ public class MovimentacaoRevendedora {
         this.revendedora = revendedora;
     }
 
-//    public List<Movimentacao> getMovimentacoes() {
-//        return movimentacoes;
-//    }
+    public List<Movimentacao> getMovimentacoes() {
+        return movimentacoes;
+    }
 
-//    public void setMovimentacoes(List<Movimentacao> movimentacoes) {
-//        this.movimentacoes = movimentacoes;
-//    }
+    public void setMovimentacoes(List<Movimentacao> movimentacoes) {
+        this.movimentacoes = movimentacoes;
+    }
 
     public LocalDateTime getData() {
         return data;

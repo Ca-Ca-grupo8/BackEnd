@@ -5,8 +5,12 @@ import com.caeca.estoque.database.model.categoria.Categoria;
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.material.Material;
 import com.caeca.estoque.database.repository.joia.JoiaRepository;
+import com.caeca.estoque.dto.joia.JoiaEntradaDTO;
 import com.caeca.estoque.dto.joia.JoiaMapper;
 import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
+import com.caeca.estoque.service.Material.MaterialService;
+import com.caeca.estoque.service.banho.BanhoService;
+import com.caeca.estoque.service.categoria.CategoriaService;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,9 +22,15 @@ import java.util.List;
 public class JoiaService {
 
     private final JoiaRepository joiaRepository;
+    private final BanhoService banhoService;
+    private final CategoriaService categoriaService;
+    private final MaterialService materialService;
 
-    public JoiaService(JoiaRepository joiaRepository) {
+    public JoiaService(JoiaRepository joiaRepository, BanhoService banhoService, CategoriaService categoriaService, MaterialService materialService) {
         this.joiaRepository = joiaRepository;
+        this.banhoService = banhoService;
+        this.categoriaService = categoriaService;
+        this.materialService = materialService;
     }
 
     public List<JoiaSaidaDTO> listarTodasAsJoias() {
@@ -49,42 +59,19 @@ public class JoiaService {
         return joia;
     }
 
-    public JoiaSaidaDTO criarJoia(Joia joia, Categoria categoria, Banho banho, Material material) {
+    public JoiaSaidaDTO criarJoia(JoiaEntradaDTO dto) {
 
-        if (joia.getNome() == null || joia.getNome().isBlank()) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Nome da jóia não pode estar vazio");
-        }
+        Categoria categoria = categoriaService.listarCategoriaPorId(dto.getCategoria());
 
-        if (joia.getMultiplicador() == null || joia.getMultiplicador() <= 0) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Multiplicador de preço da jóia deve ser maior que zero");
-        }
+        Banho banho = banhoService.buscarPorId(dto.getBanho());
 
-        if (joia.getPeso() == null || joia.getPeso() <= 0) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Peso da jóia deve ser maior que zero");
-        }
+        Material material = materialService.listarPorId(dto.getMaterial());
 
-        if (joia.getPrecoOriginal() == null || joia.getPrecoOriginal() <= 0) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Preço original da jóia deve ser maior que zero");
-        }
-
-        if (joia.getQuantidadeMinima() == null || joia.getQuantidadeMinima() < 0) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Quantidade mínima deve ser maior que zero");
-        }
-
-        if (joia.getQuantidade() == null || joia.getQuantidade() <= 0) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Quantidade de jóias deve ser maior que zero");
-        }
-
-        if (joia.getPrecoBanho() == null || joia.getPrecoBanho() <= 0) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Preço do banho deve ser maior que zero");
-        }
+        Joia joia = JoiaMapper.toEntity(dto);
 
         joia.setCategoria(categoria);
         joia.setBanho(banho);
         joia.setMaterial(material);
-
-        joia.setDataCadastro(LocalDateTime.now());
-        joia.setDataAtualizacao(LocalDateTime.now());
 
         joia.setAtivo(true);
 

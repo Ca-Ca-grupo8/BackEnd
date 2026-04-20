@@ -1,6 +1,7 @@
 package com.caeca.estoque.database.model.revendedora;
 
 import com.caeca.estoque.database.model.endereco.Endereco;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -44,6 +45,7 @@ public class Revendedora {
     @LastModifiedDate
     private LocalDate dataAtualizacao;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "revendedora")
     private List<MovimentacaoRevendedora> vendas;
 

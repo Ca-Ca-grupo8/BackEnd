@@ -25,6 +25,7 @@ public class SaidaStrategy implements MovimentacaoStrategy {
     @Override
     public boolean suporta(TipoMovimentacao tipoMovimentacao) {
         return tipoMovimentacao.getDescricao().toLowerCase().contains("saída") ||
+                tipoMovimentacao.getDescricao().toLowerCase().contains("saida") ||
                 tipoMovimentacao.getDescricao().toLowerCase().contains("venda");
     }
 
@@ -43,7 +44,7 @@ public class SaidaStrategy implements MovimentacaoStrategy {
         if(dto.tipo().getDescricao().toLowerCase().contains("venda") &&
                 dto.dadosOriginais().getIdRevendedora() != null){
             movimentacao.setMovimentacaoRevendedora(mrService.buscarOuCriarVendaPorRevendedora(
-                    new MovimentacaoRevendedoraRequestDto(dto.dadosOriginais().getIdRevendedora()));
+                    new MovimentacaoRevendedoraRequestDto(dto.dadosOriginais().getIdRevendedora())));
         }
 
         return movimentacao;

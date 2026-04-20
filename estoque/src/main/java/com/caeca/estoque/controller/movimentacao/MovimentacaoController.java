@@ -38,7 +38,7 @@ public class MovimentacaoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<MovimentacaoResponseDto> buscarPorId(@PathVariable Long id){
-        return ResponseEntity.ok(MovimentacaoMapper.ToResponse(movimentacaoService.buscarPorId(id)));
+        return ResponseEntity.ok(MovimentacaoMapper.toResponse(movimentacaoService.buscarPorId(id)));
     }
 
     @PostMapping
