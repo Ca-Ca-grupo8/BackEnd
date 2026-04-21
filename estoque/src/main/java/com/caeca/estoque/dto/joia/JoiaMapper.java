@@ -39,6 +39,7 @@ public class JoiaMapper {
         joiaSaidaDTO.setQuantidadeMinima(joia.getQuantidadeMinima());
         joiaSaidaDTO.setAtivo(joia.getAtivo());
         joiaSaidaDTO.setDataCadastro(joia.getDataCadastro());
+        joiaSaidaDTO.setQuantidade(joia.getQuantidade());
 
         return joiaSaidaDTO;
     }

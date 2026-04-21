@@ -13,6 +13,8 @@ import com.caeca.estoque.service.joia.JoiaService;
 import com.caeca.estoque.service.Material.MaterialService;
 import com.caeca.estoque.service.banho.BanhoService;
 import com.caeca.estoque.service.categoria.CategoriaService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/joias")
+@SecurityRequirement(name = "Bearer")
+@Tag(name = "Joias", description = "Gerenciamento das semijoias do sistema")
 public class JoiaController {
 
     private final JoiaService joiaService;
