@@ -4,16 +4,12 @@ import com.caeca.estoque.database.model.banho.Banho;
 import com.caeca.estoque.database.model.categoria.Categoria;
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.material.Material;
-import com.caeca.estoque.dto.banho.BanhoMapper;
-import com.caeca.estoque.dto.banho.BanhoResponseDto;
-import com.caeca.estoque.dto.categoria.CategoriaMapper;
-import com.caeca.estoque.dto.categoria.CategoriaSaidaDTO;
+import com.caeca.estoque.dto.joia.JoiaAtualizacaoDTO;
 import com.caeca.estoque.dto.joia.JoiaEntradaDTO;
 import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
-import com.caeca.estoque.dto.material.MaterialMapper;
-import com.caeca.estoque.dto.material.MaterialResponseDto;
+import com.caeca.estoque.dto.joia.StatusDTO;
 import com.caeca.estoque.exception.NotFoundException;
-import com.caeca.estoque.service.JoiaService;
+import com.caeca.estoque.service.joia.JoiaService;
 import com.caeca.estoque.service.Material.MaterialService;
 import com.caeca.estoque.service.banho.BanhoService;
 import com.caeca.estoque.service.categoria.CategoriaService;
@@ -49,7 +45,7 @@ public class JoiaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<JoiaSaidaDTO> listarJoiaPorId(@RequestBody @Valid Long id) {
+    public ResponseEntity<JoiaSaidaDTO> listarJoiaPorId(@PathVariable Long id) {
 
         JoiaSaidaDTO joiaSaidaDTO = joiaService.listarJoiaPorId(id);
 
@@ -63,22 +59,18 @@ public class JoiaController {
         return ResponseEntity.status(201).body(joiaSaidaDTO);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<JoiaSaidaDTO> atualizarJoia(@PathVariable Long id, @RequestBody Joia joiaAtualizada, @RequestParam Long categoriaId, @RequestParam Integer banhoId, @RequestParam Integer materialId) throws NotFoundException {
+    @PatchMapping("/{id}")
+    public ResponseEntity<JoiaSaidaDTO> atualizarJoiaPorId(@PathVariable Long id, @RequestBody JoiaAtualizacaoDTO dto) {
 
-        Categoria categoria = categoriaService.listarCategoriaPorId(categoriaId);
-        Banho banho = banhoService.buscarPorId(banhoId);
-        Material material = materialService.listarPorId(materialId);
+        JoiaSaidaDTO response = joiaService.atualizarJoiaPorId(id, dto);
 
-        JoiaSaidaDTO joiaSaidaDTO = joiaService.atualizarJoiaPorId(id, joiaAtualizada, categoria, banho, material);
-
-        return ResponseEntity.status(200).body(joiaSaidaDTO);
+        return ResponseEntity.status(200).body(response);
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<JoiaSaidaDTO> atualizarStatus(@PathVariable Long id, @RequestParam Boolean ativo) {
+    public ResponseEntity<JoiaSaidaDTO> atualizarStatus(@PathVariable Long id, @RequestBody StatusDTO dto) {
 
-        JoiaSaidaDTO joiaSaidaDTO = joiaService.atualizarStatusPorId(id, ativo);
+        JoiaSaidaDTO joiaSaidaDTO = joiaService.atualizarStatusPorId(id, dto.getAtivo());
 
         return ResponseEntity.status(200).body(joiaSaidaDTO);
     }

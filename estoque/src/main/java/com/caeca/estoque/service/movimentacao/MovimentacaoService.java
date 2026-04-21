@@ -8,7 +8,7 @@ import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
 import com.caeca.estoque.exception.BadRequestException;
 import com.caeca.estoque.exception.NotFoundException;
-import com.caeca.estoque.service.JoiaService;
+import com.caeca.estoque.service.joia.JoiaService;
 import com.caeca.estoque.service.tipoMovimentacao.TipoMovimentacaoService;
 import com.caeca.estoque.service.usuario.UsuarioService;
 import com.caeca.estoque.strategy.movimentacao.MovimentacaoContext;
