@@ -6,10 +6,8 @@ import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraRequestDto;
 import com.caeca.estoque.exception.QtdInsuficienteException;
-import com.caeca.estoque.service.JoiaService;
+import com.caeca.estoque.service.joia.JoiaService;
 import com.caeca.estoque.service.movimentacaoRevendedora.MovimentacaoRevendedoraService;
-import com.caeca.estoque.service.tipoMovimentacao.TipoMovimentacaoService;
-import com.caeca.estoque.service.usuario.UsuarioService;
 import org.springframework.stereotype.Component;
 
 @Component
