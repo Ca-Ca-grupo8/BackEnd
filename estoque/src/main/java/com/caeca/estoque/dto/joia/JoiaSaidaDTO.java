@@ -10,17 +10,20 @@ public class JoiaSaidaDTO {
 
     private Double preco;
 
+    private Integer quantidade;
+
     private Integer quantidadeMinima;
 
     private Boolean isAtivo;
 
     private LocalDateTime dataCadastro;
 
-    public JoiaSaidaDTO(Long id, String nome, Integer quantidadeMinima, Double preco, Boolean isAtivo, LocalDateTime dataCadastro) {
+    public JoiaSaidaDTO(Long id, String nome, Double preco, Integer quantidade, Integer quantidadeMinima, Boolean isAtivo, LocalDateTime dataCadastro) {
         this.id = id;
         this.nome = nome;
-        this.quantidadeMinima = quantidadeMinima;
         this.preco = preco;
+        this.quantidade = quantidade;
+        this.quantidadeMinima = quantidadeMinima;
         this.isAtivo = isAtivo;
         this.dataCadastro = dataCadastro;
     }
@@ -73,5 +76,13 @@ public class JoiaSaidaDTO {
 
     public void setDataCadastro(LocalDateTime dataCadastro) {
         this.dataCadastro = dataCadastro;
+    }
+
+    public Integer getQuantidade() {
+        return quantidade;
+    }
+
+    public void setQuantidade(Integer quantidade) {
+        this.quantidade = quantidade;
     }
 }

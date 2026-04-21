@@ -1,10 +1,11 @@
-package com.caeca.estoque.service;
+package com.caeca.estoque.service.joia;
 
 import com.caeca.estoque.database.model.banho.Banho;
 import com.caeca.estoque.database.model.categoria.Categoria;
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.material.Material;
 import com.caeca.estoque.database.repository.joia.JoiaRepository;
+import com.caeca.estoque.dto.joia.JoiaAtualizacaoDTO;
 import com.caeca.estoque.dto.joia.JoiaEntradaDTO;
 import com.caeca.estoque.dto.joia.JoiaMapper;
 import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
@@ -84,50 +85,54 @@ public class JoiaService {
         return JoiaMapper.toResponse(joiaCriada);
     }
 
-    public JoiaSaidaDTO atualizarJoiaPorId(Long id, Joia joiaAtualizada, Categoria categoria, Banho banho, Material material) {
+    public JoiaSaidaDTO atualizarJoiaPorId(Long id, JoiaAtualizacaoDTO dto) {
 
         Joia joia = joiaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(400), "Jóia não encontrada"));
+                .orElseThrow(() -> new RuntimeException("Jóia não encontrada"));
 
-        if (joiaAtualizada.getNome() == null || joiaAtualizada.getNome().isBlank()) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Nome da jóia não pode estar vazio");
+        // Atualizações simples
+        if (dto.getNome() != null && !dto.getNome().isBlank()) {
+            joia.setNome(dto.getNome());
         }
 
-        if (joiaAtualizada.getMultiplicador() == null || joiaAtualizada.getMultiplicador() <= 0) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Multiplicador deve ser maior que zero");
+        if (dto.getMultiplicador() != null && dto.getMultiplicador() > 0) {
+            joia.setMultiplicador(dto.getMultiplicador());
         }
 
-        if (joiaAtualizada.getPeso() == null || joiaAtualizada.getPeso() <= 0) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Peso deve ser maior que zero");
+        if (dto.getPeso() != null && dto.getPeso() > 0) {
+            joia.setPeso(dto.getPeso());
         }
 
-        if (joiaAtualizada.getPrecoOriginal() == null || joiaAtualizada.getPrecoOriginal() <= 0) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Preço original deve ser maior que zero");
+        if (dto.getPrecoOriginal() != null && dto.getPrecoOriginal() > 0) {
+            joia.setPrecoOriginal(dto.getPrecoOriginal());
         }
 
-        if (joiaAtualizada.getQuantidadeMinima() == null || joiaAtualizada.getQuantidadeMinima() < 0) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Quantidade mínima inválida");
+        if (dto.getPrecoBanho() != null && dto.getPrecoBanho() > 0) {
+            joia.setPrecoBanho(dto.getPrecoBanho());
         }
 
-        if (joiaAtualizada.getQuantidade() == null || joiaAtualizada.getQuantidade() <= 0) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Quantidade deve ser maior que zero");
+        if (dto.getQuantidadeMinima() != null && dto.getQuantidadeMinima() >= 0) {
+            joia.setQuantidadeMinima(dto.getQuantidadeMinima());
         }
 
-        if (joiaAtualizada.getPrecoBanho() == null || joiaAtualizada.getPrecoBanho() <= 0) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Preço do banho deve ser maior que zero");
+        if (dto.getQuantidade() != null && dto.getQuantidade() > 0) {
+            joia.setQuantidade(dto.getQuantidade());
         }
 
-        joia.setNome(joiaAtualizada.getNome());
-        joia.setMultiplicador(joiaAtualizada.getMultiplicador());
-        joia.setPeso(joiaAtualizada.getPeso());
-        joia.setPrecoOriginal(joiaAtualizada.getPrecoOriginal());
-        joia.setPrecoBanho(joiaAtualizada.getPrecoBanho());
-        joia.setQuantidadeMinima(joiaAtualizada.getQuantidadeMinima());
-        joia.setQuantidade(joiaAtualizada.getQuantidade());
+        if (dto.getCategoriaId() != null) {
+            Categoria categoria = categoriaService.listarCategoriaPorId(dto.getCategoriaId());
+            joia.setCategoria(categoria);
+        }
 
-        joia.setCategoria(categoria);
-        joia.setBanho(banho);
-        joia.setMaterial(material);
+        if (dto.getBanhoId() != null) {
+            Banho banho = banhoService.buscarPorId(dto.getBanhoId());
+            joia.setBanho(banho);
+        }
+
+        if (dto.getMaterialId() != null) {
+            Material material = materialService.listarPorId(dto.getMaterialId());
+            joia.setMaterial(material);
+        }
 
         joia.setDataAtualizacao(LocalDateTime.now());
 
