@@ -79,6 +79,7 @@ public class SecurityConfiguracao {
             "/v3/api-docs/**",
             "/actuator/*",
             "/usuarios/login/**",
+            "/usuarios",
             "/usuarios/**",
             "/usuarios/logout/**",
             "/h2-console/**",
