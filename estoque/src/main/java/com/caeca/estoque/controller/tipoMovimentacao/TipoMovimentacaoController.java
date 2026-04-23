@@ -6,6 +6,8 @@ import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoRequestDto;
 import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoResponseDto;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.tipoMovimentacao.TipoMovimentacaoService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tipos-movimentacao")
+@SecurityRequirement(name = "Bearer")
+@Tag(name = "Tipo de Movimentação", description = "Gerenciamento dos Tipos de movimentações do sistema (entrada, saída, reentrada, etc)")
 class TipoMovimentacaoController {
 
     private final TipoMovimentacaoService tipoMovimentacaoService;
