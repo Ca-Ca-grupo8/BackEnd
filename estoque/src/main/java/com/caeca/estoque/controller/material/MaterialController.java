@@ -8,6 +8,8 @@ import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoMapper;
 import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoResponseDto;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.Material.MaterialService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/materiais")
+@SecurityRequirement(name = "Bearer")
+@Tag(name = "Material", description = "Gerenciamento de material das joias")
 public class MaterialController {
 
     private final MaterialService materialService;

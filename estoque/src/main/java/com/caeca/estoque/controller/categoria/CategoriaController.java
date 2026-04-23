@@ -5,6 +5,8 @@ import com.caeca.estoque.dto.categoria.CategoriaEntradaDTO;
 import com.caeca.estoque.dto.categoria.CategoriaMapper;
 import com.caeca.estoque.dto.categoria.CategoriaSaidaDTO;
 import com.caeca.estoque.service.categoria.CategoriaService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/categorias")
+@SecurityRequirement(name = "Bearer")
+@Tag(name = "Categoria", description = "Gerenciamento de categoria das joias")
 public class CategoriaController {
 
     private final CategoriaService categoriaService;
