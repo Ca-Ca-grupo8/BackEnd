@@ -1,9 +1,12 @@
 package com.caeca.estoque.strategy.movimentacao;
 
 import com.caeca.estoque.database.model.fornecedores.Fornecedor;
+import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
 import com.caeca.estoque.database.repository.fornecedor.FornecedorRepository;
+import com.caeca.estoque.dto.joia.JoiaMapper;
+import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.exception.NotFoundException;
@@ -27,11 +30,19 @@ public class EntradaStrategy implements MovimentacaoStrategy {
 
     @Override
     public Movimentacao realizarMovimentacao(MovimentacaoContextDto dto) {
+        Joia joia;
+        if(dto.dadosOriginais().getIdJoia() == null) {
+            JoiaSaidaDTO joiaSaidaDTO =  joiaService.criarJoia(dto.dadosOriginais().getDadosNovaJoia());
+            joia = joiaService.obterEntityJoiaPorId(joiaSaidaDTO.getId());
+        } else {
+            joia = joiaService.obterEntityJoiaPorId(dto.dadosOriginais().getIdJoia());
+        }
+
         Fornecedor fornecedor = fornecedorRepository.findById(dto.dadosOriginais().getIdFornecedor())
                 .orElseThrow(() -> new NotFoundException("Fornecedor não encontrado."));
 
         Movimentacao movimentacao = MovimentacaoMapper.toEntity(dto.dadosOriginais());
-        movimentacao.setJoia(dto.joia());
+        movimentacao.setJoia(joia);
         movimentacao.setTipoMovimentacao(dto.tipo());
         movimentacao.setFornecedor(fornecedor);
         movimentacao.setUsuario(dto.usuario());
