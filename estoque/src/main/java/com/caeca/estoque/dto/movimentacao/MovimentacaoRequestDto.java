@@ -22,16 +22,25 @@ public class MovimentacaoRequestDto {
 
     private Long idRevendedora;
 
+    private Double precoCompraRevendedor;
+
+    private Double precoBanho;
+
+    private Double multiplicador;
+
     public MovimentacaoRequestDto() {
     }
 
-    public MovimentacaoRequestDto(Integer quantidade, Long idJoia, JoiaEntradaDTO dadosNovaJoia, Integer idTipoMovimentacao, Long idFornecedor, Long idRevendedora) {
+    public MovimentacaoRequestDto(Integer quantidade, Long idJoia, JoiaEntradaDTO dadosNovaJoia, Integer idTipoMovimentacao, Long idFornecedor, Long idRevendedora, Double precoCompraRevendedor, Double precoBanho, Double multiplicador) {
         this.quantidade = quantidade;
         this.idJoia = idJoia;
         this.dadosNovaJoia = dadosNovaJoia;
         this.idTipoMovimentacao = idTipoMovimentacao;
         this.idFornecedor = idFornecedor;
         this.idRevendedora = idRevendedora;
+        this.precoCompraRevendedor = precoCompraRevendedor;
+        this.precoBanho = precoBanho;
+        this.multiplicador = multiplicador;
     }
 
     public Integer getQuantidade() {
@@ -48,6 +57,14 @@ public class MovimentacaoRequestDto {
 
     public void setIdJoia(Long idJoia) {
         this.idJoia = idJoia;
+    }
+
+    public JoiaEntradaDTO getDadosNovaJoia() {
+        return dadosNovaJoia;
+    }
+
+    public void setDadosNovaJoia(JoiaEntradaDTO dadosNovaJoia) {
+        this.dadosNovaJoia = dadosNovaJoia;
     }
 
     public Integer getIdTipoMovimentacao() {
@@ -74,11 +91,27 @@ public class MovimentacaoRequestDto {
         this.idRevendedora = idRevendedora;
     }
 
-    public JoiaEntradaDTO getDadosNovaJoia() {
-        return dadosNovaJoia;
+    public Double getPrecoCompraRevendedor() {
+        return precoCompraRevendedor;
     }
 
-    public void setDadosNovaJoia(JoiaEntradaDTO dadosNovaJoia) {
-        this.dadosNovaJoia = dadosNovaJoia;
+    public void setPrecoCompraRevendedor(Double precoCompraRevendedor) {
+        this.precoCompraRevendedor = precoCompraRevendedor;
+    }
+
+    public Double getPrecoBanho() {
+        return precoBanho;
+    }
+
+    public void setPrecoBanho(Double precoBanho) {
+        this.precoBanho = precoBanho;
+    }
+
+    public Double getMultiplicador() {
+        return multiplicador;
+    }
+
+    public void setMultiplicador(Double multiplicador) {
+        this.multiplicador = multiplicador;
     }
 }

@@ -16,11 +16,7 @@ public class JoiaMapper {
 
         joia.setNome(dto.getNome());
         joia.setQuantidade(dto.getQuantidade());
-        joia.setPeso(dto.getPeso());
-        joia.setPrecoOriginal(dto.getPrecoOriginal());
-        joia.setMultiplicador(dto.getMultiplicador());
         joia.setQuantidadeMinima(dto.getQuantidadeMinima());
-        joia.setPrecoBanho(dto.getPrecoBanho());
 
         return joia;
     }

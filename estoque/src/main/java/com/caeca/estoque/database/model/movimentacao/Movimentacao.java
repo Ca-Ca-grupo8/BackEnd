@@ -27,6 +27,12 @@ public class Movimentacao {
 
     private Double precoSaida;
 
+    private Double precoOriginal;
+
+    private Double multiplicador;
+
+    private Double precoBanho;
+
     @ManyToOne()
     private Joia joia;
 
@@ -45,11 +51,14 @@ public class Movimentacao {
     public Movimentacao() {
     }
 
-    public Movimentacao(Long idMovimentacao, LocalDateTime data, Integer quantidade, Double precoSaida, Joia joia, TipoMovimentacao tipoMovimentacao, Usuario usuario, Fornecedor fornecedor, MovimentacaoRevendedora movimentacaoRevendedora) {
+    public Movimentacao(Long idMovimentacao, LocalDateTime data, Integer quantidade, Double precoSaida, Double precoOriginal, Double multiplicador, Double precoBanho, Joia joia, TipoMovimentacao tipoMovimentacao, Usuario usuario, Fornecedor fornecedor, MovimentacaoRevendedora movimentacaoRevendedora) {
         this.idMovimentacao = idMovimentacao;
         this.data = data;
         this.quantidade = quantidade;
         this.precoSaida = precoSaida;
+        this.precoOriginal = precoOriginal;
+        this.multiplicador = multiplicador;
+        this.precoBanho = precoBanho;
         this.joia = joia;
         this.tipoMovimentacao = tipoMovimentacao;
         this.usuario = usuario;
@@ -87,6 +96,30 @@ public class Movimentacao {
 
     public void setPrecoSaida(Double precoSaida) {
         this.precoSaida = precoSaida;
+    }
+
+    public Double getPrecoOriginal() {
+        return precoOriginal;
+    }
+
+    public void setPrecoOriginal(Double precoOriginal) {
+        this.precoOriginal = precoOriginal;
+    }
+
+    public Double getMultiplicador() {
+        return multiplicador;
+    }
+
+    public void setMultiplicador(Double multiplicador) {
+        this.multiplicador = multiplicador;
+    }
+
+    public Double getPrecoBanho() {
+        return precoBanho;
+    }
+
+    public void setPrecoBanho(Double precoBanho) {
+        this.precoBanho = precoBanho;
     }
 
     public Joia getJoia() {

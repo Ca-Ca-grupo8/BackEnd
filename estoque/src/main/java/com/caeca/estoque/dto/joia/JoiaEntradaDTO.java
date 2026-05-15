@@ -22,26 +22,6 @@ public class JoiaEntradaDTO {
 
     @NotNull
     @Positive
-    @Schema(description = "Peso de uma unidade da joia", example = "0.3")
-    private Double peso;
-
-    @NotNull
-    @Positive
-    @Schema(description = "Preço original pago na joia", example = "10.50")
-    private Double precoOriginal;
-
-    @NotNull
-    @Positive
-    @Schema(description = "Multiplicador para gerar o lucro", example = "2")
-    private Double multiplicador;
-
-    @NotNull
-    @Positive
-    @Schema(description = "Preço pago pelo banho da joia", example = "4.5")
-    private Double precoBanho;
-
-    @NotNull
-    @Positive
     @Schema(description = "Quantidade miníma recomendada para se ter no estoque", example = "2")
     private Integer quantidadeMinima;
 
@@ -57,17 +37,13 @@ public class JoiaEntradaDTO {
     @Schema(description = "Id do material (Ex: aço)", example = "1")
     private Integer material;
 
-    public JoiaEntradaDTO(String nome, Integer quantidade, Double peso, Double precoOriginal, Double multiplicador, Double precoBanho, Integer quantidadeMinima, Long categoria, Integer banho, Integer material) {
-        this.nome = nome;
-        this.quantidade = quantidade;
-        this.peso = peso;
-        this.precoOriginal = precoOriginal;
-        this.multiplicador = multiplicador;
-        this.precoBanho = precoBanho;
-        this.quantidadeMinima = quantidadeMinima;
-        this.categoria = categoria;
-        this.banho = banho;
+    public JoiaEntradaDTO(Integer material, Integer banho, Long categoria, Integer quantidadeMinima, Integer quantidade, String nome) {
         this.material = material;
+        this.banho = banho;
+        this.categoria = categoria;
+        this.quantidadeMinima = quantidadeMinima;
+        this.quantidade = quantidade;
+        this.nome = nome;
     }
 
     public String getNome() {
@@ -84,38 +60,6 @@ public class JoiaEntradaDTO {
 
     public void setQuantidade(Integer quantidade) {
         this.quantidade = quantidade;
-    }
-
-    public Double getPeso() {
-        return peso;
-    }
-
-    public void setPeso(Double peso) {
-        this.peso = peso;
-    }
-
-    public Double getPrecoOriginal() {
-        return precoOriginal;
-    }
-
-    public void setPrecoOriginal(Double precoOriginal) {
-        this.precoOriginal = precoOriginal;
-    }
-
-    public Double getMultiplicador() {
-        return multiplicador;
-    }
-
-    public void setMultiplicador(Double multiplicador) {
-        this.multiplicador = multiplicador;
-    }
-
-    public Double getPrecoBanho() {
-        return precoBanho;
-    }
-
-    public void setPrecoBanho(Double precoBanho) {
-        this.precoBanho = precoBanho;
     }
 
     public Integer getQuantidadeMinima() {
