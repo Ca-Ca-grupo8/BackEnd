@@ -1,5 +1,6 @@
 package com.caeca.estoque.strategy.movimentacao;
 
+import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
@@ -29,14 +30,16 @@ public class SaidaStrategy implements MovimentacaoStrategy {
 
     @Override
     public Movimentacao realizarMovimentacao(MovimentacaoContextDto dto) {
-        if(dto.joia().getQuantidade() < dto.dadosOriginais().getQuantidade()) {
-            throw new QtdInsuficienteException("Quantidade da jóia " + dto.joia().getNome() + " no estoque é insufiente");
+        Joia joia = joiaService.obterEntityJoiaPorId(dto.dadosOriginais().getIdJoia());
+
+        if(joia.getQuantidade() < dto.dadosOriginais().getQuantidade()) {
+            throw new QtdInsuficienteException("Quantidade da jóia " + joia.getNome() + " no estoque é insufiente");
         }
 
         Movimentacao movimentacao = MovimentacaoMapper.toEntity(dto.dadosOriginais());
-        movimentacao.setJoia(dto.joia());
+        movimentacao.setJoia(joia);
         movimentacao.setTipoMovimentacao(dto.tipo());
-        movimentacao.setPrecoSaida(dto.joia().getPreco());
+        movimentacao.setPrecoSaida(joia.getPreco());
         movimentacao.setUsuario(dto.usuario());
 
         if(dto.tipo().getDescricao().toLowerCase().contains("venda") &&

@@ -25,7 +25,7 @@ public class ReentradaStrategy implements MovimentacaoStrategy{
     @Override
     public Movimentacao realizarMovimentacao(MovimentacaoContextDto dto) {
         Movimentacao movimentacao = MovimentacaoMapper.toEntity(dto.dadosOriginais());
-        movimentacao.setJoia(dto.joia());
+        movimentacao.setJoia(joiaService.obterEntityJoiaPorId(dto.dadosOriginais().getIdJoia()));
         movimentacao.setTipoMovimentacao(dto.tipo());
         movimentacao.setUsuario(dto.usuario());
 
