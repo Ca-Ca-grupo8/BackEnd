@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Joia {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -22,15 +22,6 @@ public class Joia {
 
     @Column(nullable = false)
     private Integer quantidade;
-
-    @Column(nullable = false)
-    private Double peso;
-
-    @Column(nullable = false)
-    private Double precoOriginal;
-
-    @Column(nullable = false)
-    private Double multiplicador;
 
     @Column(nullable = false)
     private Double preco;
@@ -60,15 +51,10 @@ public class Joia {
     @Column(nullable = false)
     private Integer quantidadeMinima;
 
-    private Double precoBanho;
-
-    public Joia(Long id, String nome, Integer quantidade, Double peso, Double precoOriginal, Double multiplicador, Double preco, String imagem, Categoria categoria, Banho banho, Material material, LocalDateTime dataAtualizacao, Boolean isAtivo, LocalDateTime dataCadastro, Integer quantidadeMinima, Double precoBanho) {
+    public Joia(Long id, String nome, Integer quantidade, Double preco, String imagem, Categoria categoria, Banho banho, Material material, LocalDateTime dataAtualizacao, Boolean isAtivo, LocalDateTime dataCadastro, Integer quantidadeMinima) {
         this.id = id;
         this.nome = nome;
         this.quantidade = quantidade;
-        this.peso = peso;
-        this.precoOriginal = precoOriginal;
-        this.multiplicador = multiplicador;
         this.preco = preco;
         this.imagem = imagem;
         this.categoria = categoria;
@@ -78,10 +64,10 @@ public class Joia {
         this.isAtivo = isAtivo;
         this.dataCadastro = dataCadastro;
         this.quantidadeMinima = quantidadeMinima;
-        this.precoBanho = precoBanho;
     }
 
     public Joia() {}
+
 
     public Long getId() {
         return id;
@@ -105,30 +91,6 @@ public class Joia {
 
     public void setQuantidade(Integer quantidade) {
         this.quantidade = quantidade;
-    }
-
-    public Double getPeso() {
-        return peso;
-    }
-
-    public void setPeso(Double peso) {
-        this.peso = peso;
-    }
-
-    public Double getPrecoOriginal() {
-        return precoOriginal;
-    }
-
-    public void setPrecoOriginal(Double precoOriginal) {
-        this.precoOriginal = precoOriginal;
-    }
-
-    public Double getMultiplicador() {
-        return multiplicador;
-    }
-
-    public void setMultiplicador(Double multiplicador) {
-        this.multiplicador = multiplicador;
     }
 
     public Double getPreco() {
@@ -201,13 +163,5 @@ public class Joia {
 
     public void setQuantidadeMinima(Integer quantidadeMinima) {
         this.quantidadeMinima = quantidadeMinima;
-    }
-
-    public Double getPrecoBanho() {
-        return precoBanho;
-    }
-
-    public void setPrecoBanho(Double precoBanho) {
-        this.precoBanho = precoBanho;
     }
 }

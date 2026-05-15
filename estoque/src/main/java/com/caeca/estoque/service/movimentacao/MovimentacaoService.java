@@ -13,6 +13,7 @@ import com.caeca.estoque.service.tipoMovimentacao.TipoMovimentacaoService;
 import com.caeca.estoque.service.usuario.UsuarioService;
 import com.caeca.estoque.strategy.movimentacao.MovimentacaoContext;
 import com.caeca.estoque.strategy.movimentacao.MovimentacaoStrategy;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,13 +45,10 @@ public class MovimentacaoService {
                 .orElseThrow(() -> new NotFoundException("Movimentação com o Id " + id + " inexistente"));
     }
 
+    @Transactional
     public Movimentacao cadastrar(MovimentacaoRequestDto request) {
-        try {
-            System.out.println("Buscando tipo...");
             TipoMovimentacao tipoMovimentacao = tipoService.buscarPorId(request.getIdTipoMovimentacao());
-            System.out.println("Tipo encontrado: " + tipoMovimentacao.getDescricao());
             MovimentacaoContextDto movimentacaoContextDto = new MovimentacaoContextDto(
-                    joiaService.obterEntityJoiaPorId(request.getIdJoia()),
                     tipoMovimentacao,
                     usuarioService.getUsuarioLogado(),
                     request
@@ -79,10 +77,5 @@ public class MovimentacaoService {
             movimentacaoRepository.flush();
 
             return movimentacao;
-        } catch (Exception e) {
-            System.err.println("ERRO IDENTIFICADO: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
     }
 }

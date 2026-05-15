@@ -1,11 +1,16 @@
 package com.caeca.estoque.strategy.movimentacao;
 
 import com.caeca.estoque.database.model.fornecedores.Fornecedor;
+import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
 import com.caeca.estoque.database.repository.fornecedor.FornecedorRepository;
+import com.caeca.estoque.dto.joia.JoiaAtualizacaoDTO;
+import com.caeca.estoque.dto.joia.JoiaMapper;
+import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
+import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.joia.JoiaService;
 import org.springframework.stereotype.Component;
@@ -27,14 +32,34 @@ public class EntradaStrategy implements MovimentacaoStrategy {
 
     @Override
     public Movimentacao realizarMovimentacao(MovimentacaoContextDto dto) {
+        Joia joia;
+        MovimentacaoRequestDto dados = dto.dadosOriginais();
+
+        if(dados.getIdJoia() == null) {
+            JoiaSaidaDTO joiaSaidaDTO = joiaService.criarJoia(dados.getDadosNovaJoia());
+            joia = joiaService.obterEntityJoiaPorId(joiaSaidaDTO.getId());
+        } else {
+            joia = joiaService.obterEntityJoiaPorId(dados.getIdJoia());
+        }
+
+        Double custoOriginal = dados.getPrecoBanho() + dados.getPrecoCompraRevendedor();
+        Double precoJoia = custoOriginal * dados.getMultiplicador();
+
+        JoiaAtualizacaoDTO joiaAtualizacaoDTO = new JoiaAtualizacaoDTO();
+        joiaAtualizacaoDTO.setPrecoFinal(precoJoia);
+        joiaService.atualizarJoiaPorId(joia.getId(), joiaAtualizacaoDTO);
+
         Fornecedor fornecedor = fornecedorRepository.findById(dto.dadosOriginais().getIdFornecedor())
                 .orElseThrow(() -> new NotFoundException("Fornecedor não encontrado."));
 
         Movimentacao movimentacao = MovimentacaoMapper.toEntity(dto.dadosOriginais());
-        movimentacao.setJoia(dto.joia());
+        movimentacao.setJoia(joia);
         movimentacao.setTipoMovimentacao(dto.tipo());
         movimentacao.setFornecedor(fornecedor);
         movimentacao.setUsuario(dto.usuario());
+        movimentacao.setPrecoOriginal(dto.dadosOriginais().getPrecoCompraRevendedor());
+        movimentacao.setPrecoBanho(dto.dadosOriginais().getPrecoBanho());
+        movimentacao.setMultiplicador(dto.dadosOriginais().getMultiplicador());
 
         return movimentacao;
     }

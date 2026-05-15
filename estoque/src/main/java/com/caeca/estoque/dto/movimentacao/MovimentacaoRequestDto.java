@@ -1,5 +1,6 @@
 package com.caeca.estoque.dto.movimentacao;
 
+import com.caeca.estoque.dto.joia.JoiaEntradaDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
@@ -9,8 +10,9 @@ public class MovimentacaoRequestDto {
     private Integer quantidade;
 
     @Schema(example = "1", description = "Id da jóia")
-    @NotNull
     private Long idJoia;
+
+    private JoiaEntradaDTO dadosNovaJoia;
 
     @Schema(example = "1", description = "Id do tipo de movimentação (Entrada, saída, etc)")
     @NotNull
@@ -20,15 +22,25 @@ public class MovimentacaoRequestDto {
 
     private Long idRevendedora;
 
+    private Double precoCompraRevendedor;
+
+    private Double precoBanho;
+
+    private Double multiplicador;
+
     public MovimentacaoRequestDto() {
     }
 
-    public MovimentacaoRequestDto(Integer quantidade, Long idJoia, Integer idTipoMovimentacao, Long idFornecedor, Long idRevendedora) {
+    public MovimentacaoRequestDto(Integer quantidade, Long idJoia, JoiaEntradaDTO dadosNovaJoia, Integer idTipoMovimentacao, Long idFornecedor, Long idRevendedora, Double precoCompraRevendedor, Double precoBanho, Double multiplicador) {
         this.quantidade = quantidade;
         this.idJoia = idJoia;
+        this.dadosNovaJoia = dadosNovaJoia;
         this.idTipoMovimentacao = idTipoMovimentacao;
         this.idFornecedor = idFornecedor;
         this.idRevendedora = idRevendedora;
+        this.precoCompraRevendedor = precoCompraRevendedor;
+        this.precoBanho = precoBanho;
+        this.multiplicador = multiplicador;
     }
 
     public Integer getQuantidade() {
@@ -45,6 +57,14 @@ public class MovimentacaoRequestDto {
 
     public void setIdJoia(Long idJoia) {
         this.idJoia = idJoia;
+    }
+
+    public JoiaEntradaDTO getDadosNovaJoia() {
+        return dadosNovaJoia;
+    }
+
+    public void setDadosNovaJoia(JoiaEntradaDTO dadosNovaJoia) {
+        this.dadosNovaJoia = dadosNovaJoia;
     }
 
     public Integer getIdTipoMovimentacao() {
@@ -69,5 +89,29 @@ public class MovimentacaoRequestDto {
 
     public void setIdRevendedora(Long idRevendedora) {
         this.idRevendedora = idRevendedora;
+    }
+
+    public Double getPrecoCompraRevendedor() {
+        return precoCompraRevendedor;
+    }
+
+    public void setPrecoCompraRevendedor(Double precoCompraRevendedor) {
+        this.precoCompraRevendedor = precoCompraRevendedor;
+    }
+
+    public Double getPrecoBanho() {
+        return precoBanho;
+    }
+
+    public void setPrecoBanho(Double precoBanho) {
+        this.precoBanho = precoBanho;
+    }
+
+    public Double getMultiplicador() {
+        return multiplicador;
+    }
+
+    public void setMultiplicador(Double multiplicador) {
+        this.multiplicador = multiplicador;
     }
 }
