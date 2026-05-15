@@ -22,13 +22,16 @@ public class JoiaAtualizacaoDTO {
     @Schema(description = "Id do material (Ex: aço)", example = "1")
     private Integer materialId;
 
-    public JoiaAtualizacaoDTO(String nome, Integer quantidadeMinima, Integer quantidade, Long categoriaId, Integer banhoId, Integer materialId) {
+    private Double precoFinal;
+
+    public JoiaAtualizacaoDTO(String nome, Integer quantidadeMinima, Integer quantidade, Long categoriaId, Integer banhoId, Integer materialId, Double precoFinal) {
         this.nome = nome;
         this.quantidadeMinima = quantidadeMinima;
         this.quantidade = quantidade;
         this.categoriaId = categoriaId;
         this.banhoId = banhoId;
         this.materialId = materialId;
+        this.precoFinal = precoFinal;
     }
 
     public JoiaAtualizacaoDTO() {}
@@ -79,5 +82,13 @@ public class JoiaAtualizacaoDTO {
 
     public void setMaterialId(Integer materialId) {
         this.materialId = materialId;
+    }
+
+    public Double getPrecoFinal() {
+        return precoFinal;
+    }
+
+    public void setPrecoFinal(Double precoFinal) {
+        this.precoFinal = precoFinal;
     }
 }
