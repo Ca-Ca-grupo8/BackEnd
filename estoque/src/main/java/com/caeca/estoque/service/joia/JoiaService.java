@@ -73,12 +73,9 @@ public class JoiaService {
         joia.setCategoria(categoria);
         joia.setBanho(banho);
         joia.setMaterial(material);
+        joia.setPreco(0.0);
 
         joia.setAtivo(true);
-
-        Double precoFinal = (joia.getPrecoOriginal() + joia.getPrecoBanho()) * joia.getMultiplicador();
-
-        joia.setPreco(precoFinal);
 
         Joia joiaCriada = joiaRepository.save(joia);
 
@@ -93,22 +90,6 @@ public class JoiaService {
         // Atualizações simples
         if (dto.getNome() != null && !dto.getNome().isBlank()) {
             joia.setNome(dto.getNome());
-        }
-
-        if (dto.getMultiplicador() != null && dto.getMultiplicador() > 0) {
-            joia.setMultiplicador(dto.getMultiplicador());
-        }
-
-        if (dto.getPeso() != null && dto.getPeso() > 0) {
-            joia.setPeso(dto.getPeso());
-        }
-
-        if (dto.getPrecoOriginal() != null && dto.getPrecoOriginal() > 0) {
-            joia.setPrecoOriginal(dto.getPrecoOriginal());
-        }
-
-        if (dto.getPrecoBanho() != null && dto.getPrecoBanho() > 0) {
-            joia.setPrecoBanho(dto.getPrecoBanho());
         }
 
         if (dto.getQuantidadeMinima() != null && dto.getQuantidadeMinima() >= 0) {
@@ -134,10 +115,11 @@ public class JoiaService {
             joia.setMaterial(material);
         }
 
-        joia.setDataAtualizacao(LocalDateTime.now());
+        if (dto.getPrecoFinal() != null) {
+            joia.setPreco(dto.getPrecoFinal());
+        }
 
-        Double precoFinal = (joia.getPrecoOriginal() + joia.getPrecoBanho()) * joia.getMultiplicador();
-        joia.setPreco(precoFinal);
+        joia.setDataAtualizacao(LocalDateTime.now());
 
         Joia joiaSalva = joiaRepository.save(joia);
 
