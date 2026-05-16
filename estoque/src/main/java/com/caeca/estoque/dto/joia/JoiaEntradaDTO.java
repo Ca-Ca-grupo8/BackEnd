@@ -46,6 +46,10 @@ public class JoiaEntradaDTO {
         this.nome = nome;
     }
 
+    public JoiaEntradaDTO() {
+
+    }
+
     public String getNome() {
         return nome;
     }

@@ -24,7 +24,9 @@ public class JoiaAtualizacaoDTO {
 
     private Double precoFinal;
 
-    public JoiaAtualizacaoDTO(String nome, Integer quantidadeMinima, Integer quantidade, Long categoriaId, Integer banhoId, Integer materialId, Double precoFinal) {
+    private Boolean isAtivo;
+
+    public JoiaAtualizacaoDTO(String nome, Integer quantidadeMinima, Integer quantidade, Long categoriaId, Integer banhoId, Integer materialId, Double precoFinal, Boolean isAtivo) {
         this.nome = nome;
         this.quantidadeMinima = quantidadeMinima;
         this.quantidade = quantidade;
@@ -32,6 +34,7 @@ public class JoiaAtualizacaoDTO {
         this.banhoId = banhoId;
         this.materialId = materialId;
         this.precoFinal = precoFinal;
+        this.isAtivo = isAtivo;
     }
 
     public JoiaAtualizacaoDTO() {}
@@ -90,5 +93,13 @@ public class JoiaAtualizacaoDTO {
 
     public void setPrecoFinal(Double precoFinal) {
         this.precoFinal = precoFinal;
+    }
+
+    public Boolean getIsAtivo() {
+        return isAtivo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        isAtivo = ativo;
     }
 }
