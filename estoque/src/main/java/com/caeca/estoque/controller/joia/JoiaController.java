@@ -70,12 +70,4 @@ public class JoiaController {
 
         return ResponseEntity.status(200).body(response);
     }
-
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<JoiaSaidaDTO> atualizarStatus(@PathVariable Long id, @RequestBody StatusDTO dto) {
-
-        JoiaSaidaDTO joiaSaidaDTO = joiaService.atualizarStatusPorId(id, dto.getAtivo());
-
-        return ResponseEntity.status(200).body(joiaSaidaDTO);
-    }
 }
