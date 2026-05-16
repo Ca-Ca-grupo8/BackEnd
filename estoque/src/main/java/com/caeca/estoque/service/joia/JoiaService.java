@@ -12,6 +12,7 @@ import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
 import com.caeca.estoque.service.Material.MaterialService;
 import com.caeca.estoque.service.banho.BanhoService;
 import com.caeca.estoque.service.categoria.CategoriaService;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -60,6 +61,7 @@ public class JoiaService {
         return joia;
     }
 
+    @Transactional
     public JoiaSaidaDTO criarJoia(JoiaEntradaDTO dto) {
 
         Categoria categoria = categoriaService.listarCategoriaPorId(dto.getCategoria());
@@ -82,6 +84,7 @@ public class JoiaService {
         return JoiaMapper.toResponse(joiaCriada);
     }
 
+    @Transactional
     public JoiaSaidaDTO atualizarJoiaPorId(Long id, JoiaAtualizacaoDTO dto) {
 
         Joia joia = joiaRepository.findById(id)
@@ -119,28 +122,15 @@ public class JoiaService {
             joia.setPreco(dto.getPrecoFinal());
         }
 
+        if(dto.getIsAtivo() != null){
+            joia.setAtivo(dto.getIsAtivo());
+        }
+
         joia.setDataAtualizacao(LocalDateTime.now());
 
         Joia joiaSalva = joiaRepository.save(joia);
 
         return JoiaMapper.toResponse(joiaSalva);
-    }
-
-    public JoiaSaidaDTO atualizarStatusPorId (Long id, Boolean ativo) {
-
-        Joia joia = joiaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Joia não encontrada"));
-
-        if (ativo == null) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Status não pode ser nulo");
-        }
-
-        joia.setAtivo(ativo);
-        joia.setDataAtualizacao(LocalDateTime.now());
-
-        Joia joiaAtualizada = joiaRepository.save(joia);
-
-        return JoiaMapper.toResponse(joiaAtualizada);
     }
 
     public void adicionarEstoque(Long id, Integer quantidade) {
