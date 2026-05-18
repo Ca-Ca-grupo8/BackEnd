@@ -68,6 +68,7 @@ public class EntradaStrategy implements MovimentacaoStrategy {
         Arquivo arquivoEntity = arquivoStrategy.adicionar(dto.arquivo());
 
         arquivoEntity.setJoia(joia);
+        joia.setArquivo(arquivoEntity);
 
         return movimentacao;
     }
