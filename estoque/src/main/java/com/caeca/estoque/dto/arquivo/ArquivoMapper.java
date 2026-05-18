@@ -5,13 +5,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class ArquivoMapper {
     public static ArquivoResponseDto toResponse(Arquivo arquivo){
+        if (arquivo == null) {
+            return null;
+        }
+
         return new ArquivoResponseDto(
                 arquivo.getId(),
                 arquivo.getNomeOriginal(),
-                arquivo.getS3Key(),
-                arquivo.getUrl(),
-                arquivo.getJoia(),
-                arquivo.getDataUpload()
+                arquivo.getUrl()
         );
     }
 

@@ -7,8 +7,5 @@ import java.time.LocalDateTime;
 public record ArquivoResponseDto (
     Long id,
     String nomeOriginal,
-    String s3key,
-    String url,
-    Joia joia,
-    LocalDateTime dataUpload
+    String url
 ){}

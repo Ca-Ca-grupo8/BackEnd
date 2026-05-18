@@ -29,8 +29,8 @@ public class Arquivo {
     @Column(nullable = false)
     private Long tamanho;
 
-    @ManyToOne
-    @JoinColumn(name = "fk_joia")
+    @OneToOne
+    @JoinColumn(name = "fk_joia", referencedColumnName = "id")
     private Joia joia;
 
     @UpdateTimestamp

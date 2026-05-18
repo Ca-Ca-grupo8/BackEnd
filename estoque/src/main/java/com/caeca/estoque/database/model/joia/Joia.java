@@ -1,5 +1,6 @@
 package com.caeca.estoque.database.model.joia;
 
+import com.caeca.estoque.database.model.arquivo.Arquivo;
 import com.caeca.estoque.database.model.banho.Banho;
 import com.caeca.estoque.database.model.categoria.Categoria;
 import com.caeca.estoque.database.model.material.Material;
@@ -26,7 +27,8 @@ public class Joia {
     @Column(nullable = false)
     private Double preco;
 
-    private String imagem;
+    @OneToOne(mappedBy = "joia")
+    private Arquivo arquivo;
 
     @ManyToOne
     private Categoria categoria;
@@ -51,12 +53,12 @@ public class Joia {
     @Column(nullable = false)
     private Integer quantidadeMinima;
 
-    public Joia(Long id, String nome, Integer quantidade, Double preco, String imagem, Categoria categoria, Banho banho, Material material, LocalDateTime dataAtualizacao, Boolean isAtivo, LocalDateTime dataCadastro, Integer quantidadeMinima) {
+    public Joia(Long id, String nome, Integer quantidade, Double preco, Arquivo arquivo, Categoria categoria, Banho banho, Material material, LocalDateTime dataAtualizacao, Boolean isAtivo, LocalDateTime dataCadastro, Integer quantidadeMinima) {
         this.id = id;
         this.nome = nome;
         this.quantidade = quantidade;
         this.preco = preco;
-        this.imagem = imagem;
+        this.arquivo = arquivo;
         this.categoria = categoria;
         this.banho = banho;
         this.material = material;
@@ -101,12 +103,12 @@ public class Joia {
         this.preco = preco;
     }
 
-    public String getImagem() {
-        return imagem;
+    public Arquivo getArquivo() {
+        return arquivo;
     }
 
-    public void setImagem(String imagem) {
-        this.imagem = imagem;
+    public void setArquivo(Arquivo arquivo) {
+        this.arquivo = arquivo;
     }
 
     public Categoria getCategoria() {
