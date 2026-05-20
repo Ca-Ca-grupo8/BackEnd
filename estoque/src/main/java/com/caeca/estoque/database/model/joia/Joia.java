@@ -27,7 +27,7 @@ public class Joia {
     @Column(nullable = false)
     private Double preco;
 
-    @OneToOne(mappedBy = "joia")
+    @OneToOne(mappedBy = "joia", cascade = CascadeType.ALL, orphanRemoval = true)
     private Arquivo arquivo;
 
     @ManyToOne

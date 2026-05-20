@@ -12,6 +12,7 @@ import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
+import com.caeca.estoque.exception.ConflictException;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.joia.JoiaService;
 import com.caeca.estoque.strategy.arquivo.ArquivoStrategy;
@@ -65,10 +66,15 @@ public class EntradaStrategy implements MovimentacaoStrategy {
         movimentacao.setPrecoBanho(dto.dadosOriginais().getPrecoBanho());
         movimentacao.setMultiplicador(dto.dadosOriginais().getMultiplicador());
 
-        Arquivo arquivoEntity = arquivoStrategy.adicionar(dto.arquivo());
+        if(joia.getArquivo() != null) {
+            throw new ConflictException("Esta jóia já possui uma imagem cadastrada. Remova a antiga antes de adicionar uma nova.");
+        }
 
-        arquivoEntity.setJoia(joia);
-        joia.setArquivo(arquivoEntity);
+        if(!dto.arquivo().isEmpty()) {
+            Arquivo arquivoEntity = arquivoStrategy.adicionar(dto.arquivo());
+            arquivoEntity.setJoia(joia);
+            joia.setArquivo(arquivoEntity);
+        }
 
         return movimentacao;
     }
