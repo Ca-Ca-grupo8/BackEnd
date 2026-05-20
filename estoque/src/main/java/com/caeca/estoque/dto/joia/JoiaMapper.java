@@ -1,6 +1,7 @@
 package com.caeca.estoque.dto.joia;
 
 import com.caeca.estoque.database.model.joia.Joia;
+import com.caeca.estoque.dto.arquivo.ArquivoMapper;
 
 import java.util.List;
 
@@ -36,6 +37,12 @@ public class JoiaMapper {
         joiaSaidaDTO.setAtivo(joia.getAtivo());
         joiaSaidaDTO.setDataCadastro(joia.getDataCadastro());
         joiaSaidaDTO.setQuantidade(joia.getQuantidade());
+
+        if (joia.getArquivo() != null) {
+            joiaSaidaDTO.setArquivo(ArquivoMapper.toResponse(joia.getArquivo()));
+        } else {
+            joiaSaidaDTO.setArquivo(null);
+        }
 
         return joiaSaidaDTO;
     }

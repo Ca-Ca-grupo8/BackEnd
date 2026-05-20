@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -41,10 +42,11 @@ public class MovimentacaoController {
         return ResponseEntity.ok(MovimentacaoMapper.toResponse(movimentacaoService.buscarPorId(id)));
     }
 
-    @PostMapping
+    @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<MovimentacaoResponseDto> cadastrar(
-            @RequestBody @Valid MovimentacaoRequestDto request){
+            @RequestPart(value = "movimentacaoRequest") @Valid MovimentacaoRequestDto request,
+            @RequestPart("arquivo")MultipartFile arquivo){
         return ResponseEntity.created(null)
-                .body(MovimentacaoMapper.toResponse(movimentacaoService.cadastrar(request)));
+                .body(MovimentacaoMapper.toResponse(movimentacaoService.cadastrar(request, arquivo)));
     }
 }

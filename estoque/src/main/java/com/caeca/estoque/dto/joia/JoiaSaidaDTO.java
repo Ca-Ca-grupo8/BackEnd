@@ -1,5 +1,8 @@
 package com.caeca.estoque.dto.joia;
 
+import com.caeca.estoque.database.model.arquivo.Arquivo;
+import com.caeca.estoque.dto.arquivo.ArquivoResponseDto;
+
 import java.time.LocalDateTime;
 
 public class JoiaSaidaDTO {
@@ -18,7 +21,9 @@ public class JoiaSaidaDTO {
 
     private LocalDateTime dataCadastro;
 
-    public JoiaSaidaDTO(Long id, String nome, Double preco, Integer quantidade, Integer quantidadeMinima, Boolean isAtivo, LocalDateTime dataCadastro) {
+    private ArquivoResponseDto arquivo;
+
+    public JoiaSaidaDTO(Long id, String nome, Double preco, Integer quantidade, Integer quantidadeMinima, Boolean isAtivo, LocalDateTime dataCadastro, ArquivoResponseDto arquivo) {
         this.id = id;
         this.nome = nome;
         this.preco = preco;
@@ -26,6 +31,7 @@ public class JoiaSaidaDTO {
         this.quantidadeMinima = quantidadeMinima;
         this.isAtivo = isAtivo;
         this.dataCadastro = dataCadastro;
+        this.arquivo = arquivo;
     }
 
     public JoiaSaidaDTO() {}
@@ -84,5 +90,13 @@ public class JoiaSaidaDTO {
 
     public void setQuantidade(Integer quantidade) {
         this.quantidade = quantidade;
+    }
+
+    public ArquivoResponseDto getArquivo() {
+        return arquivo;
+    }
+
+    public void setArquivo(ArquivoResponseDto arquivo) {
+        this.arquivo = arquivo;
     }
 }
