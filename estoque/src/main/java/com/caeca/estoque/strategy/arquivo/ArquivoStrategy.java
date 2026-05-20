@@ -5,7 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ArquivoStrategy {
     public Arquivo adicionar(MultipartFile arquivo);
-    public Arquivo listar();
-    public Arquivo atualizarPorId();
-    public void deletar();
+    Arquivo atualizarPorJoiaId(Long joiaId, MultipartFile novoArquivo);
+    public void deletar(Long id);
+    public void deletarPorJoiaId(Long joiaId);
 }
