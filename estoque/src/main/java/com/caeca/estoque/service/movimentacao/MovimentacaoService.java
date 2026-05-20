@@ -15,6 +15,7 @@ import com.caeca.estoque.strategy.movimentacao.MovimentacaoContext;
 import com.caeca.estoque.strategy.movimentacao.MovimentacaoStrategy;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,12 +47,13 @@ public class MovimentacaoService {
     }
 
     @Transactional
-    public Movimentacao cadastrar(MovimentacaoRequestDto request) {
+    public Movimentacao cadastrar(MovimentacaoRequestDto request, MultipartFile arquivo) {
             TipoMovimentacao tipoMovimentacao = tipoService.buscarPorId(request.getIdTipoMovimentacao());
             MovimentacaoContextDto movimentacaoContextDto = new MovimentacaoContextDto(
                     tipoMovimentacao,
                     usuarioService.getUsuarioLogado(),
-                    request
+                    request,
+                    arquivo
             );
 
             MovimentacaoContext context = new MovimentacaoContext(movimentacaoStrategies

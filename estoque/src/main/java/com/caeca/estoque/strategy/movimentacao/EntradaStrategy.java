@@ -1,5 +1,6 @@
 package com.caeca.estoque.strategy.movimentacao;
 
+import com.caeca.estoque.database.model.arquivo.Arquivo;
 import com.caeca.estoque.database.model.fornecedores.Fornecedor;
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
@@ -11,18 +12,22 @@ import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
+import com.caeca.estoque.exception.ConflictException;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.joia.JoiaService;
+import com.caeca.estoque.strategy.arquivo.ArquivoStrategy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EntradaStrategy implements MovimentacaoStrategy {
     private final JoiaService joiaService;
     private final FornecedorRepository fornecedorRepository;
+    private final ArquivoStrategy arquivoStrategy;
 
-    public EntradaStrategy(JoiaService joiaService, FornecedorRepository fornecedorRepository) {
+    public EntradaStrategy(JoiaService joiaService, FornecedorRepository fornecedorRepository, ArquivoStrategy arquivoStrategy) {
         this.joiaService = joiaService;
         this.fornecedorRepository = fornecedorRepository;
+        this.arquivoStrategy = arquivoStrategy;
     }
 
     @Override
@@ -60,6 +65,16 @@ public class EntradaStrategy implements MovimentacaoStrategy {
         movimentacao.setPrecoOriginal(dto.dadosOriginais().getPrecoCompraRevendedor());
         movimentacao.setPrecoBanho(dto.dadosOriginais().getPrecoBanho());
         movimentacao.setMultiplicador(dto.dadosOriginais().getMultiplicador());
+
+        if(joia.getArquivo() != null) {
+            throw new ConflictException("Esta jóia já possui uma imagem cadastrada. Remova a antiga antes de adicionar uma nova.");
+        }
+
+        if(!dto.arquivo().isEmpty()) {
+            Arquivo arquivoEntity = arquivoStrategy.adicionar(dto.arquivo());
+            arquivoEntity.setJoia(joia);
+            joia.setArquivo(arquivoEntity);
+        }
 
         return movimentacao;
     }
