@@ -49,7 +49,11 @@ class ArquivoS3StrategyTest {
     @Test
     @DisplayName("Deve adicionar um arquivo com sucesso no S3 e salvar no banco")
     void adicionarComSucesso() throws IOException {
-        mockMultipartFileValido();
+        when(multipartFile.isEmpty()).thenReturn(false);
+        when(multipartFile.getContentType()).thenReturn("image/jpeg");
+        when(multipartFile.getOriginalFilename()).thenReturn("foto-teste.jpg");
+        when(multipartFile.getSize()).thenReturn(1024L);
+        when(multipartFile.getInputStream()).thenReturn(new ByteArrayInputStream("dados".getBytes()));
 
         when(s3Client.putObject(any(PutObjectRequest.class), any(RequestBody.class)))
                 .thenReturn(PutObjectResponse.builder().build());
@@ -87,7 +91,11 @@ class ArquivoS3StrategyTest {
     @Test
     @DisplayName("Deve atualizar o arquivo de uma joia existente com sucesso")
     void atualizarPorJoiaIdComSucesso() throws IOException {
-        mockMultipartFileValido();
+        when(multipartFile.isEmpty()).thenReturn(false);
+        when(multipartFile.getContentType()).thenReturn("image/jpeg");
+        when(multipartFile.getOriginalFilename()).thenReturn("foto-teste.jpg");
+        when(multipartFile.getSize()).thenReturn(1024L);
+        when(multipartFile.getInputStream()).thenReturn(new ByteArrayInputStream("dados".getBytes()));
 
         Joia joia = new Joia();
         joia.setId(1L);
@@ -175,14 +183,5 @@ class ArquivoS3StrategyTest {
                 .when(s3Client).deleteObject(any(DeleteObjectRequest.class));
 
         assertThrows(RuntimeException.class, () -> strategy.deletar(arquivoId));
-    }
-
-    private void mockMultipartFileValido() throws IOException {
-        when(multipartFile.isEmpty()).thenReturn(false);
-        when(multipartFile.getContentType()).thenReturn("image/jpeg");
-
-        lenient().when(multipartFile.getOriginalFilename()).thenReturn("foto-teste.jpg");
-        lenient().when(multipartFile.getSize()).thenReturn(1024L);
-        lenient().when(multipartFile.getInputStream()).thenReturn(new ByteArrayInputStream("dados".getBytes()));
     }
 }
