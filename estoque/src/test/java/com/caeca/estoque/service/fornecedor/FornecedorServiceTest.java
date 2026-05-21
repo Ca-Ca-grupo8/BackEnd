@@ -51,11 +51,9 @@ public class FornecedorServiceTest {
         requestDTO.setInstagram("@joiasbrasil");
     }
 
-    // ── listar ────────────────────────────────────────────────────────────────
-
     @Test
-    @DisplayName("listar: sem filtros retorna todos os fornecedores")
-    void listar_semFiltros_retornaTodos() {
+    @DisplayName("sem filtros retorna todos os fornecedores")
+    void listarSemFiltrosRetornaTodos() {
         when(fornecedorRepository.findAll()).thenReturn(List.of(fornecedor));
 
         List<FornecedorResponseDTO> resultado = fornecedorService.listar(null, null);
@@ -66,8 +64,8 @@ public class FornecedorServiceTest {
     }
 
     @Test
-    @DisplayName("listar: filtro por isAtivo chama metodo correto")
-    void listar_comIsAtivo_chamaFindByIsAtivo() {
+    @DisplayName("filtro por isAtivo chama metodo correto")
+    void listarComIsAtivoChamaFindByIsAtivo() {
         when(fornecedorRepository.findByIsAtivo(true)).thenReturn(List.of(fornecedor));
 
         List<FornecedorResponseDTO> resultado = fornecedorService.listar(true, null);
@@ -77,8 +75,8 @@ public class FornecedorServiceTest {
     }
 
     @Test
-    @DisplayName("listar: filtro por nome chama metodo correto")
-    void listar_comNome_chamaFindByNome() {
+    @DisplayName("filtro por nome chama metodo correto")
+    void listarComNomeChamaFindByNome() {
         when(fornecedorRepository.findByNomeContainingIgnoreCase("joias")).thenReturn(List.of(fornecedor));
 
         List<FornecedorResponseDTO> resultado = fornecedorService.listar(null, "joias");
@@ -88,8 +86,8 @@ public class FornecedorServiceTest {
     }
 
     @Test
-    @DisplayName("listar: filtro por isAtivo e nome chama metodo correto")
-    void listar_comIsAtivoENome_chamaFindByIsAtivoAndNome() {
+    @DisplayName("filtro por isAtivo e nome chama metodo correto")
+    void listarComIsAtivoENomeChamaFindByIsAtivoAndNome() {
         when(fornecedorRepository.findByIsAtivoAndNomeContainingIgnoreCase(true, "joias"))
                 .thenReturn(List.of(fornecedor));
 
@@ -99,11 +97,9 @@ public class FornecedorServiceTest {
         verify(fornecedorRepository).findByIsAtivoAndNomeContainingIgnoreCase(true, "joias");
     }
 
-    // ── buscarPorId ───────────────────────────────────────────────────────────
-
     @Test
-    @DisplayName("buscarPorId: id existente retorna DTO corretamente")
-    void buscarPorId_idExistente_retornaDTO() {
+    @DisplayName("existente retorna DTO corretamente")
+    void buscarPorIdExistenteRetornaDTO() {
         when(fornecedorRepository.findById(1L)).thenReturn(Optional.of(fornecedor));
 
         FornecedorResponseDTO resultado = fornecedorService.buscarPorId(1L);
@@ -115,18 +111,15 @@ public class FornecedorServiceTest {
     }
 
     @Test
-    @DisplayName("buscarPorId: id inexistente lanca FornecedorNotFoundException")
-    void buscarPorId_idInexistente_lancaException() {
+    @DisplayName("id inexistente lanca FornecedorNotFoundException")
+    void buscarPorIdInexistentelancaException() {
         when(fornecedorRepository.findById(99L)).thenReturn(Optional.empty());
-
         assertThrows(FornecedorNotFoundException.class, () -> fornecedorService.buscarPorId(99L));
     }
 
-    // ── criar ─────────────────────────────────────────────────────────────────
-
     @Test
-    @DisplayName("criar: salva fornecedor e retorna DTO com dados corretos")
-    void criar_dadosValidos_retornaCreatedDTO() {
+    @DisplayName("salva fornecedor e retorna DTO com dados corretos")
+    void criarDadosValidosRetornaCreatedDTO() {
         when(fornecedorRepository.save(any(Fornecedor.class))).thenReturn(fornecedor);
 
         FornecedorCreatedResponseDTO resultado = fornecedorService.criar(requestDTO);
@@ -138,8 +131,8 @@ public class FornecedorServiceTest {
     }
 
     @Test
-    @DisplayName("criar: mapeia nome, telefone e instagram corretamente")
-    void criar_mapeiaAtributosCorretamente() {
+    @DisplayName("mapeia nome, telefone e instagram corretamente")
+    void criarMapeiaAtributosCorretamente() {
         when(fornecedorRepository.save(any(Fornecedor.class))).thenAnswer(invocation -> {
             Fornecedor f = invocation.getArgument(0);
             f.setId(1L);
@@ -154,11 +147,9 @@ public class FornecedorServiceTest {
         assertNotNull(resultado.getDataCadastro());
     }
 
-    // ── atualizar ─────────────────────────────────────────────────────────────
-
     @Test
-    @DisplayName("atualizar: id existente atualiza e retorna DTO")
-    void atualizar_idExistente_atualizaDados() {
+    @DisplayName("id existente atualiza e retorna DTO")
+    void atualizarIdExistenteAtualizaDados() {
         requestDTO.setNome("Novo Nome");
         requestDTO.setTelefone("11888880000");
         requestDTO.setInstagram("@novonome");
@@ -173,19 +164,17 @@ public class FornecedorServiceTest {
     }
 
     @Test
-    @DisplayName("atualizar: id inexistente lanca FornecedorNotFoundException")
-    void atualizar_idInexistente_lancaException() {
+    @DisplayName("id inexistente lanca FornecedorNotFoundException")
+    void atualizarIdInexistenteLancaException() {
         when(fornecedorRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(FornecedorNotFoundException.class,
                 () -> fornecedorService.atualizar(99L, requestDTO));
     }
 
-    // ── atualizarStatus ───────────────────────────────────────────────────────
-
     @Test
-    @DisplayName("atualizarStatus: desativa fornecedor existente")
-    void atualizarStatus_desativa_comSucesso() {
+    @DisplayName("desativa fornecedor existente")
+    void atualizarStatusDesativaComSucesso() {
         FornecedorStatusDTO statusDTO = new FornecedorStatusDTO(false);
 
         when(fornecedorRepository.findById(1L)).thenReturn(Optional.of(fornecedor));
@@ -197,8 +186,8 @@ public class FornecedorServiceTest {
     }
 
     @Test
-    @DisplayName("atualizarStatus: id inexistente lanca FornecedorNotFoundException")
-    void atualizarStatus_idInexistente_lancaException() {
+    @DisplayName("id inexistente lanca FornecedorNotFoundException")
+    void atualizarStatusIdInexistenteLancaException() {
         FornecedorStatusDTO statusDTO = new FornecedorStatusDTO(false);
 
         when(fornecedorRepository.findById(99L)).thenReturn(Optional.empty());
