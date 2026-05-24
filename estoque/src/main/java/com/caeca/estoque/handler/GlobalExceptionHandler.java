@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
                 .body(new ErroResponseDTO(ex.getMessage()));
     }
 
-    // Erros de validação (@Valid): retorna um erro por campo
+    // Erros de validação retorna um erro por campo
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<ErroResponseDTO>> handleValidation(MethodArgumentNotValidException ex) {
         List<ErroResponseDTO> erros = ex.getBindingResult().getFieldErrors().stream()

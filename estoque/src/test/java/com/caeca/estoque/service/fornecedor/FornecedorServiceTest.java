@@ -25,7 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class FornecedorServiceTest {
+class FornecedorServiceTest {
     @Mock
     private FornecedorRepository fornecedorRepository;
 
@@ -106,8 +106,11 @@ public class FornecedorServiceTest {
 
         assertEquals(1L, resultado.getIdFornecedor());
         assertEquals("Joias Brasil", resultado.getNome());
-        assertEquals("11999990000", resultado.getTelefone());
         assertEquals("@joiasbrasil", resultado.getInstagram());
+        assertEquals("11999990000", resultado.getTelefone());
+
+
+
     }
 
     @Test
