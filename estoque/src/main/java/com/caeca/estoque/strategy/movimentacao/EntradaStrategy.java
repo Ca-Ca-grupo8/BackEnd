@@ -70,7 +70,7 @@ public class EntradaStrategy implements MovimentacaoStrategy {
             throw new ConflictException("Esta jóia já possui uma imagem cadastrada. Remova a antiga antes de adicionar uma nova.");
         }
 
-        if(!dto.arquivo().isEmpty()) {
+        if(dto.arquivo() != null && !dto.arquivo().isEmpty()) {
             Arquivo arquivoEntity = arquivoStrategy.adicionar(dto.arquivo());
             arquivoEntity.setJoia(joia);
             joia.setArquivo(arquivoEntity);
