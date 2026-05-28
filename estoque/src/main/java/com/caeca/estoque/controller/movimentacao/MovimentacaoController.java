@@ -45,7 +45,7 @@ public class MovimentacaoController {
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<MovimentacaoResponseDto> cadastrar(
             @RequestPart(value = "movimentacaoRequest") @Valid MovimentacaoRequestDto request,
-            @RequestPart("arquivo")MultipartFile arquivo){
+            @RequestPart(value = "arquivo", required = false)MultipartFile arquivo){
         return ResponseEntity.created(null)
                 .body(MovimentacaoMapper.toResponse(movimentacaoService.cadastrar(request, arquivo)));
     }
