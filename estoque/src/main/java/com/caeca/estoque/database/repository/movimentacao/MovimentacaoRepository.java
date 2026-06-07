@@ -1,7 +1,19 @@
 package com.caeca.estoque.database.repository.movimentacao;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Integer> {
+    @Query("""
+            SELECT COALESCE(SUM(m.precoSaida), 0.0)
+            FROM Movimentacao m
+            WHERE (LOWER(m.tipoMovimentacao.descricao) LIKE '%saída%' OR LOWER(m.tipoMovimentacao.descricao) LIKE '%saida%')
+            AND m.data BETWEEN :inicio AND :fim
+    """)
+    Double somarValorTotalDasSaidas(LocalDateTime inicio, LocalDateTime fim);
 }

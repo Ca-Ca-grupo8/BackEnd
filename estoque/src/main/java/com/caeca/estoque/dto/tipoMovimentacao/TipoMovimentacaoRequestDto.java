@@ -3,7 +3,9 @@ package com.caeca.estoque.dto.tipoMovimentacao;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class TipoMovimentacaoRequestDto {
+public class
+
+TipoMovimentacaoRequestDto {
 
     @NotBlank(message = "A descrição é obrigatória")
     @Size(max = 45, message = "A descrição deve ter no máximo 45 caracteres")
