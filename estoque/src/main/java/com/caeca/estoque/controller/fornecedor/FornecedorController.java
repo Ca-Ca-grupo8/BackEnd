@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,6 +40,7 @@ public class FornecedorController {
 
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<FornecedorCreatedResponseDTO> criar(
             @Valid @RequestBody FornecedorRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -46,6 +48,7 @@ public class FornecedorController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<FornecedorResponseDTO> atualizar(
             @PathVariable Long id,
             @Valid @RequestBody FornecedorRequestDTO dto) {
@@ -54,6 +57,7 @@ public class FornecedorController {
 
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> atualizarStatus(
             @PathVariable Long id,
             @Valid @RequestBody FornecedorStatusDTO dto) {

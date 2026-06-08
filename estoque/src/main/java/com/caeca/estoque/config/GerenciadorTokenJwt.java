@@ -114,6 +114,10 @@ public class GerenciadorTokenJwt {
         return getClaimForToken(token, Claims::getExpiration);
     }
 
+    public String getAuthoritiesFromToken(String token) {
+        return getClaimForToken(token, claims -> claims.get("authorities", String.class));
+    }
+
     /**
      * Valida se o token é válido para o usuário informado.
      *
