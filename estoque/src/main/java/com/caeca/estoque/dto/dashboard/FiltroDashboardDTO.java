@@ -8,5 +8,6 @@ public record FiltroDashboardDTO(
         @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
         LocalDateTime dataInicio,
         @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
-        LocalDateTime dataTermino
+        LocalDateTime dataTermino,
+        Long categoriaId
 ) {}

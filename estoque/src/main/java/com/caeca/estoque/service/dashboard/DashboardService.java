@@ -2,13 +2,15 @@ package com.caeca.estoque.service.dashboard;
 
 import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
 import com.caeca.estoque.dto.dashboard.FiltroDashboardDTO;
+import com.caeca.estoque.dto.dashboard.TopCincoDto;
 import com.caeca.estoque.dto.dashboard.ValorSaidaDto;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
+import java.util.List;
 
 @Service
 public class DashboardService {
@@ -47,5 +49,29 @@ public class DashboardService {
                 anterior,
                 varianca
         );
+    }
+
+    public List<TopCincoDto> buscarTopCincoMaisVendidos(FiltroDashboardDTO filtro) {
+        LocalDateTime inicio = filtro.dataInicio();
+        LocalDateTime fim = filtro.dataTermino();
+
+        if (inicio == null || fim == null) {
+            LocalDateTime hoje = LocalDateTime.now();
+            inicio = hoje.minusMonths(1).withDayOfMonth(1).with(LocalTime.MIN);
+            fim = inicio.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX);
+        }
+
+        if(filtro.categoriaId() != null){
+            return movimentacaoRepository.buscarTopCincoProdutos(
+                    inicio,
+                    fim,
+                    filtro.categoriaId(),
+                    PageRequest.of(0,5));
+        }
+
+        return movimentacaoRepository.buscarTopCincoCategorias(
+                    inicio,
+                    fim,
+                    PageRequest.of(0, 5));
     }
 }
