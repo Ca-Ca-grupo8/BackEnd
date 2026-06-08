@@ -1,5 +1,6 @@
 package com.caeca.estoque.dto.usuario;
 
+import com.caeca.estoque.database.model.usuario.PerfilUsuario;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -17,6 +18,8 @@ public class UsuarioCriacaoDto {
     @Size(min = 6, max = 20)
     @Schema(description = "Senha do usuário", example = "123456")
     private String senha;
+
+    private PerfilUsuario perfilUsuario;
 
     public String getNome() {
         return nome;
@@ -40,5 +43,13 @@ public class UsuarioCriacaoDto {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public PerfilUsuario getPerfilUsuario() {
+        return perfilUsuario;
+    }
+
+    public void setPerfilUsuario(PerfilUsuario perfilUsuario) {
+        this.perfilUsuario = perfilUsuario;
     }
 }

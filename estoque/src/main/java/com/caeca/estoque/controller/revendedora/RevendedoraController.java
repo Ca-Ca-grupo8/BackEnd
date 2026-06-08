@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +45,7 @@ class RevendedoraController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<RevendedoraResponseDto> cadastrar(@Valid @RequestBody RevendedoraRequestDto request){
         Revendedora revendedora = revendedoraService.cadastrar(request);
 
@@ -51,6 +53,7 @@ class RevendedoraController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<RevendedoraResponseDto> atualizarPorCompleto(
             @Valid @RequestBody RevendedoraRequestDto request,
             @PathVariable Long id){
@@ -58,6 +61,7 @@ class RevendedoraController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<RevendedoraResponseDto> atualizarParcialmente(
             @RequestBody RevendedoraPatchDto dto,
             @PathVariable Long id

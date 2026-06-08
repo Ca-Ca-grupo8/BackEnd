@@ -10,6 +10,7 @@ public class UsuarioMapper {
         usuario.setEmail(usuarioCriacaoDto.getEmail());
         usuario.setNome(usuarioCriacaoDto.getNome());
         usuario.setSenha(usuarioCriacaoDto.getSenha());
+        usuario.setPerfil(usuarioCriacaoDto.getPerfilUsuario());
 
         return usuario;
     }
@@ -30,6 +31,7 @@ public class UsuarioMapper {
         usuarioTokenDto.setEmail(usuario.getEmail());
         usuarioTokenDto.setNome(usuario.getNome());
         usuarioTokenDto.setToken(token);
+        usuarioTokenDto.setRole(usuario.getPerfil());
 
         return usuarioTokenDto;
     }
@@ -47,6 +49,7 @@ public class UsuarioMapper {
         dto.setUserId(tokenDto.getUserId());
         dto.setEmail(tokenDto.getEmail());
         dto.setNome(tokenDto.getNome());
+        dto.setRole(tokenDto.getRole());
 
         return dto;
     }
@@ -57,6 +60,7 @@ public class UsuarioMapper {
         usuarioListarDto.setId(usuario.getId());
         usuarioListarDto.setEmail(usuario.getEmail());
         usuarioListarDto.setNome(usuario.getNome());
+        usuarioListarDto.setRole(usuario.getPerfil());
 
         return usuarioListarDto;
     }
