@@ -1,6 +1,7 @@
 package com.caeca.estoque.controller.dashboard;
 
 import com.caeca.estoque.dto.dashboard.FiltroDashboardDTO;
+import com.caeca.estoque.dto.dashboard.TopCincoDto;
 import com.caeca.estoque.dto.dashboard.ValorSaidaDto;
 import com.caeca.estoque.service.dashboard.DashboardService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/dashboard")
@@ -25,5 +28,10 @@ public class DashboardController {
     @GetMapping
     public ResponseEntity<ValorSaidaDto> buscarValorSaida(FiltroDashboardDTO filtros){
         return ResponseEntity.ok(dashboardService.calcularValorSaida(filtros));
+    }
+
+    @GetMapping("/topCinco")
+    public ResponseEntity<List<TopCincoDto>> buscarTopCinco(FiltroDashboardDTO filtros) {
+        return ResponseEntity.ok(dashboardService.buscarTopCincoMaisVendidos(filtros));
     }
 }
