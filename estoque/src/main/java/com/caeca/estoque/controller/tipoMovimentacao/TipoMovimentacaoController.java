@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,6 +42,7 @@ class TipoMovimentacaoController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<TipoMovimentacaoResponseDto> cadastrar(@Valid @RequestBody TipoMovimentacaoRequestDto request) {
         TipoMovimentacao tipo = tipoMovimentacaoService.cadastrar(request);
         return ResponseEntity.created(null).body(TipoMovimentacaoMapper.toResponse(tipo));

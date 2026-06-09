@@ -1,10 +1,13 @@
 package com.caeca.estoque.dto.usuario;
 
+import com.caeca.estoque.database.model.usuario.PerfilUsuario;
+
 public class UsuarioSessaoDto {
 
     private Long userId;
     private String nome;
     private String email;
+    private PerfilUsuario role;
 
     public Long getUserId() {
         return userId;
@@ -28,5 +31,13 @@ public class UsuarioSessaoDto {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public PerfilUsuario getRole() {
+        return role;
+    }
+
+    public void setRole(PerfilUsuario role) {
+        this.role = role;
     }
 }

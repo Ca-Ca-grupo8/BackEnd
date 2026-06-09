@@ -1,5 +1,6 @@
 package com.caeca.estoque.dto.usuario;
 
+import com.caeca.estoque.database.model.usuario.PerfilUsuario;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class UsuarioListarDto {
@@ -12,6 +13,9 @@ public class UsuarioListarDto {
 
     @Schema(description = "Email do usuário", example = "john@doe.com")
     private String email;
+
+    @Schema(description = "Role do usuário", example = "ROLE_ADMIN")
+    private PerfilUsuario role;
 
     public Long getId() {
         return id;
@@ -35,5 +39,13 @@ public class UsuarioListarDto {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public PerfilUsuario getRole() {
+        return role;
+    }
+
+    public void setRole(PerfilUsuario role) {
+        this.role = role;
     }
 }
