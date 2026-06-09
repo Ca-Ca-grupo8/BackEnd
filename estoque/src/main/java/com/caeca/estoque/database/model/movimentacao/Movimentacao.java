@@ -1,17 +1,13 @@
 package com.caeca.estoque.database.model.movimentacao;
 
-import com.caeca.estoque.database.model.arquivo.Arquivo;
 import com.caeca.estoque.database.model.fornecedores.Fornecedor;
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
-import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
+import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
 import com.caeca.estoque.database.model.usuario.Usuario;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.ManyToAny;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -38,7 +34,7 @@ public class Movimentacao {
     private Joia joia;
 
     @ManyToOne()
-    private TipoMovimentacao tipoMovimentacao;
+    private MotivoMovimentacao motivoMovimentacao;
 
     @ManyToOne()
     private Usuario usuario;
@@ -52,7 +48,7 @@ public class Movimentacao {
     public Movimentacao() {
     }
 
-    public Movimentacao(Long idMovimentacao, LocalDateTime data, Integer quantidade, Double precoSaida, Double precoOriginal, Double multiplicador, Double precoBanho, Joia joia, TipoMovimentacao tipoMovimentacao, Usuario usuario, Fornecedor fornecedor, MovimentacaoRevendedora movimentacaoRevendedora) {
+    public Movimentacao(Long idMovimentacao, LocalDateTime data, Integer quantidade, Double precoSaida, Double precoOriginal, Double multiplicador, Double precoBanho, Joia joia, MotivoMovimentacao motivoMovimentacao, Usuario usuario, Fornecedor fornecedor, MovimentacaoRevendedora movimentacaoRevendedora) {
         this.idMovimentacao = idMovimentacao;
         this.data = data;
         this.quantidade = quantidade;
@@ -61,7 +57,7 @@ public class Movimentacao {
         this.multiplicador = multiplicador;
         this.precoBanho = precoBanho;
         this.joia = joia;
-        this.tipoMovimentacao = tipoMovimentacao;
+        this.motivoMovimentacao = motivoMovimentacao;
         this.usuario = usuario;
         this.fornecedor = fornecedor;
         this.movimentacaoRevendedora = movimentacaoRevendedora;
@@ -131,12 +127,12 @@ public class Movimentacao {
         this.joia = joia;
     }
 
-    public TipoMovimentacao getTipoMovimentacao() {
-        return tipoMovimentacao;
+    public MotivoMovimentacao getMotivoMovimentacao() {
+        return motivoMovimentacao;
     }
 
-    public void setTipoMovimentacao(TipoMovimentacao tipoMovimentacao) {
-        this.tipoMovimentacao = tipoMovimentacao;
+    public void setMotivoMovimentacao(MotivoMovimentacao motivoMovimentacao) {
+        this.motivoMovimentacao = motivoMovimentacao;
     }
 
     public Usuario getUsuario() {

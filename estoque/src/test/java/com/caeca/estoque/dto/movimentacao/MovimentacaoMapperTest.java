@@ -5,7 +5,7 @@ import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
 import com.caeca.estoque.database.model.revendedora.Revendedora;
-import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
+import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
 import com.caeca.estoque.database.model.usuario.Usuario;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -29,7 +29,7 @@ class MovimentacaoMapperTest {
             entity.setQuantidade(3);
             entity.setPrecoSaida(200.0);
             entity.setJoia(new Joia());
-            entity.setTipoMovimentacao(new TipoMovimentacao());
+            entity.setMotivoMovimentacao(new MotivoMovimentacao());
             entity.setUsuario(new Usuario());
             entity.setFornecedor(null);
             entity.setMovimentacaoRevendedora(null);
@@ -41,7 +41,7 @@ class MovimentacaoMapperTest {
             assertEquals(3, resultado.getQuantidade());
             assertEquals(200.0, resultado.getPrecoSaida());
             assertNotNull(resultado.getJoia());
-            assertNotNull(resultado.getTipoMovimentacao());
+            assertNotNull(resultado.getMotivoMovimentacao());
             assertNotNull(resultado.getUsuario());
         }
 
@@ -55,7 +55,7 @@ class MovimentacaoMapperTest {
             Movimentacao entity = new Movimentacao();
             entity.setIdMovimentacao(1L);
             entity.setJoia(new Joia());
-            entity.setTipoMovimentacao(new TipoMovimentacao());
+            entity.setMotivoMovimentacao(new MotivoMovimentacao());
             entity.setUsuario(new Usuario());
             entity.setFornecedor(fornecedor);
             entity.setMovimentacaoRevendedora(null);
@@ -73,7 +73,7 @@ class MovimentacaoMapperTest {
             Movimentacao entity = new Movimentacao();
             entity.setIdMovimentacao(1L);
             entity.setJoia(new Joia());
-            entity.setTipoMovimentacao(new TipoMovimentacao());
+            entity.setMotivoMovimentacao(new MotivoMovimentacao());
             entity.setUsuario(new Usuario());
             entity.setFornecedor(null);
             entity.setMovimentacaoRevendedora(null);
@@ -97,7 +97,7 @@ class MovimentacaoMapperTest {
             Movimentacao entity = new Movimentacao();
             entity.setIdMovimentacao(1L);
             entity.setJoia(new Joia());
-            entity.setTipoMovimentacao(new TipoMovimentacao());
+            entity.setMotivoMovimentacao(new MotivoMovimentacao());
             entity.setUsuario(new Usuario());
             entity.setFornecedor(null);
             entity.setMovimentacaoRevendedora(movimentacaoRevendedora);
@@ -113,7 +113,7 @@ class MovimentacaoMapperTest {
             Movimentacao entity = new Movimentacao();
             entity.setIdMovimentacao(1L);
             entity.setJoia(new Joia());
-            entity.setTipoMovimentacao(new TipoMovimentacao());
+            entity.setMotivoMovimentacao(new MotivoMovimentacao());
             entity.setUsuario(new Usuario());
             entity.setFornecedor(null);
             entity.setMovimentacaoRevendedora(null);
@@ -134,13 +134,13 @@ class MovimentacaoMapperTest {
             Movimentacao entity1 = new Movimentacao();
             entity1.setIdMovimentacao(1L);
             entity1.setJoia(new Joia());
-            entity1.setTipoMovimentacao(new TipoMovimentacao());
+            entity1.setMotivoMovimentacao(new MotivoMovimentacao());
             entity1.setUsuario(new Usuario());
 
             Movimentacao entity2 = new Movimentacao();
             entity2.setIdMovimentacao(2L);
             entity2.setJoia(new Joia());
-            entity2.setTipoMovimentacao(new TipoMovimentacao());
+            entity2.setMotivoMovimentacao(new MotivoMovimentacao());
             entity2.setUsuario(new Usuario());
 
             List<MovimentacaoResponseDto> resultado = MovimentacaoMapper.toReponseList(List.of(entity1, entity2));
@@ -187,7 +187,7 @@ class MovimentacaoMapperTest {
 
             assertNull(resultado.getJoia());
             assertNull(resultado.getFornecedor());
-            assertNull(resultado.getTipoMovimentacao());
+            assertNull(resultado.getMotivoMovimentacao());
             assertNull(resultado.getUsuario());
             assertNull(resultado.getMovimentacaoRevendedora());
         }

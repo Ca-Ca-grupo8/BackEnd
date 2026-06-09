@@ -4,7 +4,9 @@ import com.caeca.estoque.database.model.arquivo.Arquivo;
 import com.caeca.estoque.database.model.fornecedores.Fornecedor;
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
+import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.database.model.usuario.Usuario;
 import com.caeca.estoque.database.repository.fornecedor.FornecedorRepository;
 import com.caeca.estoque.dto.joia.JoiaEntradaDTO;
@@ -43,19 +45,10 @@ class EntradaStrategyTest {
     class suporta {
 
         @Test
-        @DisplayName("Deve retornar true quando descrição do tipo contiver 'entrada'")
+        @DisplayName("Deve retornar true quando descrição do tipo contiver 'ENTRADA'")
         void deveRetornarTrueQuandoDescricaoContiverEntrada() {
-            TipoMovimentacao tipo = new TipoMovimentacao();
-            tipo.setDescricao("Entrada de estoque");
-
-            assertTrue(entradaStrategy.suporta(tipo));
-        }
-
-        @Test
-        @DisplayName("Deve retornar true quando descrição estiver em caixa alta")
-        void deveRetornarTrueQuandoDescricaoEstiverEmCaixaAlta() {
-            TipoMovimentacao tipo = new TipoMovimentacao();
-            tipo.setDescricao("ENTRADA");
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
+            tipo.setTipoMovimentacao(new TipoMovimentacao(1L, TipoMovimentacaoEnum.ENTRADA));
 
             assertTrue(entradaStrategy.suporta(tipo));
         }
@@ -63,8 +56,8 @@ class EntradaStrategyTest {
         @Test
         @DisplayName("Deve retornar false quando descrição não contiver 'entrada'")
         void deveRetornarFalseQuandoDescricaoNaoContiverEntrada() {
-            TipoMovimentacao tipo = new TipoMovimentacao();
-            tipo.setDescricao("Saída de estoque");
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
+            tipo.setTipoMovimentacao(new TipoMovimentacao(1L, TipoMovimentacaoEnum.SAIDA));
 
             assertFalse(entradaStrategy.suporta(tipo));
         }
@@ -82,7 +75,7 @@ class EntradaStrategyTest {
             joia.setArquivo(null);
 
             Fornecedor fornecedor = new Fornecedor();
-            TipoMovimentacao tipo = new TipoMovimentacao();
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
             Usuario usuario = new Usuario();
             MultipartFile arquivo = mock(MultipartFile.class);
 
@@ -100,7 +93,7 @@ class EntradaStrategyTest {
             assertNotNull(resultado);
             assertEquals(joia, resultado.getJoia());
             assertEquals(fornecedor, resultado.getFornecedor());
-            assertEquals(tipo, resultado.getTipoMovimentacao());
+            assertEquals(tipo, resultado.getMotivoMovimentacao());
             assertEquals(usuario, resultado.getUsuario());
             assertEquals(50.0, resultado.getPrecoOriginal());
             assertEquals(10.0, resultado.getPrecoBanho());
@@ -121,7 +114,7 @@ class EntradaStrategyTest {
             joia.setArquivo(null);
 
             Fornecedor fornecedor = new Fornecedor();
-            TipoMovimentacao tipo = new TipoMovimentacao();
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
             Usuario usuario = new Usuario();
             MultipartFile arquivo = mock(MultipartFile.class);
 
@@ -152,7 +145,7 @@ class EntradaStrategyTest {
 
             Arquivo arquivoEntity = new Arquivo();
             Fornecedor fornecedor = new Fornecedor();
-            TipoMovimentacao tipo = new TipoMovimentacao();
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
             Usuario usuario = new Usuario();
             MultipartFile arquivo = mock(MultipartFile.class);
 
@@ -182,7 +175,7 @@ class EntradaStrategyTest {
             joia.setArquivo(arquivoExistente);
 
             Fornecedor fornecedor = new Fornecedor();
-            TipoMovimentacao tipo = new TipoMovimentacao();
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
             Usuario usuario = new Usuario();
             MultipartFile arquivo = mock(MultipartFile.class);
 
@@ -208,7 +201,7 @@ class EntradaStrategyTest {
             joia.setId(1L);
             joia.setArquivo(null);
 
-            TipoMovimentacao tipo = new TipoMovimentacao();
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
             Usuario usuario = new Usuario();
             MultipartFile arquivo = mock(MultipartFile.class);
 
@@ -233,7 +226,7 @@ class EntradaStrategyTest {
             joia.setArquivo(null);
 
             Fornecedor fornecedor = new Fornecedor();
-            TipoMovimentacao tipo = new TipoMovimentacao();
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
             Usuario usuario = new Usuario();
             MultipartFile arquivo = mock(MultipartFile.class);
 
