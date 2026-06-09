@@ -1,29 +1,26 @@
 package com.caeca.estoque.database.model.tipoMovimentacao;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
-@Table(name = "Tipo_Movimentacao")
+@Getter
 public class TipoMovimentacao {
-
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_tipo_movimentacao")
-    private Integer idTipoMovimentacao;
+    private Long id;
+    @Enumerated(EnumType.STRING)
+    private TipoMovimentacaoEnum tipoMovimentacaoEnum;
 
-    @Column(name = "descricao", nullable = false, length = 45)
-    private String descricao;
-
-    public TipoMovimentacao() {}
-
-    public TipoMovimentacao(Integer idTipoMovimentacao, String descricao) {
-        this.idTipoMovimentacao = idTipoMovimentacao;
-        this.descricao = descricao;
+    public TipoMovimentacao(Long id, TipoMovimentacaoEnum tipoMovimentacaoEnum) {
+        this.id = id;
+        this.tipoMovimentacaoEnum = tipoMovimentacaoEnum;
     }
 
-    public Integer getIdTipoMovimentacao() { return idTipoMovimentacao; }
-    public void setIdTipoMovimentacao(Integer idTipoMovimentacao) { this.idTipoMovimentacao = idTipoMovimentacao; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getDescricao() { return descricao; }
-    public void setDescricao(String descricao) { this.descricao = descricao; }
+    public void setTipoMovimentacaoEnum(TipoMovimentacaoEnum tipoMovimentacaoEnum) {
+        this.tipoMovimentacaoEnum = tipoMovimentacaoEnum;
+    }
 }

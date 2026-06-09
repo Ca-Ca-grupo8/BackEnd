@@ -1,7 +1,8 @@
 package com.caeca.estoque.strategy.movimentacao;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
-import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
+import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.service.joia.JoiaService;
@@ -18,15 +19,15 @@ public class ReentradaStrategy implements MovimentacaoStrategy{
     }
 
     @Override
-    public boolean suporta(TipoMovimentacao tipoMovimentacao) {
-        return tipoMovimentacao.getDescricao().toLowerCase().contains("reentrada");
+    public boolean suporta(MotivoMovimentacao motivoMovimentacao) {
+        return motivoMovimentacao.getTipoMovimentacao().getTipoMovimentacaoEnum().equals(TipoMovimentacaoEnum.REENTRADA);
     }
 
     @Override
     public Movimentacao realizarMovimentacao(MovimentacaoContextDto dto) {
         Movimentacao movimentacao = MovimentacaoMapper.toEntity(dto.dadosOriginais());
         movimentacao.setJoia(joiaService.obterEntityJoiaPorId(dto.dadosOriginais().getIdJoia()));
-        movimentacao.setTipoMovimentacao(dto.tipo());
+        movimentacao.setMotivoMovimentacao(dto.tipo());
         movimentacao.setUsuario(dto.usuario());
 
         if(dto.dadosOriginais().getIdRevendedora() != null){

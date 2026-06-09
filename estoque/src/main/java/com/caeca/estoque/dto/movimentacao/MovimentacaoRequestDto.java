@@ -16,7 +16,7 @@ public class MovimentacaoRequestDto {
 
     @Schema(example = "1", description = "Id do tipo de movimentação (Entrada, saída, etc)")
     @NotNull
-    private Integer idTipoMovimentacao;
+    private Integer idMotivoMovimentacao;
 
     private Long idFornecedor;
 
@@ -35,7 +35,7 @@ public class MovimentacaoRequestDto {
         this.quantidade = quantidade;
         this.idJoia = idJoia;
         this.dadosNovaJoia = dadosNovaJoia;
-        this.idTipoMovimentacao = idTipoMovimentacao;
+        this.idMotivoMovimentacao = idTipoMovimentacao;
         this.idFornecedor = idFornecedor;
         this.idRevendedora = idRevendedora;
         this.precoCompraRevendedor = precoCompraRevendedor;
@@ -67,12 +67,12 @@ public class MovimentacaoRequestDto {
         this.dadosNovaJoia = dadosNovaJoia;
     }
 
-    public Integer getIdTipoMovimentacao() {
-        return idTipoMovimentacao;
+    public Integer getIdMotivoMovimentacao() {
+        return idMotivoMovimentacao;
     }
 
-    public void setIdTipoMovimentacao(Integer idTipoMovimentacao) {
-        this.idTipoMovimentacao = idTipoMovimentacao;
+    public void setIdMotivoMovimentacao(Integer idMotivoMovimentacao) {
+        this.idMotivoMovimentacao = idMotivoMovimentacao;
     }
 
     public Long getIdFornecedor() {

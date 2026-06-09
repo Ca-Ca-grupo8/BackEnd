@@ -3,7 +3,9 @@ package com.caeca.estoque.strategy.movimentacao;
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
+import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.database.model.usuario.Usuario;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
@@ -36,17 +38,8 @@ class ReentradaStrategyTest {
         @Test
         @DisplayName("Deve retornar true quando descrição do tipo contiver 'reentrada'")
         void deveRetornarTrueQuandoDescricaoContiverReentrada() {
-            TipoMovimentacao tipo = new TipoMovimentacao();
-            tipo.setDescricao("Reentrada de estoque");
-
-            assertTrue(reentradaStrategy.suporta(tipo));
-        }
-
-        @Test
-        @DisplayName("Deve retornar true quando descrição estiver em caixa alta")
-        void deveRetornarTrueQuandoDescricaoEstiverEmCaixaAlta() {
-            TipoMovimentacao tipo = new TipoMovimentacao();
-            tipo.setDescricao("REENTRADA");
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
+            tipo.setTipoMovimentacao(new TipoMovimentacao(1L, TipoMovimentacaoEnum.REENTRADA));
 
             assertTrue(reentradaStrategy.suporta(tipo));
         }
@@ -54,8 +47,8 @@ class ReentradaStrategyTest {
         @Test
         @DisplayName("Deve retornar false quando descrição não contiver 'reentrada'")
         void deveRetornarFalseQuandoDescricaoNaoContiverReentrada() {
-            TipoMovimentacao tipo = new TipoMovimentacao();
-            tipo.setDescricao("Entrada de estoque");
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
+            tipo.setTipoMovimentacao(new TipoMovimentacao(1L, TipoMovimentacaoEnum.ENTRADA));
 
             assertFalse(reentradaStrategy.suporta(tipo));
         }
@@ -71,7 +64,7 @@ class ReentradaStrategyTest {
             Joia joia = new Joia();
             joia.setId(1L);
 
-            TipoMovimentacao tipo = new TipoMovimentacao();
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
             Usuario usuario = new Usuario();
             MultipartFile arquivo = mock(MultipartFile.class);
 
@@ -86,7 +79,7 @@ class ReentradaStrategyTest {
 
             assertNotNull(resultado);
             assertEquals(joia, resultado.getJoia());
-            assertEquals(tipo, resultado.getTipoMovimentacao());
+            assertEquals(tipo, resultado.getMotivoMovimentacao());
             assertEquals(usuario, resultado.getUsuario());
             assertNull(resultado.getMovimentacaoRevendedora());
             verify(mrService, never()).buscarVendaAbertaPorRevendedora(any());
@@ -99,7 +92,7 @@ class ReentradaStrategyTest {
             joia.setId(1L);
 
             MovimentacaoRevendedora movimentacaoRevendedora = new MovimentacaoRevendedora();
-            TipoMovimentacao tipo = new TipoMovimentacao();
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
             Usuario usuario = new Usuario();
             MultipartFile arquivo = mock(MultipartFile.class);
 

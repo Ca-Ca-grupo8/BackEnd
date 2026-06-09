@@ -2,14 +2,14 @@ package com.caeca.estoque.service.movimentacao;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
-import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
+import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
 import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
 import com.caeca.estoque.exception.BadRequestException;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.joia.JoiaService;
-import com.caeca.estoque.service.tipoMovimentacao.TipoMovimentacaoService;
+import com.caeca.estoque.service.motivoMovimentacao.MotivoMovimentacaoService;
 import com.caeca.estoque.service.usuario.UsuarioService;
 import com.caeca.estoque.strategy.movimentacao.MovimentacaoContext;
 import com.caeca.estoque.strategy.movimentacao.MovimentacaoStrategy;
@@ -25,11 +25,11 @@ public class MovimentacaoService {
 
     private final List<MovimentacaoStrategy> movimentacaoStrategies;
     private final MovimentacaoRepository movimentacaoRepository;
-    private final TipoMovimentacaoService tipoService;
+    private final MotivoMovimentacaoService tipoService;
     private final JoiaService joiaService;
     private final UsuarioService usuarioService;
 
-    public MovimentacaoService(List<MovimentacaoStrategy> movimentacaoStrategies, MovimentacaoRepository movimentacaoRepository, TipoMovimentacaoService tipoService, JoiaService joiaService, UsuarioService usuarioService) {
+    public MovimentacaoService(List<MovimentacaoStrategy> movimentacaoStrategies, MovimentacaoRepository movimentacaoRepository, MotivoMovimentacaoService tipoService, JoiaService joiaService, UsuarioService usuarioService) {
         this.movimentacaoStrategies = movimentacaoStrategies;
         this.movimentacaoRepository = movimentacaoRepository;
         this.tipoService = tipoService;
@@ -48,9 +48,9 @@ public class MovimentacaoService {
 
     @Transactional
     public Movimentacao cadastrar(MovimentacaoRequestDto request, MultipartFile arquivo) {
-            TipoMovimentacao tipoMovimentacao = tipoService.buscarPorId(request.getIdTipoMovimentacao());
+            MotivoMovimentacao motivoMovimentacao = tipoService.buscarPorId(request.getIdMotivoMovimentacao());
             MovimentacaoContextDto movimentacaoContextDto = new MovimentacaoContextDto(
-                    tipoMovimentacao,
+                    motivoMovimentacao,
                     usuarioService.getUsuarioLogado(),
                     request,
                     arquivo
@@ -58,7 +58,7 @@ public class MovimentacaoService {
 
             MovimentacaoContext context = new MovimentacaoContext(movimentacaoStrategies
                     .stream()
-                    .filter(m -> m.suporta(tipoMovimentacao))
+                    .filter(m -> m.suporta(motivoMovimentacao))
                     .findFirst()
                     .orElseThrow(() -> new BadRequestException("Tipo de movimentação inválido")));
 

@@ -4,8 +4,6 @@ import com.caeca.estoque.database.model.material.Material;
 import com.caeca.estoque.dto.material.MaterialMapper;
 import com.caeca.estoque.dto.material.MaterialRequestDto;
 import com.caeca.estoque.dto.material.MaterialResponseDto;
-import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoMapper;
-import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoResponseDto;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.Material.MaterialService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -15,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.List;
 
 @RestController
