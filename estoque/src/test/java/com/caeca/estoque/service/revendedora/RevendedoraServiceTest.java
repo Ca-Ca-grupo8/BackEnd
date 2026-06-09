@@ -255,4 +255,100 @@ class RevendedoraServiceTest {
                 () -> revendedoraService.atualizarParcialmente(1L, dto)
         );
     }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao cadastrar telefone duplicado")
+    void deveLancarExcecaoAoCadastrarTelefoneDuplicado() {
+
+        RevendedoraRequestDto dto = new RevendedoraRequestDto();
+        dto.setEmail("teste@email.com");
+        dto.setTelefone("11999999999");
+        dto.setEnderecoId(1L);
+
+        Mockito.when(revendedoraRepository.existsByEmail(dto.getEmail()))
+                .thenReturn(false);
+
+        Mockito.when(revendedoraRepository.existsByTelefone(dto.getTelefone()))
+                .thenReturn(true);
+
+        Assertions.assertThrows(
+                ConflictException.class,
+                () -> revendedoraService.cadastrar(dto)
+        );
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao cadastrar endereço duplicado")
+    void deveLancarExcecaoAoCadastrarEnderecoDuplicado() {
+
+        RevendedoraRequestDto dto = new RevendedoraRequestDto();
+        dto.setEmail("teste@email.com");
+        dto.setTelefone("11999999999");
+        dto.setEnderecoId(1L);
+
+        Mockito.when(revendedoraRepository.existsByEmail(dto.getEmail()))
+                .thenReturn(false);
+
+        Mockito.when(revendedoraRepository.existsByTelefone(dto.getTelefone()))
+                .thenReturn(false);
+
+        Mockito.when(revendedoraRepository.existsByEnderecoId(dto.getEnderecoId()))
+                .thenReturn(true);
+
+        Assertions.assertThrows(
+                ConflictException.class,
+                () -> revendedoraService.cadastrar(dto)
+        );
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao atualizar telefone duplicado")
+    void deveLancarExcecaoAoAtualizarTelefoneDuplicado() {
+
+        Revendedora atual = new Revendedora();
+        atual.setId(1L);
+
+        Revendedora outra = new Revendedora();
+        outra.setId(2L);
+        outra.setTelefone("11999999999");
+
+        RevendedoraPatchDto dto = new RevendedoraPatchDto();
+        dto.setTelefone("11999999999");
+
+        Mockito.when(revendedoraRepository.findById(1L))
+                .thenReturn(Optional.of(atual));
+
+        Mockito.when(revendedoraRepository.findByTelefone(dto.getTelefone()))
+                .thenReturn(Optional.of(outra));
+
+        Assertions.assertThrows(
+                ConflictException.class,
+                () -> revendedoraService.atualizarParcialmente(1L, dto)
+        );
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao atualizar endereço duplicado")
+    void deveLancarExcecaoAoAtualizarEnderecoDuplicado() {
+
+        Revendedora atual = new Revendedora();
+        atual.setId(1L);
+
+        Revendedora outra = new Revendedora();
+        outra.setId(2L);
+
+        RevendedoraPatchDto dto = new RevendedoraPatchDto();
+        dto.setEnderecoId(10L);
+
+        Mockito.when(revendedoraRepository.findById(1L))
+                .thenReturn(Optional.of(atual));
+
+        Mockito.when(revendedoraRepository.findByEnderecoId(10L))
+                .thenReturn(Optional.of(outra));
+
+        Assertions.assertThrows(
+                ConflictException.class,
+                () -> revendedoraService.atualizarParcialmente(1L, dto)
+        );
+    }
 }
