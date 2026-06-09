@@ -1,10 +1,7 @@
 package com.caeca.estoque.database.model.usuario;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 @Tag(name = "Usuários")
@@ -17,6 +14,9 @@ public class Usuario {
     private String nome;
     private String email;
     private String senha;
+
+    @Enumerated(EnumType.STRING)
+    private PerfilUsuario perfil;
 
     public Long getId() {
         return id;
@@ -48,5 +48,13 @@ public class Usuario {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public PerfilUsuario getPerfil() {
+        return perfil;
+    }
+
+    public void setPerfil(PerfilUsuario perfil) {
+        this.perfil = perfil;
     }
 }
