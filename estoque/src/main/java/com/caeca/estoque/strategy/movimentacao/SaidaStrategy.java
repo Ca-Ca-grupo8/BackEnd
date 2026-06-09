@@ -24,7 +24,7 @@ public class SaidaStrategy implements MovimentacaoStrategy {
 
     @Override
     public boolean suporta(MotivoMovimentacao motivoMovimentacao) {
-        return motivoMovimentacao.getTipoMovimentacao().getTipoMovimentacaoEnum().equals(TipoMovimentacaoEnum.SAIDA);
+        return motivoMovimentacao.getTipoMovimentacao().getNome().equals(TipoMovimentacaoEnum.SAIDA);
     }
 
     @Override

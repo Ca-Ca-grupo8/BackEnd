@@ -6,21 +6,25 @@ import lombok.Getter;
 @Entity
 @Getter
 public class TipoMovimentacao {
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Enumerated(EnumType.STRING)
-    private TipoMovimentacaoEnum tipoMovimentacaoEnum;
+    private TipoMovimentacaoEnum nome;
 
-    public TipoMovimentacao(Long id, TipoMovimentacaoEnum tipoMovimentacaoEnum) {
+    public TipoMovimentacao(Long id, TipoMovimentacaoEnum nome) {
         this.id = id;
-        this.tipoMovimentacaoEnum = tipoMovimentacaoEnum;
+        this.nome = nome;
+    }
+
+    public TipoMovimentacao() {
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public void setTipoMovimentacaoEnum(TipoMovimentacaoEnum tipoMovimentacaoEnum) {
-        this.tipoMovimentacaoEnum = tipoMovimentacaoEnum;
+    public void setNome(TipoMovimentacaoEnum nome) {
+        this.nome = nome;
     }
 }

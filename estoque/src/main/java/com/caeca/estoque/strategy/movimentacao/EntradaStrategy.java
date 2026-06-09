@@ -32,7 +32,7 @@ public class EntradaStrategy implements MovimentacaoStrategy {
 
     @Override
     public boolean suporta(MotivoMovimentacao motivoMovimentacao) {
-        return motivoMovimentacao.getTipoMovimentacao().getTipoMovimentacaoEnum().equals(TipoMovimentacaoEnum.ENTRADA);
+        return motivoMovimentacao.getTipoMovimentacao().getNome().equals(TipoMovimentacaoEnum.ENTRADA);
     }
 
     @Override
