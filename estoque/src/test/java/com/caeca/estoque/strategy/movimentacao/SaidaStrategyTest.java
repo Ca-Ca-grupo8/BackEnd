@@ -3,7 +3,9 @@ package com.caeca.estoque.strategy.movimentacao;
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
+import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.database.model.usuario.Usuario;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
@@ -38,35 +40,8 @@ class SaidaStrategyTest {
         @Test
         @DisplayName("Deve retornar true quando descrição contiver 'saída' com acento")
         void deveRetornarTrueQuandoDescricaoContiverSaidaComAcento() {
-            TipoMovimentacao tipo = new TipoMovimentacao();
-            tipo.setDescricao("Saída de estoque");
-
-            assertTrue(saidaStrategy.suporta(tipo));
-        }
-
-        @Test
-        @DisplayName("Deve retornar true quando descrição contiver 'saida' sem acento")
-        void deveRetornarTrueQuandoDescricaoContiverSaidaSemAcento() {
-            TipoMovimentacao tipo = new TipoMovimentacao();
-            tipo.setDescricao("saida");
-
-            assertTrue(saidaStrategy.suporta(tipo));
-        }
-
-        @Test
-        @DisplayName("Deve retornar true quando descrição contiver 'venda'")
-        void deveRetornarTrueQuandoDescricaoContiverVenda() {
-            TipoMovimentacao tipo = new TipoMovimentacao();
-            tipo.setDescricao("Venda para revendedora");
-
-            assertTrue(saidaStrategy.suporta(tipo));
-        }
-
-        @Test
-        @DisplayName("Deve retornar true quando descrição estiver em caixa alta")
-        void deveRetornarTrueQuandoDescricaoEstiverEmCaixaAlta() {
-            TipoMovimentacao tipo = new TipoMovimentacao();
-            tipo.setDescricao("VENDA");
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
+            tipo.setTipoMovimentacao(new TipoMovimentacao(1L, TipoMovimentacaoEnum.SAIDA));
 
             assertTrue(saidaStrategy.suporta(tipo));
         }
@@ -74,8 +49,8 @@ class SaidaStrategyTest {
         @Test
         @DisplayName("Deve retornar false quando descrição não contiver nenhum dos termos")
         void deveRetornarFalseQuandoDescricaoNaoContiverNenhumDosTeremos() {
-            TipoMovimentacao tipo = new TipoMovimentacao();
-            tipo.setDescricao("Entrada de estoque");
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
+            tipo.setTipoMovimentacao(new TipoMovimentacao(1L, TipoMovimentacaoEnum.ENTRADA));
 
             assertFalse(saidaStrategy.suporta(tipo));
         }
@@ -93,7 +68,7 @@ class SaidaStrategyTest {
             joia.setQuantidade(10);
             joia.setPreco(150.0);
 
-            TipoMovimentacao tipo = new TipoMovimentacao();
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
             tipo.setDescricao("Saída");
 
             Usuario usuario = new Usuario();
@@ -110,7 +85,7 @@ class SaidaStrategyTest {
 
             assertNotNull(resultado);
             assertEquals(joia, resultado.getJoia());
-            assertEquals(tipo, resultado.getTipoMovimentacao());
+            assertEquals(tipo, resultado.getMotivoMovimentacao());
             assertEquals(usuario, resultado.getUsuario());
             assertEquals(150.0, resultado.getPrecoSaida());
             assertNull(resultado.getMovimentacaoRevendedora());
@@ -125,7 +100,7 @@ class SaidaStrategyTest {
             joia.setQuantidade(3);
             joia.setNome("Anel de Ouro");
 
-            TipoMovimentacao tipo = new TipoMovimentacao();
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
             tipo.setDescricao("Saída");
 
             Usuario usuario = new Usuario();
@@ -154,7 +129,7 @@ class SaidaStrategyTest {
             joia.setPreco(150.0);
 
             MovimentacaoRevendedora movimentacaoRevendedora = new MovimentacaoRevendedora();
-            TipoMovimentacao tipo = new TipoMovimentacao();
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
             tipo.setDescricao("Venda para revendedora");
 
             Usuario usuario = new Usuario();
@@ -185,7 +160,7 @@ class SaidaStrategyTest {
             joia.setQuantidade(10);
             joia.setPreco(150.0);
 
-            TipoMovimentacao tipo = new TipoMovimentacao();
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
             tipo.setDescricao("Venda para revendedora");
 
             Usuario usuario = new Usuario();
@@ -213,7 +188,7 @@ class SaidaStrategyTest {
             joia.setQuantidade(10);
             joia.setPreco(150.0);
 
-            TipoMovimentacao tipo = new TipoMovimentacao();
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
             tipo.setDescricao("Saída de estoque");
 
             Usuario usuario = new Usuario();

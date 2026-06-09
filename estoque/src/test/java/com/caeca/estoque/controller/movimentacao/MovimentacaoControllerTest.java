@@ -5,7 +5,7 @@ import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
 import com.caeca.estoque.database.model.revendedora.Revendedora;
-import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
+import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
 import com.caeca.estoque.database.model.usuario.Usuario;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
 import com.caeca.estoque.service.movimentacao.MovimentacaoService;
@@ -42,7 +42,7 @@ class MovimentacaoControllerTest {
     @Test
     void listar() throws Exception {
         Joia joiaMock = mock(Joia.class);
-        TipoMovimentacao tipoMock = mock(TipoMovimentacao.class);
+        MotivoMovimentacao tipoMock = mock(MotivoMovimentacao.class);
         Usuario usuarioMock = mock(Usuario.class);
         Revendedora revendedoraMock = mock(Revendedora.class);
         MovimentacaoRevendedora movRevendedoraMock = mock(MovimentacaoRevendedora.class);
@@ -63,7 +63,7 @@ class MovimentacaoControllerTest {
     @Test
     void buscarPorId() throws Exception {
         Joia joiaMock = mock(Joia.class);
-        TipoMovimentacao tipoMock = mock(TipoMovimentacao.class);
+        MotivoMovimentacao tipoMock = mock(MotivoMovimentacao.class);
         Usuario usuarioMock = mock(Usuario.class);
         Revendedora revendedoraMock = mock(Revendedora.class);
 
@@ -98,7 +98,7 @@ class MovimentacaoControllerTest {
                 "banho": 1,
                 "material": 1
             },
-            "idTipoMovimentacao": 1,
+            "idMotivoMovimentacao": 1,
             "idFornecedor": 1,
             "idRevendedora": 0,
             "precoCompraRevendedor": 0.1,
@@ -115,7 +115,7 @@ class MovimentacaoControllerTest {
         );
 
         Joia joiaMock = mock(Joia.class);
-        TipoMovimentacao tipoMock = mock(TipoMovimentacao.class);
+        MotivoMovimentacao tipoMock = mock(MotivoMovimentacao.class);
         Usuario usuarioMock = mock(Usuario.class);
         MovimentacaoRevendedora movRevendedoraMock = mock(MovimentacaoRevendedora.class);
         when(movRevendedoraMock.getRevendedora()).thenReturn(mock(Revendedora.class));

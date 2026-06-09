@@ -2,19 +2,16 @@ package com.caeca.estoque.dto.movimentacao;
 
 import com.caeca.estoque.dto.fornecedor.FornecedorResponseDTO;
 import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
-import com.caeca.estoque.dto.tipoMovimentacao.TipoMovimentacaoResponseDto;
+import com.caeca.estoque.dto.motivoMovimentacao.MotivoMovimentacaoResponseDto;
 import com.caeca.estoque.dto.usuario.UsuarioListarDto;
-import jakarta.validation.constraints.NotNull;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResponseDto;
-
-import java.math.BigDecimal;
 
 public class MovimentacaoResponseDto {
     private Long id;
     private Integer quantidade;
     private Double precoSaida;
     private JoiaSaidaDTO joia;
-    private TipoMovimentacaoResponseDto tipoMovimentacao;
+    private MotivoMovimentacaoResponseDto motivoMovimentacao;
     private UsuarioListarDto usuario;
     private FornecedorResponseDTO fornecedor;
     private MovimentacaoRevendedoraResponseDto movimentacaoRevendedora;
@@ -22,12 +19,12 @@ public class MovimentacaoResponseDto {
     public MovimentacaoResponseDto() {
     }
 
-    public MovimentacaoResponseDto(Long id, Integer quantidade, Double precoSaida, JoiaSaidaDTO joia, TipoMovimentacaoResponseDto tipoMovimentacao, UsuarioListarDto usuario, FornecedorResponseDTO fornecedor, MovimentacaoRevendedoraResponseDto movimentacaoRevendedora) {
+    public MovimentacaoResponseDto(Long id, Integer quantidade, Double precoSaida, JoiaSaidaDTO joia, MotivoMovimentacaoResponseDto motivoMovimentacao, UsuarioListarDto usuario, FornecedorResponseDTO fornecedor, MovimentacaoRevendedoraResponseDto movimentacaoRevendedora) {
         this.id = id;
         this.quantidade = quantidade;
         this.precoSaida = precoSaida;
         this.joia = joia;
-        this.tipoMovimentacao = tipoMovimentacao;
+        this.motivoMovimentacao = motivoMovimentacao;
         this.usuario = usuario;
         this.fornecedor = fornecedor;
         this.movimentacaoRevendedora = movimentacaoRevendedora;
@@ -65,12 +62,12 @@ public class MovimentacaoResponseDto {
         this.joia = joia;
     }
 
-    public TipoMovimentacaoResponseDto getTipoMovimentacao() {
-        return tipoMovimentacao;
+    public MotivoMovimentacaoResponseDto getMotivoMovimentacao() {
+        return motivoMovimentacao;
     }
 
-    public void setTipoMovimentacao(TipoMovimentacaoResponseDto tipoMovimentacao) {
-        this.tipoMovimentacao = tipoMovimentacao;
+    public void setMotivoMovimentacao(MotivoMovimentacaoResponseDto motivoMovimentacao) {
+        this.motivoMovimentacao = motivoMovimentacao;
     }
 
     public UsuarioListarDto getUsuario() {
