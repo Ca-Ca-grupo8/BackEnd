@@ -2,14 +2,14 @@ package com.caeca.estoque.service.movimentacao;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
-import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
+import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
 import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
 import com.caeca.estoque.exception.BadRequestException;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.joia.JoiaService;
-import com.caeca.estoque.service.tipoMovimentacao.TipoMovimentacaoService;
+import com.caeca.estoque.service.motivoMovimentacao.MotivoMovimentacaoService;
 import com.caeca.estoque.service.usuario.UsuarioService;
 import com.caeca.estoque.strategy.movimentacao.MovimentacaoStrategy;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 class MovimentacaoServiceTest {
 
     @Mock private MovimentacaoRepository movimentacaoRepository;
-    @Mock private TipoMovimentacaoService tipoService;
+    @Mock private MotivoMovimentacaoService tipoService;
     @Mock private JoiaService joiaService;
     @Mock private UsuarioService usuarioService;
     @Mock private MovimentacaoStrategy movimentacaoStrategy;
@@ -117,15 +117,15 @@ class MovimentacaoServiceTest {
         @Test
         @DisplayName("Deve cadastrar movimentação com sucesso quando strategy suportar o tipo")
         void deveCadastrarMovimentacaoComSucesso() {
-            TipoMovimentacao tipoMovimentacao = new TipoMovimentacao();
+            MotivoMovimentacao motivoMovimentacao = new MotivoMovimentacao();
             Movimentacao movimentacao = new Movimentacao();
             MovimentacaoRequestDto request = mock(MovimentacaoRequestDto.class);
             MultipartFile arquivo = mock(MultipartFile.class);
 
-            when(request.getIdTipoMovimentacao()).thenReturn(1);
-            when(tipoService.buscarPorId(1)).thenReturn(tipoMovimentacao);
+            when(request.getIdMotivoMovimentacao()).thenReturn(1);
+            when(tipoService.buscarPorId(1)).thenReturn(motivoMovimentacao);
             when(usuarioService.getUsuarioLogado()).thenReturn(null);
-            when(movimentacaoStrategy.suporta(tipoMovimentacao)).thenReturn(true);
+            when(movimentacaoStrategy.suporta(motivoMovimentacao)).thenReturn(true);
             when(movimentacaoStrategy.realizarMovimentacao(any(MovimentacaoContextDto.class))).thenReturn(movimentacao);
             doReturn(movimentacao).when(movimentacaoRepository).save(any());
 
@@ -141,14 +141,14 @@ class MovimentacaoServiceTest {
         @Test
         @DisplayName("Deve lançar BadRequestException quando nenhuma strategy suportar o tipo de movimentação")
         void deveLancarBadRequestExceptionQuandoNenhumaStrategySuportarOTipo() {
-            TipoMovimentacao tipoMovimentacao = new TipoMovimentacao();
+            MotivoMovimentacao motivoMovimentacao = new MotivoMovimentacao();
             MovimentacaoRequestDto request = mock(MovimentacaoRequestDto.class);
             MultipartFile arquivo = mock(MultipartFile.class);
 
-            when(request.getIdTipoMovimentacao()).thenReturn(1);
-            when(tipoService.buscarPorId(1)).thenReturn(tipoMovimentacao);
+            when(request.getIdMotivoMovimentacao()).thenReturn(1);
+            when(tipoService.buscarPorId(1)).thenReturn(motivoMovimentacao);
             when(usuarioService.getUsuarioLogado()).thenReturn(null);
-            when(movimentacaoStrategy.suporta(tipoMovimentacao)).thenReturn(false);
+            when(movimentacaoStrategy.suporta(motivoMovimentacao)).thenReturn(false);
 
             assertThrows(BadRequestException.class, () -> {
                 movimentacaoService.cadastrar(request, arquivo);
@@ -162,7 +162,7 @@ class MovimentacaoServiceTest {
         @Test
         @DisplayName("Deve associar movimentação à sessão revendedora quando sessão não for nula")
         void deveAssociarMovimentacaoASessaoRevendedoraQuandoSessaoNaoForNula() {
-            TipoMovimentacao tipoMovimentacao = new TipoMovimentacao();
+            MotivoMovimentacao motivoMovimentacao = new MotivoMovimentacao();
             MovimentacaoRevendedora sessao = new MovimentacaoRevendedora();
             sessao.setMovimentacoes(new ArrayList<>());
             Movimentacao movimentacao = new Movimentacao();
@@ -170,10 +170,10 @@ class MovimentacaoServiceTest {
             MovimentacaoRequestDto request = mock(MovimentacaoRequestDto.class);
             MultipartFile arquivo = mock(MultipartFile.class);
 
-            when(request.getIdTipoMovimentacao()).thenReturn(1);
-            when(tipoService.buscarPorId(1)).thenReturn(tipoMovimentacao);
+            when(request.getIdMotivoMovimentacao()).thenReturn(1);
+            when(tipoService.buscarPorId(1)).thenReturn(motivoMovimentacao);
             when(usuarioService.getUsuarioLogado()).thenReturn(null);
-            when(movimentacaoStrategy.suporta(tipoMovimentacao)).thenReturn(true);
+            when(movimentacaoStrategy.suporta(motivoMovimentacao)).thenReturn(true);
             when(movimentacaoStrategy.realizarMovimentacao(any(MovimentacaoContextDto.class))).thenReturn(movimentacao);
             doReturn(movimentacao).when(movimentacaoRepository).save(any());
 
@@ -187,7 +187,7 @@ class MovimentacaoServiceTest {
         @Test
         @DisplayName("Deve inicializar lista de movimentações da sessão quando a lista for nula")
         void deveInicializarListaDeMovimentacoesDaSessaoQuandoAListaForNula() {
-            TipoMovimentacao tipoMovimentacao = new TipoMovimentacao();
+            MotivoMovimentacao motivoMovimentacao = new MotivoMovimentacao();
             MovimentacaoRevendedora sessao = new MovimentacaoRevendedora();
             sessao.setMovimentacoes(null);
             Movimentacao movimentacao = new Movimentacao();
@@ -195,10 +195,10 @@ class MovimentacaoServiceTest {
             MovimentacaoRequestDto request = mock(MovimentacaoRequestDto.class);
             MultipartFile arquivo = mock(MultipartFile.class);
 
-            when(request.getIdTipoMovimentacao()).thenReturn(1);
-            when(tipoService.buscarPorId(1)).thenReturn(tipoMovimentacao);
+            when(request.getIdMotivoMovimentacao()).thenReturn(1);
+            when(tipoService.buscarPorId(1)).thenReturn(motivoMovimentacao);
             when(usuarioService.getUsuarioLogado()).thenReturn(null);
-            when(movimentacaoStrategy.suporta(tipoMovimentacao)).thenReturn(true);
+            when(movimentacaoStrategy.suporta(motivoMovimentacao)).thenReturn(true);
             when(movimentacaoStrategy.realizarMovimentacao(any(MovimentacaoContextDto.class))).thenReturn(movimentacao);
             doReturn(movimentacao).when(movimentacaoRepository).save(any());
 
@@ -212,15 +212,15 @@ class MovimentacaoServiceTest {
         @Test
         @DisplayName("Deve cadastrar movimentação sem associar sessão quando sessão for nula")
         void deveCadastrarMovimentacaoSemAssociarSessaoQuandoSessaoForNula() {
-            TipoMovimentacao tipoMovimentacao = new TipoMovimentacao();
+            MotivoMovimentacao motivoMovimentacao = new MotivoMovimentacao();
             Movimentacao movimentacao = mock(Movimentacao.class);
             MovimentacaoRequestDto request = mock(MovimentacaoRequestDto.class);
             MultipartFile arquivo = mock(MultipartFile.class);
 
-            when(request.getIdTipoMovimentacao()).thenReturn(1);
-            when(tipoService.buscarPorId(1)).thenReturn(tipoMovimentacao);
+            when(request.getIdMotivoMovimentacao()).thenReturn(1);
+            when(tipoService.buscarPorId(1)).thenReturn(motivoMovimentacao);
             when(usuarioService.getUsuarioLogado()).thenReturn(null);
-            when(movimentacaoStrategy.suporta(tipoMovimentacao)).thenReturn(true);
+            when(movimentacaoStrategy.suporta(motivoMovimentacao)).thenReturn(true);
             when(movimentacaoStrategy.realizarMovimentacao(any(MovimentacaoContextDto.class))).thenReturn(movimentacao);
             when(movimentacao.getMovimentacaoRevendedora()).thenReturn(null);
             doReturn(movimentacao).when(movimentacaoRepository).save(any());

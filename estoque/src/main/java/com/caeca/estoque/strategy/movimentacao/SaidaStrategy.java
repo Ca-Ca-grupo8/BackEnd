@@ -2,7 +2,8 @@ package com.caeca.estoque.strategy.movimentacao;
 
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
-import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
+import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraRequestDto;
@@ -22,10 +23,8 @@ public class SaidaStrategy implements MovimentacaoStrategy {
     }
 
     @Override
-    public boolean suporta(TipoMovimentacao tipoMovimentacao) {
-        return tipoMovimentacao.getDescricao().toLowerCase().contains("saída") ||
-                tipoMovimentacao.getDescricao().toLowerCase().contains("saida") ||
-                tipoMovimentacao.getDescricao().toLowerCase().contains("venda");
+    public boolean suporta(MotivoMovimentacao motivoMovimentacao) {
+        return motivoMovimentacao.getTipoMovimentacao().getNome().equals(TipoMovimentacaoEnum.SAIDA);
     }
 
     @Override
@@ -38,7 +37,7 @@ public class SaidaStrategy implements MovimentacaoStrategy {
 
         Movimentacao movimentacao = MovimentacaoMapper.toEntity(dto.dadosOriginais());
         movimentacao.setJoia(joia);
-        movimentacao.setTipoMovimentacao(dto.tipo());
+        movimentacao.setMotivoMovimentacao(dto.tipo());
         movimentacao.setPrecoSaida(joia.getPreco());
         movimentacao.setUsuario(dto.usuario());
 
