@@ -20,7 +20,7 @@ public class ReentradaStrategy implements MovimentacaoStrategy{
 
     @Override
     public boolean suporta(MotivoMovimentacao motivoMovimentacao) {
-        return motivoMovimentacao.getTipoMovimentacao().getTipoMovimentacaoEnum().equals(TipoMovimentacaoEnum.REENTRADA);
+        return motivoMovimentacao.getTipoMovimentacao().getNome().equals(TipoMovimentacaoEnum.REENTRADA);
     }
 
     @Override
