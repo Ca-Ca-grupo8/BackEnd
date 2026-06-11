@@ -4,6 +4,7 @@ import com.caeca.estoque.database.model.material.Material;
 import com.caeca.estoque.database.repository.material.MaterialRepository;
 import com.caeca.estoque.dto.material.MaterialMapper;
 import com.caeca.estoque.dto.material.MaterialRequestDto;
+import com.caeca.estoque.exception.ConflictException;
 import com.caeca.estoque.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -31,8 +32,8 @@ public class MaterialService {
 
     public Material cadastrar(MaterialRequestDto request){
         if (materialRepository.existsByNomeIgnoreCase(request.getNome())) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "Já existe um material com o nome: " + request.getNome()
+            throw new ConflictException(
+                    "Já existe um material com o nome: " + request.getNome()
             );
         }
         return materialRepository.save(MaterialMapper.toEntity(request));
