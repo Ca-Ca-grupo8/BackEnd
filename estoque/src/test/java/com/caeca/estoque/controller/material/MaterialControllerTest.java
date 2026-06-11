@@ -2,6 +2,7 @@ package com.caeca.estoque.controller.material;
 
 import com.caeca.estoque.database.model.material.Material;
 import com.caeca.estoque.dto.material.MaterialRequestDto;
+import com.caeca.estoque.exception.ConflictException;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.handler.GlobalExceptionHandler;
 import com.caeca.estoque.service.Material.MaterialService;
@@ -143,7 +144,7 @@ class MaterialControllerTest {
         @DisplayName("Deve retornar status 409 quando já tiver o material com o mesmo nome cadastrado")
         void deveRetornar409QuandoNomeJaExistir() throws Exception {
             when(materialService.cadastrar(any(MaterialRequestDto.class)))
-                    .thenThrow(new ResponseStatusException(HttpStatus.CONFLICT, "Já existe um material com o nome: Ouro 18K"));
+                    .thenThrow(new ConflictException("Já existe um material com o nome: Ouro 18K"));
 
             mockMvc.perform(post("/materiais")
                             .contentType(MediaType.APPLICATION_JSON)
