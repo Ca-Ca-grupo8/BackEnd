@@ -1,6 +1,7 @@
 package com.caeca.estoque.controller.dashboard;
 
 import com.caeca.estoque.dto.dashboard.FiltroDashboardDTO;
+import com.caeca.estoque.dto.dashboard.FiltroGiroEstoque;
 import com.caeca.estoque.dto.dashboard.TopCincoDto;
 import com.caeca.estoque.dto.dashboard.ValorSaidaDto;
 import com.caeca.estoque.service.dashboard.DashboardService;
@@ -30,8 +31,13 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.calcularValorSaida(filtros));
     }
 
-    @GetMapping("/topCinco")
+    @GetMapping("/top-cinco")
     public ResponseEntity<List<TopCincoDto>> buscarTopCinco(FiltroDashboardDTO filtros) {
         return ResponseEntity.ok(dashboardService.buscarTopCincoMaisVendidos(filtros));
+    }
+
+    @GetMapping("/giro-estoque")
+    public ResponseEntity<FiltroGiroEstoque> calcularGiroEstoque(FiltroDashboardDTO filtros) {
+        return ResponseEntity.ok(dashboardService.calcularGiroEstoque(filtros));
     }
 }
