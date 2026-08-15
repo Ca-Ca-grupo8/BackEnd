@@ -64,4 +64,20 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
             AND m.data BETWEEN :inicio AND :fim
     """)
     Long buscarTotalDeEntradas(LocalDateTime inicio, LocalDateTime fim);
+
+    @Query("""
+        SELECT COALESCE(SUM(m.quantidade), 0.0)
+            FROM Movimentacao m
+            WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%entrada%')
+            AND m.data > :fim
+    """)
+    long buscarTotalDeItensVendidosApos(LocalDateTime fim);
+
+    @Query("""
+        SELECT COALESCE(SUM(m.quantidade), 0.0)
+            FROM Movimentacao m
+            WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%entrada%')
+            AND m.data > :fim
+    """)
+    long buscarTotalDeEntradasApos(LocalDateTime fim);
 }
