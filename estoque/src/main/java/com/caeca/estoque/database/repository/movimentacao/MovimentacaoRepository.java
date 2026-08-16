@@ -15,7 +15,7 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
     @Query("""
             SELECT COALESCE(SUM(m.precoSaida), 0.0)
             FROM Movimentacao m
-            WHERE (LOWER(m.tipoMovimentacao.descricao) LIKE '%saída%' OR LOWER(m.tipoMovimentacao.descricao) LIKE '%saida%')
+            WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%saida%')
             AND m.data BETWEEN :inicio AND :fim
     """)
     Double somarValorTotalDasSaidas(LocalDateTime inicio, LocalDateTime fim);
@@ -26,8 +26,7 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
                 SUM(m.quantidade))
             FROM Movimentacao m
             WHERE (
-                    LOWER(m.tipoMovimentacao.descricao) LIKE '%saída%'
-                    OR LOWER(m.tipoMovimentacao.descricao) LIKE '%saida%'
+                    LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%saida%'
                   )
             AND m.data BETWEEN :inicio AND :fim
             GROUP BY m.joia.categoria.nome
@@ -41,8 +40,7 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
                 SUM(m.quantidade))
             FROM Movimentacao m
             WHERE (
-                    LOWER(m.tipoMovimentacao.descricao) LIKE '%saída%'
-                    OR LOWER(m.tipoMovimentacao.descricao) LIKE '%saida%'
+                    LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%saida%'
                   )
             AND m.data BETWEEN :inicio AND :fim
             AND m.joia.categoria.id = :categoriaId
@@ -50,4 +48,36 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
             ORDER BY SUM(m.quantidade) DESC
     """)
     List<TopCincoDto> buscarTopCincoProdutos(LocalDateTime inicio, LocalDateTime fim, Long categoriaId, Pageable pageable);
+
+    @Query("""
+        SELECT COALESCE(SUM(m.quantidade), 0.0)
+            FROM Movimentacao m
+            WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%saida%')
+            AND m.data BETWEEN :inicio AND :fim
+    """)
+    Long buscarTotalDeItensVendidos(LocalDateTime inicio, LocalDateTime fim);
+
+    @Query("""
+        SELECT COALESCE(SUM(m.quantidade), 0.0)
+            FROM Movimentacao m
+            WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%entrada%')
+            AND m.data BETWEEN :inicio AND :fim
+    """)
+    Long buscarTotalDeEntradas(LocalDateTime inicio, LocalDateTime fim);
+
+    @Query("""
+        SELECT COALESCE(SUM(m.quantidade), 0.0)
+            FROM Movimentacao m
+            WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%entrada%')
+            AND m.data > :fim
+    """)
+    long buscarTotalDeItensVendidosApos(LocalDateTime fim);
+
+    @Query("""
+        SELECT COALESCE(SUM(m.quantidade), 0.0)
+            FROM Movimentacao m
+            WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%entrada%')
+            AND m.data > :fim
+    """)
+    long buscarTotalDeEntradasApos(LocalDateTime fim);
 }
