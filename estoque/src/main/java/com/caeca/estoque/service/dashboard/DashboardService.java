@@ -2,10 +2,7 @@ package com.caeca.estoque.service.dashboard;
 
 import com.caeca.estoque.database.repository.joia.JoiaRepository;
 import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
-import com.caeca.estoque.dto.dashboard.FiltroDashboardDTO;
-import com.caeca.estoque.dto.dashboard.FiltroGiroEstoque;
-import com.caeca.estoque.dto.dashboard.TopCincoDto;
-import com.caeca.estoque.dto.dashboard.ValorSaidaDto;
+import com.caeca.estoque.dto.dashboard.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -131,5 +128,13 @@ public class DashboardService {
         }
 
         return totalVendido / estoqueMedio;
+    }
+
+    public List<GraficoMotivoDto> obterGraficoMotivosSaida(LocalDateTime inicio, LocalDateTime fim, Long categoriaId) {
+        return movimentacaoRepository.buscarGraficoMotivosSaida(inicio, fim, categoriaId);
+    }
+
+    public List<GraficoMotivoDto> obterGraficoMotivosReentrada(LocalDateTime inicio, LocalDateTime fim, Long categoriaId) {
+        return movimentacaoRepository.buscarGraficoMotivosReentrada(inicio, fim, categoriaId);
     }
 }
