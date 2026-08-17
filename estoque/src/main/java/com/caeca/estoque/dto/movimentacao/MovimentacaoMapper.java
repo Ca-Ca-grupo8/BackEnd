@@ -27,6 +27,8 @@ public class MovimentacaoMapper {
                 ? MovimentacaoRevendedoraMapper.toResponse(entity.getMovimentacaoRevendedora())
                 : null);
 
+        dto.setData(entity.getData());
+
         return dto;
     }
 
