@@ -8,7 +8,9 @@ import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.service.joia.JoiaService;
 import com.caeca.estoque.service.movimentacaoRevendedora.MovimentacaoRevendedoraService;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ReentradaStrategy implements MovimentacaoStrategy{
     private final JoiaService joiaService;
     private final MovimentacaoRevendedoraService mrService;
