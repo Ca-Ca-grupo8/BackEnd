@@ -1,11 +1,13 @@
 package com.caeca.estoque.database.repository.movimentacao;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.dto.dashboard.TopCincoDto;
 import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -80,4 +82,18 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
             AND m.data > :fim
     """)
     long buscarTotalDeEntradasApos(LocalDateTime fim);
+
+    @Query("""
+        SELECT m FROM Movimentacao m
+        WHERE (:nome IS NULL OR LOWER(m.joia.nome) LIKE LOWER(CONCAT('%', :nome, '%')))
+          AND (:tipo IS NULL OR m.motivoMovimentacao.tipoMovimentacao.nome = :tipo)
+          AND (cast(:dataInicio as date) IS NULL OR m.data >= :dataInicio)
+          AND (cast(:dataFim as date) IS NULL OR m.data <= :dataFim)
+    """)
+    List<Movimentacao> buscarComFiltros(
+            @Param("nome") String nome,
+            @Param("tipo") TipoMovimentacaoEnum tipo,
+            @Param("dataInicio") LocalDateTime dataInicio,
+            @Param("dataFim") LocalDateTime dataFim
+    );
 }

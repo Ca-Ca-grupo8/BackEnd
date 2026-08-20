@@ -3,6 +3,7 @@ package com.caeca.estoque.service.movimentacao;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
 import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
@@ -17,6 +18,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +41,11 @@ public class MovimentacaoService {
         this.usuarioService = usuarioService;
     }
 
-    public List<Movimentacao> listar() {
-        return movimentacaoRepository.findAll();
+    public List<Movimentacao> listar(String nome, TipoMovimentacaoEnum tipo, LocalDate dataInicio, LocalDate dataFim) {
+        LocalDateTime inicioComHora = (dataInicio != null) ? dataInicio.atStartOfDay() : null;
+        LocalDateTime fimComHora = (dataFim != null) ? dataFim.atTime(LocalTime.MAX) : null;
+
+        return movimentacaoRepository.buscarComFiltros(nome, tipo, inicioComHora, fimComHora);
     }
 
     public Movimentacao buscarPorId(Long id) {
