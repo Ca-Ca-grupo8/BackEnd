@@ -1,6 +1,9 @@
 package com.caeca.estoque.dto.joia;
 
+import com.caeca.estoque.database.model.banho.Banho;
+import com.caeca.estoque.database.model.categoria.Categoria;
 import com.caeca.estoque.database.model.joia.Joia;
+import com.caeca.estoque.database.model.material.Material;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -46,6 +49,10 @@ class JoiaMapperTest {
         @Test
         @DisplayName("Deve mapear Joia para JoiaSaidaDTO corretamente com todos os campos")
         void deveMapearEntidadeParaResponseDTO() {
+            Categoria categoria = new Categoria(1L, "Anel");
+            Banho banho = new Banho(2, "Dourado");
+            Material material = new Material(3, "Prata");
+
             Joia joia = new Joia();
             joia.setId(1L);
             joia.setNome("Colar Ponto de Luz");
@@ -53,7 +60,11 @@ class JoiaMapperTest {
             joia.setQuantidadeMinima(3);
             joia.setAtivo(true);
             joia.setDataCadastro(LocalDateTime.now());
+            joia.setDataAtualizacao(LocalDateTime.now().plusMinutes(5));
             joia.setQuantidade(20);
+            joia.setCategoria(categoria);
+            joia.setBanho(banho);
+            joia.setMaterial(material);
 
             JoiaSaidaDTO dto = JoiaMapper.toResponse(joia);
 
@@ -63,8 +74,29 @@ class JoiaMapperTest {
             assertEquals(joia.getPreco(), dto.getPreco());
             assertEquals(joia.getQuantidadeMinima(), dto.getQuantidadeMinima());
             assertEquals(joia.getAtivo(), dto.getAtivo());
+            assertEquals(JoiaStatus.ATIVO, dto.getStatus());
             assertEquals(joia.getDataCadastro(), dto.getDataCadastro());
+            assertEquals(joia.getDataAtualizacao(), dto.getDataAtualizacao());
             assertEquals(joia.getQuantidade(), dto.getQuantidade());
+            assertNotNull(dto.getCategoria());
+            assertEquals("Anel", dto.getCategoria().getNome());
+            assertNotNull(dto.getBanho());
+            assertEquals("Dourado", dto.getBanho().getNome());
+            assertNotNull(dto.getMaterial());
+            assertEquals("Prata", dto.getMaterial().getNome());
+        }
+
+        @Test
+        @DisplayName("Deve marcar como critico quando a quantidade estiver na faixa minima")
+        void deveMapearStatusCriticoQuandoQuantidadeAtingiuMinimo() {
+            Joia joia = new Joia();
+            joia.setAtivo(true);
+            joia.setQuantidade(3);
+            joia.setQuantidadeMinima(3);
+
+            JoiaSaidaDTO dto = JoiaMapper.toResponse(joia);
+
+            assertEquals(JoiaStatus.CRITICO, dto.getStatus());
         }
 
         @Test
