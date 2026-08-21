@@ -96,4 +96,6 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
             @Param("dataInicio") LocalDateTime dataInicio,
             @Param("dataFim") LocalDateTime dataFim
     );
+
+    Movimentacao findFirstByJoiaIdOrderByDataDesc(long id);
 }
