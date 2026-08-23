@@ -127,4 +127,3 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
 
     Movimentacao findFirstByJoiaIdOrderByDataDesc(long id);
 }
-}
