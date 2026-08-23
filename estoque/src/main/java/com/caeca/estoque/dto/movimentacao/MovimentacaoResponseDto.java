@@ -6,6 +6,8 @@ import com.caeca.estoque.dto.motivoMovimentacao.MotivoMovimentacaoResponseDto;
 import com.caeca.estoque.dto.usuario.UsuarioListarDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResponseDto;
 
+import java.time.LocalDateTime;
+
 public class MovimentacaoResponseDto {
     private Long id;
     private Integer quantidade;
@@ -15,11 +17,12 @@ public class MovimentacaoResponseDto {
     private UsuarioListarDto usuario;
     private FornecedorResponseDTO fornecedor;
     private MovimentacaoRevendedoraResponseDto movimentacaoRevendedora;
+    private LocalDateTime data;
 
     public MovimentacaoResponseDto() {
     }
 
-    public MovimentacaoResponseDto(Long id, Integer quantidade, Double precoSaida, JoiaSaidaDTO joia, MotivoMovimentacaoResponseDto motivoMovimentacao, UsuarioListarDto usuario, FornecedorResponseDTO fornecedor, MovimentacaoRevendedoraResponseDto movimentacaoRevendedora) {
+    public MovimentacaoResponseDto(Long id, Integer quantidade, Double precoSaida, JoiaSaidaDTO joia, MotivoMovimentacaoResponseDto motivoMovimentacao, UsuarioListarDto usuario, FornecedorResponseDTO fornecedor, MovimentacaoRevendedoraResponseDto movimentacaoRevendedora, LocalDateTime data) {
         this.id = id;
         this.quantidade = quantidade;
         this.precoSaida = precoSaida;
@@ -28,6 +31,7 @@ public class MovimentacaoResponseDto {
         this.usuario = usuario;
         this.fornecedor = fornecedor;
         this.movimentacaoRevendedora = movimentacaoRevendedora;
+        this.data = data;
     }
 
     public Long getId() {
@@ -92,5 +96,13 @@ public class MovimentacaoResponseDto {
 
     public void setMovimentacaoRevendedora(MovimentacaoRevendedoraResponseDto movimentacaoRevendedora) {
         this.movimentacaoRevendedora = movimentacaoRevendedora;
+    }
+
+    public LocalDateTime getData() {
+        return data;
+    }
+
+    public void setData(LocalDateTime data) {
+        this.data = data;
     }
 }
