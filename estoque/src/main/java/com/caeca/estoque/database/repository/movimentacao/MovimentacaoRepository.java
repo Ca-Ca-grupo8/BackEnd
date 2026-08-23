@@ -2,6 +2,7 @@ package com.caeca.estoque.database.repository.movimentacao;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
+import com.caeca.estoque.dto.dashboard.GraficoMotivoDto;
 import com.caeca.estoque.dto.dashboard.TopCincoDto;
 import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Pageable;
@@ -82,6 +83,33 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
             AND m.data > :fim
     """)
     long buscarTotalDeEntradasApos(LocalDateTime fim);
+
+
+    @Query("""
+            SELECT new com.caeca.estoque.dto.dashboard.GraficoMotivoDto(
+                m.motivoMovimentacao.descricao,
+                SUM(m.quantidade))
+            FROM Movimentacao m
+            WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%saida%')
+            AND m.data BETWEEN :inicio AND :fim
+            AND (:categoriaId IS NULL OR m.joia.categoria.id = :categoriaId)
+            GROUP BY m.motivoMovimentacao.descricao
+            ORDER BY SUM(m.quantidade) DESC
+    """)
+    List<GraficoMotivoDto> buscarGraficoMotivosSaida(LocalDateTime inicio, LocalDateTime fim, Long categoriaId);
+
+    @Query("""
+            SELECT new com.caeca.estoque.dto.dashboard.GraficoMotivoDto(
+                m.motivoMovimentacao.descricao,
+                SUM(m.quantidade))
+            FROM Movimentacao m
+            WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%reentrada%')
+            AND m.data BETWEEN :inicio AND :fim
+            AND (:categoriaId IS NULL OR m.joia.categoria.id = :categoriaId)
+            GROUP BY m.motivoMovimentacao.descricao
+            ORDER BY SUM(m.quantidade) DESC
+    """)
+    List<GraficoMotivoDto> buscarGraficoMotivosReentrada(LocalDateTime inicio, LocalDateTime fim, Long categoriaId);
 
     @Query("""
         SELECT m FROM Movimentacao m
