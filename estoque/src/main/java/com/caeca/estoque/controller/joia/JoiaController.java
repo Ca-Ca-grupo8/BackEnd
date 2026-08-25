@@ -1,13 +1,8 @@
 package com.caeca.estoque.controller.joia;
 
-import com.caeca.estoque.database.model.banho.Banho;
-import com.caeca.estoque.database.model.categoria.Categoria;
-import com.caeca.estoque.database.model.joia.Joia;
-import com.caeca.estoque.database.model.material.Material;
 import com.caeca.estoque.dto.joia.JoiaAtualizacaoDTO;
 import com.caeca.estoque.dto.joia.JoiaEntradaDTO;
 import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
-import com.caeca.estoque.dto.joia.StatusDTO;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.joia.JoiaService;
 import com.caeca.estoque.service.Material.MaterialService;
@@ -15,7 +10,6 @@ import com.caeca.estoque.service.banho.BanhoService;
 import com.caeca.estoque.service.categoria.CategoriaService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

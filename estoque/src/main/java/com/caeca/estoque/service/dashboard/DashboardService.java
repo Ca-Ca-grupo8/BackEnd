@@ -2,10 +2,7 @@ package com.caeca.estoque.service.dashboard;
 
 import com.caeca.estoque.database.repository.joia.JoiaRepository;
 import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
-import com.caeca.estoque.dto.dashboard.FiltroDashboardDTO;
-import com.caeca.estoque.dto.dashboard.FiltroGiroEstoque;
-import com.caeca.estoque.dto.dashboard.TopCincoDto;
-import com.caeca.estoque.dto.dashboard.ValorSaidaDto;
+import com.caeca.estoque.dto.dashboard.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +10,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class DashboardService {
@@ -131,5 +127,32 @@ public class DashboardService {
         }
 
         return totalVendido / estoqueMedio;
+    }
+
+    public List<TopCincoMaisFriasDto> buscarTopCincoMaisFrios(
+            FiltroDashboardDTO filtro
+    ) {
+
+        LocalDateTime inicio = filtro.dataInicio();
+        LocalDateTime fim = filtro.dataTermino();
+
+        if (inicio == null || fim == null) {
+            LocalDateTime hoje = LocalDateTime.now();
+
+            inicio = hoje.minusMonths(1)
+                    .withDayOfMonth(1)
+                    .with(LocalTime.MIN);
+
+            fim = inicio
+                    .with(TemporalAdjusters.lastDayOfMonth())
+                    .with(LocalTime.MAX);
+        }
+
+        return movimentacaoRepository.buscarProdutosFrios(
+                inicio,
+                fim,
+                filtro.categoriaId(),
+                PageRequest.of(0, 5)
+        );
     }
 }
