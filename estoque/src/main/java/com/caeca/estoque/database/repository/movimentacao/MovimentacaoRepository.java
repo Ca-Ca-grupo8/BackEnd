@@ -4,6 +4,7 @@ import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.dto.dashboard.GraficoMotivoDto;
 import com.caeca.estoque.dto.dashboard.TopCincoDto;
+import com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDTO;
 import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -126,4 +127,29 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
     );
 
     Movimentacao findFirstByJoiaIdOrderByDataDesc(long id);
+
+    @Query("""
+    SELECT new com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDTO(
+        j.nome,
+        j.quantidade,
+        MAX(m.data)
+    )
+    FROM Joia j
+    LEFT JOIN Movimentacao m
+        ON m.joia.id = j.id
+        AND m.motivoMovimentacao.tipoMovimentacao.id = 2
+        AND m.data BETWEEN :inicio AND :fim
+    WHERE j.isAtivo = true
+        AND (:categoriaId = 0 OR j.categoria.id = :categoriaId)
+    GROUP BY j.id, j.nome, j.quantidade
+    ORDER BY
+        CASE WHEN MAX(m.data) IS NULL THEN 0 ELSE 1 END,
+        MAX(m.data) ASC
+    """)
+    List<TopCincoMaisFriasDTO> buscarProdutosFrios(
+            LocalDateTime inicio,
+            LocalDateTime fim,
+            Long categoriaId,
+            Pageable pageable
+    );
 }

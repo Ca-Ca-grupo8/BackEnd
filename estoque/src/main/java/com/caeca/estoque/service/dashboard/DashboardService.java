@@ -137,4 +137,29 @@ public class DashboardService {
     public List<GraficoMotivoDto> obterGraficoMotivosReentrada(LocalDateTime inicio, LocalDateTime fim, Long categoriaId) {
         return movimentacaoRepository.buscarGraficoMotivosReentrada(inicio, fim, categoriaId);
     }
+
+    public List<TopCincoMaisFriasDTO> buscarTopCincoMaisFrios(FiltroDashboardDTO filtro) {
+
+        LocalDateTime inicio = filtro.dataInicio();
+        LocalDateTime fim = filtro.dataTermino();
+
+        if (inicio == null || fim == null) {
+            LocalDateTime hoje = LocalDateTime.now();
+
+            inicio = hoje.minusMonths(1)
+                    .withDayOfMonth(1)
+                    .with(LocalTime.MIN);
+
+            fim = inicio
+                    .with(TemporalAdjusters.lastDayOfMonth())
+                    .with(LocalTime.MAX);
+        }
+
+        return movimentacaoRepository.buscarProdutosFrios(
+                inicio,
+                fim,
+                filtro.categoriaId(),
+                PageRequest.of(0, 5)
+        );
+    }
 }

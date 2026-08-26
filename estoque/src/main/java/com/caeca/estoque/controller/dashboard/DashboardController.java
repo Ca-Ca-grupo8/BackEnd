@@ -59,4 +59,11 @@ public class DashboardController {
         List<GraficoMotivoDto> dados = dashboardService.obterGraficoMotivosReentrada(inicio, fim, categoriaId);
         return ResponseEntity.ok(dados);
     }
+
+    @GetMapping("/top-cinco-mais-frios")
+    public ResponseEntity<List<TopCincoMaisFriasDTO>> buscarTopCincoMaisFrios(FiltroDashboardDTO filtro) {
+        return ResponseEntity.ok(
+                dashboardService.buscarTopCincoMaisFrios(filtro)
+        );
+    }
 }
