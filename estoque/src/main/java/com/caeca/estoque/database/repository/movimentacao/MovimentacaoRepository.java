@@ -152,4 +152,60 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
             Long categoriaId,
             Pageable pageable
     );
+
+    @Query(value = """
+    SELECT ROUND(
+        100.0 * SUM(
+            CASE
+                WHEN NOT EXISTS (
+                    SELECT 1
+                    FROM movimentacao m
+                    WHERE m.joia_id = j.id
+                      AND m.tipo_movimentacao_id_tipo_movimentacao = 2
+                      AND m.data >= :dataInicio
+                      AND m.data < :dataTermino
+                )
+                THEN 1
+                ELSE 0
+            END
+        ) / COUNT(j.id),
+        2
+    )
+    FROM joia j
+    WHERE j.is_ativo = true
+      AND (:categoriaId = 0 OR j.categoria_id = :categoriaId)
+    """, nativeQuery = true)
+    Number buscarIndiceAtual(
+            @Param("dataInicio") LocalDateTime dataInicio,
+            @Param("dataTermino") LocalDateTime dataTermino,
+            @Param("categoriaId") Long categoriaId
+    );
+
+    @Query(value = """
+    SELECT ROUND(
+        100.0 * SUM(
+            CASE
+                WHEN NOT EXISTS (
+                    SELECT 1
+                    FROM movimentacao m
+                    WHERE m.joia_id = j.id
+                      AND m.tipo_movimentacao_id_tipo_movimentacao = 2
+                      AND m.data >= :inicioMesAnterior
+                      AND m.data < :fimMesAnterior
+                )
+                THEN 1
+                ELSE 0
+            END
+        ) / COUNT(j.id),
+        2
+    )
+    FROM joia j
+    WHERE j.is_ativo = true
+      AND (:categoriaId = 0 OR j.categoria_id = :categoriaId)
+    """, nativeQuery = true)
+    Number buscarIndiceMesAnterior(
+            @Param("inicioMesAnterior") LocalDateTime inicioMesAnterior,
+            @Param("fimMesAnterior") LocalDateTime fimMesAnterior,
+            @Param("categoriaId") Long categoriaId
+    );
 }
