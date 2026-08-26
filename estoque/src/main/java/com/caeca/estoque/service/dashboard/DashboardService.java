@@ -6,6 +6,8 @@ import com.caeca.estoque.dto.dashboard.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
@@ -160,6 +162,50 @@ public class DashboardService {
                 fim,
                 filtro.categoriaId(),
                 PageRequest.of(0, 5)
+        );
+    }
+
+    public IndicePecasFriasDTO buscarIndicePecasFrias(
+            FiltroDashboardDTO filtro
+    ) {
+
+        LocalDateTime inicioMesAnterior =
+                filtro.dataInicio().minusMonths(1);
+
+        LocalDateTime fimMesAnterior =
+                filtro.dataTermino().minusMonths(1);
+
+        Number resultadoAtual =
+                movimentacaoRepository.buscarIndiceAtual(
+                        filtro.dataInicio(),
+                        filtro.dataTermino(),
+                        filtro.categoriaId()
+                );
+
+        Number resultadoAnterior =
+                movimentacaoRepository.buscarIndiceMesAnterior(
+                        inicioMesAnterior,
+                        fimMesAnterior,
+                        filtro.categoriaId()
+                );
+
+        double indiceAtual =
+                resultadoAtual != null
+                        ? resultadoAtual.doubleValue()
+                        : 0.0;
+
+        double indiceAnterior =
+                resultadoAnterior != null
+                        ? resultadoAnterior.doubleValue()
+                        : 0.0;
+
+        double diferenca =
+                indiceAtual - indiceAnterior;
+
+        return new IndicePecasFriasDTO(
+                indiceAtual,
+                indiceAnterior,
+                diferenca
         );
     }
 }

@@ -66,4 +66,13 @@ public class DashboardController {
                 dashboardService.buscarTopCincoMaisFrios(filtro)
         );
     }
+
+    @GetMapping("/indice-pecas-frias")
+    public ResponseEntity<IndicePecasFriasDTO> buscarIndicePecasFrias(
+            FiltroDashboardDTO filtro
+    ) {
+        return ResponseEntity.ok(
+                dashboardService.buscarIndicePecasFrias(filtro)
+        );
+    }
 }
