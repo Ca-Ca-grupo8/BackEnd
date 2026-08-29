@@ -24,8 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @WebMvcTest(JoiaController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class JoiaControllerTest {
@@ -48,7 +46,7 @@ class JoiaControllerTest {
         @DisplayName("Deve retornar status 200 e lista de joias")
         void deveRetornarStatus200EListaDeJoias() throws Exception {
             JoiaSaidaDTO joia = new JoiaSaidaDTO();
-            when(joiaService.listarTodasAsJoias()).thenReturn(List.of(joia));
+            when(joiaService.listarTodasAsJoias(null, null, null, null, null, null, null)).thenReturn(List.of(joia));
 
             mockMvc.perform(get("/joias")
                             .contentType(MediaType.APPLICATION_JSON))
@@ -56,7 +54,7 @@ class JoiaControllerTest {
                     .andExpect(jsonPath("$").isArray())
                     .andExpect(jsonPath("$.length()").value(1));
 
-            verify(joiaService, times(1)).listarTodasAsJoias();
+            verify(joiaService, times(1)).listarTodasAsJoias(null, null, null, null, null, null, null);
         }
     }
 
