@@ -79,8 +79,6 @@ public class SecurityConfiguracao {
             "/v3/api-docs/**",
             "/actuator/*",
             "/usuarios/login/**",
-            "/usuarios",
-            "/usuarios/**",
             "/usuarios/logout/**",
             "/h2-console/**",
             "/h2-console/*/**",
@@ -117,8 +115,9 @@ public class SecurityConfiguracao {
 
                 // Define quais URLs são públicas e quais exigem autenticação
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(URLS_PERMITIDAS).permitAll()  // rotas públicas
-                        .anyRequest().authenticated()                  // todas as outras exigem token
+                        .requestMatchers(URLS_PERMITIDAS).permitAll()   // rotas públicas
+                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll() // criação de usuário é pública
+                        .anyRequest().authenticated()                   // todas as outras exigem token
                 )
 
                 // Configura o handler para erros de autenticação (token ausente/inválido → 401/403)
