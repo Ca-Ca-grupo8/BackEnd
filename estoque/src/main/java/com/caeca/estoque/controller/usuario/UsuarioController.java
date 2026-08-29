@@ -116,4 +116,11 @@ public class UsuarioController {
         }
         return ResponseEntity.ok(usuariosEncontrados);
     }
+
+    @GetMapping("/me")
+    @SecurityRequirement(name = "Bearer")
+    public ResponseEntity<UsuarioListarDto> autoValidacao() {
+        Usuario usuario = usuarioService.getUsuarioLogado();
+        return ResponseEntity.ok(UsuarioMapper.of(usuario));
+    }
 }

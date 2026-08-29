@@ -1,5 +1,6 @@
 package com.caeca.estoque.database.repository.movimentacao;
 
+import com.caeca.estoque.database.model.fornecedores.Fornecedor;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.dto.dashboard.GraficoMotivoDto;
@@ -118,6 +119,7 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
           AND (:tipo IS NULL OR m.motivoMovimentacao.tipoMovimentacao.nome = :tipo)
           AND (cast(:dataInicio as date) IS NULL OR m.data >= :dataInicio)
           AND (cast(:dataFim as date) IS NULL OR m.data <= :dataFim)
+        ORDER BY m.data DESC
     """)
     List<Movimentacao> buscarComFiltros(
             @Param("nome") String nome,
@@ -127,6 +129,14 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
     );
 
     Movimentacao findFirstByJoiaIdOrderByDataDesc(long id);
+
+    @Query("""
+            SELECT DISTINCT m.fornecedor
+            FROM Movimentacao m
+            WHERE m.joia.id = :joiaId
+              AND m.fornecedor IS NOT NULL
+    """)
+    List<Fornecedor> buscarFornecedoresDaJoia(@Param("joiaId") Long joiaId);
 
     @Query("""
     SELECT new com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDTO(

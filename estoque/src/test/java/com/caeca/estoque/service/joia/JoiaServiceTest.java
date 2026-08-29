@@ -5,6 +5,7 @@ import com.caeca.estoque.database.model.categoria.Categoria;
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.material.Material;
 import com.caeca.estoque.database.repository.joia.JoiaRepository;
+import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
 import com.caeca.estoque.dto.joia.JoiaAtualizacaoDTO;
 import com.caeca.estoque.dto.joia.JoiaEntradaDTO;
 import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.*;
 class JoiaServiceTest {
 
     @Mock private JoiaRepository joiaRepository;
+    @Mock private MovimentacaoRepository movimentacaoRepository;
     @Mock private BanhoService banhoService;
     @Mock private CategoriaService categoriaService;
     @Mock private MaterialService materialService;
@@ -42,23 +44,28 @@ class JoiaServiceTest {
         @Test
         @DisplayName("Deve retornar lista de joias com sucesso quando existirem dados")
         void deveLancarExcecaoQuandoListaCheia() {
-            when(joiaRepository.findAll()).thenReturn(List.of(new Joia()));
+            Joia joia = new Joia();
+            joia.setId(1L);
+            when(joiaRepository.listarTodosFiltrado(any(), any(), any(), any(), any(), any()))
+                    .thenReturn(List.of(joia));
+            when(movimentacaoRepository.buscarFornecedoresDaJoia(anyLong())).thenReturn(List.of());
 
-            List<JoiaSaidaDTO> resultado = joiaService.listarTodasAsJoias();
+            List<JoiaSaidaDTO> resultado = joiaService.listarTodasAsJoias(null, null, null, null, null, null, null);
 
             assertNotNull(resultado);
             assertFalse(resultado.isEmpty());
             assertEquals(1, resultado.size());
-            verify(joiaRepository, times(1)).findAll();
+            verify(joiaRepository, times(1)).listarTodosFiltrado(any(), any(), any(), any(), any(), any());
         }
 
         @Test
         @DisplayName("Deve lançar ResponseStatusException 404 quando a lista estiver vazia")
         void deveLancarExcecaoQuandoListaVazia() {
-            when(joiaRepository.findAll()).thenReturn(List.of());
+            when(joiaRepository.listarTodosFiltrado(any(), any(), any(), any(), any(), any()))
+                    .thenReturn(List.of());
 
             assertThrows(ResponseStatusException.class, () -> {
-                joiaService.listarTodasAsJoias();
+                joiaService.listarTodasAsJoias(null, null, null, null, null, null, null);
             });
         }
     }
@@ -144,6 +151,7 @@ class JoiaServiceTest {
         @DisplayName("Deve atualizar os dados da joia com sucesso")
         void atualizarJoiaPorId() {
             Joia joia = new Joia();
+            joia.setQuantidade(10);
             when(joiaRepository.findById(anyLong())).thenReturn(Optional.of(joia));
             when(joiaRepository.save(any(Joia.class))).thenReturn(joia);
 

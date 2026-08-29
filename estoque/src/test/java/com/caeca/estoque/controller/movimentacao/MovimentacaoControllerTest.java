@@ -53,7 +53,7 @@ class MovimentacaoControllerTest {
                 joiaMock, tipoMock, usuarioMock, null, movRevendedoraMock
         );
 
-        when(movimentacaoService.listar()).thenReturn(List.of(movimentacao));
+        when(movimentacaoService.listar(null, null, null, null)).thenReturn(List.of(movimentacao));
 
         mockMvc.perform(get("/movimentacoes"))
                 .andExpect(status().isOk())

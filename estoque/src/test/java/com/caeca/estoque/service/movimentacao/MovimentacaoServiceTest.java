@@ -57,26 +57,26 @@ class MovimentacaoServiceTest {
         @Test
         @DisplayName("Deve retornar lista de movimentações com sucesso quando existirem dados")
         void deveRetornarListaDeMovimentacoesComSucesso() {
-            when(movimentacaoRepository.findAll()).thenReturn(List.of(new Movimentacao()));
+            when(movimentacaoRepository.buscarComFiltros(null, null, null, null)).thenReturn(List.of(new Movimentacao()));
 
-            List<Movimentacao> resultado = movimentacaoService.listar();
+            List<Movimentacao> resultado = movimentacaoService.listar(null, null, null, null);
 
             assertNotNull(resultado);
             assertFalse(resultado.isEmpty());
             assertEquals(1, resultado.size());
-            verify(movimentacaoRepository, times(1)).findAll();
+            verify(movimentacaoRepository, times(1)).buscarComFiltros(null, null, null, null);
         }
 
         @Test
         @DisplayName("Deve retornar lista vazia quando não existirem movimentações")
         void deveRetornarListaVaziaQuandoNaoExistiremMovimentacoes() {
-            when(movimentacaoRepository.findAll()).thenReturn(List.of());
+            when(movimentacaoRepository.buscarComFiltros(null, null, null, null)).thenReturn(List.of());
 
-            List<Movimentacao> resultado = movimentacaoService.listar();
+            List<Movimentacao> resultado = movimentacaoService.listar(null, null, null, null);
 
             assertNotNull(resultado);
             assertTrue(resultado.isEmpty());
-            verify(movimentacaoRepository, times(1)).findAll();
+            verify(movimentacaoRepository, times(1)).buscarComFiltros(null, null, null, null);
         }
     }
 
