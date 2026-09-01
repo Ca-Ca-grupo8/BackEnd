@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -26,11 +25,14 @@ public class UsuarioController {
     // Nome do cookie — definido em um só lugar para evitar typos
     public static final String COOKIE_NOME = "authToken";
 
-    @Value("${jwt.validity}")
-    private long jwtValidity;
+    private final UsuarioService usuarioService;
+    private final long jwtValidity;
 
-    @Autowired
-    private UsuarioService usuarioService;
+    public UsuarioController(UsuarioService usuarioService,
+                             @Value("${jwt.validity}") long jwtValidity) {
+        this.usuarioService = usuarioService;
+        this.jwtValidity = jwtValidity;
+    }
 
     @PostMapping
     @SecurityRequirement(name = "Bearer")

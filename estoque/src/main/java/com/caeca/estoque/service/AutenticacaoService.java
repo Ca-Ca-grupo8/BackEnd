@@ -3,7 +3,6 @@ package com.caeca.estoque.service;
 
 import com.caeca.estoque.database.repository.usuario.UsuarioRepository;
 import com.caeca.estoque.dto.usuario.UsuarioDetalhesDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,8 +15,11 @@ import java.util.Optional;
 @Service
 public class AutenticacaoService implements UserDetailsService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
+
+    public AutenticacaoService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
 
     // Método da interface implementada
     @Override

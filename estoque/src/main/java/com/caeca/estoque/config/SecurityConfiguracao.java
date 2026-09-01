@@ -1,6 +1,5 @@
 package com.caeca.estoque.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -50,12 +49,16 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfiguracao {
 
-    @Autowired
-    private AutenticacaoService autenticacaoService;
+    private final AutenticacaoService autenticacaoService;
 
     // AutenticacaoEntryPoint é registrado como @Component, o Spring injeta automaticamente
-    @Autowired
-    private AutenticacaoEntryPoint autenticacaoJwtEntryPoint;
+    private final AutenticacaoEntryPoint autenticacaoJwtEntryPoint;
+
+    public SecurityConfiguracao(AutenticacaoService autenticacaoService,
+                                AutenticacaoEntryPoint autenticacaoJwtEntryPoint) {
+        this.autenticacaoService = autenticacaoService;
+        this.autenticacaoJwtEntryPoint = autenticacaoJwtEntryPoint;
+    }
 
     /**
      * URLs que não exigem autenticação (acesso público).
