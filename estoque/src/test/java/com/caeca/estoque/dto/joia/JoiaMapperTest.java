@@ -20,9 +20,9 @@ class JoiaMapperTest {
     class ToEntity {
 
         @Test
-        @DisplayName("Deve mapear JoiaEntradaDTO para Joia corretamente")
+        @DisplayName("Deve mapear JoiaEntradaDto para Joia corretamente")
         void deveMapearDTOParaEntidade() {
-            JoiaEntradaDTO dto = new JoiaEntradaDTO();
+            JoiaEntradaDto dto = new JoiaEntradaDto();
             dto.setNome("Anel Solitário Prata");
             dto.setQuantidade(15);
             dto.setQuantidadeMinima(5);
@@ -47,7 +47,7 @@ class JoiaMapperTest {
     class ToResponse {
 
         @Test
-        @DisplayName("Deve mapear Joia para JoiaSaidaDTO corretamente com todos os campos")
+        @DisplayName("Deve mapear Joia para JoiaSaidaDto corretamente com todos os campos")
         void deveMapearEntidadeParaResponseDTO() {
             Categoria categoria = new Categoria(1L, "Anel");
             Banho banho = new Banho(2, "Dourado");
@@ -66,7 +66,7 @@ class JoiaMapperTest {
             joia.setBanho(banho);
             joia.setMaterial(material);
 
-            JoiaSaidaDTO dto = JoiaMapper.toResponse(joia);
+            JoiaSaidaDto dto = JoiaMapper.toResponse(joia);
 
             assertNotNull(dto);
             assertEquals(joia.getId(), dto.getId());
@@ -94,7 +94,7 @@ class JoiaMapperTest {
             joia.setQuantidade(3);
             joia.setQuantidadeMinima(3);
 
-            JoiaSaidaDTO dto = JoiaMapper.toResponse(joia);
+            JoiaSaidaDto dto = JoiaMapper.toResponse(joia);
 
             assertEquals(JoiaStatus.ALERTA, dto.getStatus());
         }
@@ -107,7 +107,7 @@ class JoiaMapperTest {
             joia.setQuantidade(0);
             joia.setQuantidadeMinima(3);
 
-            JoiaSaidaDTO dto = JoiaMapper.toResponse(joia);
+            JoiaSaidaDto dto = JoiaMapper.toResponse(joia);
 
             assertEquals(JoiaStatus.CRITICO, dto.getStatus());
         }
@@ -124,7 +124,7 @@ class JoiaMapperTest {
     class ToResponseList {
 
         @Test
-        @DisplayName("Deve converter uma lista de Joia em uma lista de JoiaSaidaDTO")
+        @DisplayName("Deve converter uma lista de Joia em uma lista de JoiaSaidaDto")
         void deveConverterListaDeEntidadesParaListaDeDTOs() {
             Joia joia1 = new Joia();
             joia1.setId(1L);
@@ -136,7 +136,7 @@ class JoiaMapperTest {
 
             List<Joia> listaEntidades = List.of(joia1, joia2);
 
-            List<JoiaSaidaDTO> listaDTOS = JoiaMapper.toResponseList(listaEntidades);
+            List<JoiaSaidaDto> listaDTOS = JoiaMapper.toResponseList(listaEntidades);
 
             assertNotNull(listaDTOS);
             assertEquals(2, listaDTOS.size());

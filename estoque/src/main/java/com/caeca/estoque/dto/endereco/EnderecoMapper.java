@@ -3,8 +3,8 @@ package com.caeca.estoque.dto.endereco;
 import com.caeca.estoque.database.model.endereco.Endereco;
 
 public class EnderecoMapper {
-    public static EnderecoResponseDTO toResponse(Endereco e) {
-        return EnderecoResponseDTO.builder()
+    public static EnderecoResponseDto toResponse(Endereco e) {
+        return EnderecoResponseDto.builder()
                 .id(e.getId())
                 .cep(e.getCep())
                 .logradouro(e.getLogradouro())
@@ -16,7 +16,7 @@ public class EnderecoMapper {
                 .build();
     }
 
-    public static Endereco toEntity(EnderecoRequestDTO dto) {
+    public static Endereco toEntity(EnderecoRequestDto dto) {
         return Endereco.builder()
                 .cep(dto.getCep())
                 .logradouro(dto.getLogradouro())

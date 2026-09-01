@@ -2,7 +2,7 @@ package com.caeca.estoque.dto.endereco;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ViaCepResponseDTO {
+public class ViaCepResponseDto {
     private String cep;
 
     @JsonProperty("logradouro")
@@ -24,10 +24,10 @@ public class ViaCepResponseDTO {
         return Boolean.TRUE.equals(erro);
     }
 
-    public ViaCepResponseDTO() {
+    public ViaCepResponseDto() {
     }
 
-    public ViaCepResponseDTO(String cep, String logradouro, String bairro, String cidade, String uf, Boolean erro) {
+    public ViaCepResponseDto(String cep, String logradouro, String bairro, String cidade, String uf, Boolean erro) {
         this.cep = cep;
         this.logradouro = logradouro;
         this.bairro = bairro;

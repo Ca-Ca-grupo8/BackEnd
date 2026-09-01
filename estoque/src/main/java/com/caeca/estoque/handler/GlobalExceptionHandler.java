@@ -1,6 +1,6 @@
 package com.caeca.estoque.handler;
 
-import com.caeca.estoque.dto.endereco.ErroResponseDTO;
+import com.caeca.estoque.dto.endereco.ErroResponseDto;
 import com.caeca.estoque.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,21 +31,21 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EnderecoNotFoundException.class)
-    public ResponseEntity<ErroResponseDTO> handleEnderecoNotFound(EnderecoNotFoundException ex) {
+    public ResponseEntity<ErroResponseDto> handleEnderecoNotFound(EnderecoNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErroResponseDTO(ex.getMessage()));
+                .body(new ErroResponseDto(ex.getMessage()));
     }
 
     @ExceptionHandler(CepNotFoundException.class)
-    public ResponseEntity<ErroResponseDTO> handleCepNotFound(CepNotFoundException ex) {
+    public ResponseEntity<ErroResponseDto> handleCepNotFound(CepNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErroResponseDTO(ex.getMessage()));
+                .body(new ErroResponseDto(ex.getMessage()));
     }
 
     // Erros de validação retorna um erro por campo
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<List<ErroResponseDTO>> handleValidation(MethodArgumentNotValidException ex) {
-        List<ErroResponseDTO> erros = ex.getBindingResult().getFieldErrors().stream()
+    public ResponseEntity<List<ErroResponseDto>> handleValidation(MethodArgumentNotValidException ex) {
+        List<ErroResponseDto> erros = ex.getBindingResult().getFieldErrors().stream()
                 .map(this::buildErroFromField)
                 .collect(Collectors.toList());
 
@@ -53,14 +53,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErroResponseDTO> handleGeneric(RuntimeException ex) {
+    public ResponseEntity<ErroResponseDto> handleGeneric(RuntimeException ex) {
         ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErroResponseDTO("Erro inesperado no servidor."));
+                .body(new ErroResponseDto("Erro inesperado no servidor."));
     }
 
-    private ErroResponseDTO buildErroFromField(FieldError fe) {
-        return new ErroResponseDTO(fe.getDefaultMessage(), fe.getField());
+    private ErroResponseDto buildErroFromField(FieldError fe) {
+        return new ErroResponseDto(fe.getDefaultMessage(), fe.getField());
     }
 
 }

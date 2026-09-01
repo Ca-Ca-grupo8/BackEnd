@@ -41,19 +41,19 @@ class FornecedorControllerTest {
     @MockitoBean
     private FornecedorService fornecedorService;
 
-    private FornecedorResponseDTO responseDTO;
-    private FornecedorRequestDTO requestDTO;
+    private FornecedorResponseDto responseDTO;
+    private FornecedorRequestDto requestDTO;
 
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
-        responseDTO = new FornecedorResponseDTO(
+        responseDTO = new FornecedorResponseDto(
                 1L, "Joias Brasil", "@joiasbrasil", "11999990000", true, LocalDateTime.now()
         );
 
-        requestDTO = new FornecedorRequestDTO();
+        requestDTO = new FornecedorRequestDto();
         requestDTO.setNome("Joias Brasil");
         requestDTO.setTelefone("11999990000");
         requestDTO.setInstagram("@joiasbrasil");
@@ -145,10 +145,10 @@ class FornecedorControllerTest {
         @Test
         @DisplayName("Deve retornar status 201 e dados do fornecedor criado")
         void deveRetornar201EFornecedorCriado() throws Exception {
-            FornecedorCreatedResponseDTO createdDTO = new FornecedorCreatedResponseDTO(
+            FornecedorCreatedResponseDto createdDTO = new FornecedorCreatedResponseDto(
                     1L, "Joias Brasil", true, LocalDateTime.now()
             );
-            when(fornecedorService.criar(any(FornecedorRequestDTO.class))).thenReturn(createdDTO);
+            when(fornecedorService.criar(any(FornecedorRequestDto.class))).thenReturn(createdDTO);
 
             mockMvc.perform(post("/fornecedores")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -157,7 +157,7 @@ class FornecedorControllerTest {
                     .andExpect(jsonPath("$.idFornecedor").value(1))
                     .andExpect(jsonPath("$.ativo").value(true));
 
-            verify(fornecedorService, times(1)).criar(any(FornecedorRequestDTO.class));
+            verify(fornecedorService, times(1)).criar(any(FornecedorRequestDto.class));
         }
 
         @Test
@@ -181,7 +181,7 @@ class FornecedorControllerTest {
         @Test
         @DisplayName("Deve retornar status 200 e dados atualizados do fornecedor")
         void deveRetornar200EFornecedorAtualizado() throws Exception {
-            when(fornecedorService.atualizar(eq(1L), any(FornecedorRequestDTO.class)))
+            when(fornecedorService.atualizar(eq(1L), any(FornecedorRequestDto.class)))
                     .thenReturn(responseDTO);
 
             mockMvc.perform(put("/fornecedores/{id}", 1L)
@@ -190,13 +190,13 @@ class FornecedorControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.nome").value("Joias Brasil"));
 
-            verify(fornecedorService, times(1)).atualizar(eq(1L), any(FornecedorRequestDTO.class));
+            verify(fornecedorService, times(1)).atualizar(eq(1L), any(FornecedorRequestDto.class));
         }
 
         @Test
         @DisplayName("Deve retornar status 404 quando fornecedor nao encontrado")
         void deveRetornar404QuandoNaoEncontrado() throws Exception {
-            when(fornecedorService.atualizar(eq(99L), any(FornecedorRequestDTO.class)))
+            when(fornecedorService.atualizar(eq(99L), any(FornecedorRequestDto.class)))
                     .thenThrow(new FornecedorNotFoundException(99L));
 
             mockMvc.perform(put("/fornecedores/{id}", 99L)
@@ -204,7 +204,7 @@ class FornecedorControllerTest {
                             .content(objectMapper.writeValueAsString(requestDTO)))
                     .andExpect(status().isNotFound());
 
-            verify(fornecedorService, times(1)).atualizar(eq(99L), any(FornecedorRequestDTO.class));
+            verify(fornecedorService, times(1)).atualizar(eq(99L), any(FornecedorRequestDto.class));
         }
     }
 
@@ -215,30 +215,30 @@ class FornecedorControllerTest {
         @Test
         @DisplayName("Deve retornar status 204 ao atualizar status do fornecedor")
         void deveRetornar204AoAtualizarStatus() throws Exception {
-            FornecedorStatusDTO statusDTO = new FornecedorStatusDTO(false);
-            doNothing().when(fornecedorService).atualizarStatus(eq(1L), any(FornecedorStatusDTO.class));
+            FornecedorStatusDto statusDTO = new FornecedorStatusDto(false);
+            doNothing().when(fornecedorService).atualizarStatus(eq(1L), any(FornecedorStatusDto.class));
 
             mockMvc.perform(patch("/fornecedores/{id}/status", 1L)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(statusDTO)))
                     .andExpect(status().isNoContent());
 
-            verify(fornecedorService, times(1)).atualizarStatus(eq(1L), any(FornecedorStatusDTO.class));
+            verify(fornecedorService, times(1)).atualizarStatus(eq(1L), any(FornecedorStatusDto.class));
         }
 
         @Test
         @DisplayName("Deve retornar status 404 quando fornecedor nao encontrado")
         void deveRetornar404QuandoNaoEncontrado() throws Exception {
-            FornecedorStatusDTO statusDTO = new FornecedorStatusDTO(false);
+            FornecedorStatusDto statusDTO = new FornecedorStatusDto(false);
             doThrow(new FornecedorNotFoundException(99L))
-                    .when(fornecedorService).atualizarStatus(eq(99L), any(FornecedorStatusDTO.class));
+                    .when(fornecedorService).atualizarStatus(eq(99L), any(FornecedorStatusDto.class));
 
             mockMvc.perform(patch("/fornecedores/{id}/status", 99L)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(statusDTO)))
                     .andExpect(status().isNotFound());
 
-            verify(fornecedorService, times(1)).atualizarStatus(eq(99L), any(FornecedorStatusDTO.class));
+            verify(fornecedorService, times(1)).atualizarStatus(eq(99L), any(FornecedorStatusDto.class));
         }
     }
 }

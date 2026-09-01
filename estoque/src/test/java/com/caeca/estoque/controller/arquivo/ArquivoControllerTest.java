@@ -37,7 +37,7 @@ class ArquivoControllerTest {
     @Test
     @DisplayName("Deve deletar arquivo pelo ID da Joia e retornar 204 No Content")
     void deleteByJoiaIdComSucesso() throws Exception {
-        mockMvc.perform(delete("/arquivos/joia/1/deletar"))
+        mockMvc.perform(delete("/arquivos/joia/1"))
                 .andExpect(status().isNoContent());
 
         verify(arquivoService, times(1)).deletarPorJoiaId(1L);

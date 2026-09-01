@@ -20,7 +20,7 @@ public class FornecedorService {
     }
 
     @Transactional(readOnly = true)
-    public List<FornecedorResponseDTO> listar(Boolean isAtivo, String nome) {
+    public List<FornecedorResponseDto> listar(Boolean isAtivo, String nome) {
         List<Fornecedor> resultado;
 
         if (isAtivo != null && nome != null) {
@@ -37,14 +37,14 @@ public class FornecedorService {
     }
 
     @Transactional(readOnly = true)
-    public FornecedorResponseDTO buscarPorId(Long id) {
+    public FornecedorResponseDto buscarPorId(Long id) {
         Fornecedor fornecedor = fornecedorRepository.findById(id)
                 .orElseThrow(() -> new FornecedorNotFoundException(id));
         return toResponseDTO(fornecedor);
     }
 
     @Transactional
-    public FornecedorCreatedResponseDTO criar(FornecedorRequestDTO dto) {
+    public FornecedorCreatedResponseDto criar(FornecedorRequestDto dto) {
         Fornecedor fornecedor = new Fornecedor();
         fornecedor.setNome(dto.getNome());
         fornecedor.setTelefone(dto.getTelefone());
@@ -52,7 +52,7 @@ public class FornecedorService {
 
         Fornecedor salvo = fornecedorRepository.save(fornecedor);
 
-        return new FornecedorCreatedResponseDTO(
+        return new FornecedorCreatedResponseDto(
                 salvo.getId(),
                 salvo.getNome(),
                 salvo.getIsAtivo(),
@@ -61,7 +61,7 @@ public class FornecedorService {
     }
 
     @Transactional
-    public FornecedorResponseDTO atualizar(Long id, FornecedorRequestDTO dto) {
+    public FornecedorResponseDto atualizar(Long id, FornecedorRequestDto dto) {
         Fornecedor fornecedor = fornecedorRepository.findById(id)
                 .orElseThrow(() -> new FornecedorNotFoundException(id));
 
@@ -73,15 +73,15 @@ public class FornecedorService {
     }
 
     @Transactional
-    public void atualizarStatus(Long id, FornecedorStatusDTO dto) {
+    public void atualizarStatus(Long id, FornecedorStatusDto dto) {
         Fornecedor fornecedor = fornecedorRepository.findById(id)
                 .orElseThrow(() -> new FornecedorNotFoundException(id));
         fornecedor.setIsAtivo(dto.isAtivo());
         fornecedorRepository.save(fornecedor);
     }
 
-    private FornecedorResponseDTO toResponseDTO(Fornecedor f) {
-        return new FornecedorResponseDTO(
+    private FornecedorResponseDto toResponseDTO(Fornecedor f) {
+        return new FornecedorResponseDto(
                 f.getId(),
                 f.getNome(),
                 f.getInstagram(),

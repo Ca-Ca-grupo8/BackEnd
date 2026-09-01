@@ -2,10 +2,10 @@ package com.caeca.estoque.service.fornecedor;
 
 import com.caeca.estoque.database.model.fornecedores.Fornecedor;
 import com.caeca.estoque.database.repository.fornecedor.FornecedorRepository;
-import com.caeca.estoque.dto.fornecedor.FornecedorCreatedResponseDTO;
-import com.caeca.estoque.dto.fornecedor.FornecedorRequestDTO;
-import com.caeca.estoque.dto.fornecedor.FornecedorResponseDTO;
-import com.caeca.estoque.dto.fornecedor.FornecedorStatusDTO;
+import com.caeca.estoque.dto.fornecedor.FornecedorCreatedResponseDto;
+import com.caeca.estoque.dto.fornecedor.FornecedorRequestDto;
+import com.caeca.estoque.dto.fornecedor.FornecedorResponseDto;
+import com.caeca.estoque.dto.fornecedor.FornecedorStatusDto;
 import com.caeca.estoque.exception.FornecedorNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,7 +33,7 @@ class FornecedorServiceTest {
     private FornecedorService fornecedorService;
 
     private Fornecedor fornecedor;
-    private FornecedorRequestDTO requestDTO;
+    private FornecedorRequestDto requestDTO;
 
     @BeforeEach
     void setUp() {
@@ -45,7 +45,7 @@ class FornecedorServiceTest {
         fornecedor.setIsAtivo(true);
         fornecedor.setDataCadastro(LocalDateTime.now());
 
-        requestDTO = new FornecedorRequestDTO();
+        requestDTO = new FornecedorRequestDto();
         requestDTO.setNome("Joias Brasil");
         requestDTO.setTelefone("11999990000");
         requestDTO.setInstagram("@joiasbrasil");
@@ -56,7 +56,7 @@ class FornecedorServiceTest {
     void listarSemFiltrosRetornaTodos() {
         when(fornecedorRepository.findAll()).thenReturn(List.of(fornecedor));
 
-        List<FornecedorResponseDTO> resultado = fornecedorService.listar(null, null);
+        List<FornecedorResponseDto> resultado = fornecedorService.listar(null, null);
 
         assertEquals(1, resultado.size());
         assertEquals("Joias Brasil", resultado.get(0).getNome());
@@ -68,7 +68,7 @@ class FornecedorServiceTest {
     void listarComIsAtivoChamaFindByIsAtivo() {
         when(fornecedorRepository.findByIsAtivo(true)).thenReturn(List.of(fornecedor));
 
-        List<FornecedorResponseDTO> resultado = fornecedorService.listar(true, null);
+        List<FornecedorResponseDto> resultado = fornecedorService.listar(true, null);
 
         assertEquals(1, resultado.size());
         verify(fornecedorRepository).findByIsAtivo(true);
@@ -79,7 +79,7 @@ class FornecedorServiceTest {
     void listarComNomeChamaFindByNome() {
         when(fornecedorRepository.findByNomeContainingIgnoreCase("joias")).thenReturn(List.of(fornecedor));
 
-        List<FornecedorResponseDTO> resultado = fornecedorService.listar(null, "joias");
+        List<FornecedorResponseDto> resultado = fornecedorService.listar(null, "joias");
 
         assertEquals(1, resultado.size());
         verify(fornecedorRepository).findByNomeContainingIgnoreCase("joias");
@@ -91,7 +91,7 @@ class FornecedorServiceTest {
         when(fornecedorRepository.findByIsAtivoAndNomeContainingIgnoreCase(true, "joias"))
                 .thenReturn(List.of(fornecedor));
 
-        List<FornecedorResponseDTO> resultado = fornecedorService.listar(true, "joias");
+        List<FornecedorResponseDto> resultado = fornecedorService.listar(true, "joias");
 
         assertEquals(1, resultado.size());
         verify(fornecedorRepository).findByIsAtivoAndNomeContainingIgnoreCase(true, "joias");
@@ -102,7 +102,7 @@ class FornecedorServiceTest {
     void buscarPorIdExistenteRetornaDTO() {
         when(fornecedorRepository.findById(1L)).thenReturn(Optional.of(fornecedor));
 
-        FornecedorResponseDTO resultado = fornecedorService.buscarPorId(1L);
+        FornecedorResponseDto resultado = fornecedorService.buscarPorId(1L);
 
         assertEquals(1L, resultado.getIdFornecedor());
         assertEquals("Joias Brasil", resultado.getNome());
@@ -125,7 +125,7 @@ class FornecedorServiceTest {
     void criarDadosValidosRetornaCreatedDTO() {
         when(fornecedorRepository.save(any(Fornecedor.class))).thenReturn(fornecedor);
 
-        FornecedorCreatedResponseDTO resultado = fornecedorService.criar(requestDTO);
+        FornecedorCreatedResponseDto resultado = fornecedorService.criar(requestDTO);
 
         assertEquals(1L, resultado.getIdFornecedor());
         assertEquals("Joias Brasil", resultado.getNome());
@@ -144,7 +144,7 @@ class FornecedorServiceTest {
             return f;
         });
 
-        FornecedorCreatedResponseDTO resultado = fornecedorService.criar(requestDTO);
+        FornecedorCreatedResponseDto resultado = fornecedorService.criar(requestDTO);
 
         assertEquals("Joias Brasil", resultado.getNome());
         assertNotNull(resultado.getDataCadastro());
@@ -160,7 +160,7 @@ class FornecedorServiceTest {
         when(fornecedorRepository.findById(1L)).thenReturn(Optional.of(fornecedor));
         when(fornecedorRepository.save(any(Fornecedor.class))).thenReturn(fornecedor);
 
-        FornecedorResponseDTO resultado = fornecedorService.atualizar(1L, requestDTO);
+        FornecedorResponseDto resultado = fornecedorService.atualizar(1L, requestDTO);
 
         assertEquals("Novo Nome", resultado.getNome());
         verify(fornecedorRepository).save(fornecedor);
@@ -178,7 +178,7 @@ class FornecedorServiceTest {
     @Test
     @DisplayName("desativa fornecedor existente")
     void atualizarStatusDesativaComSucesso() {
-        FornecedorStatusDTO statusDTO = new FornecedorStatusDTO(false);
+        FornecedorStatusDto statusDTO = new FornecedorStatusDto(false);
 
         when(fornecedorRepository.findById(1L)).thenReturn(Optional.of(fornecedor));
 
@@ -191,7 +191,7 @@ class FornecedorServiceTest {
     @Test
     @DisplayName("id inexistente lanca FornecedorNotFoundException")
     void atualizarStatusIdInexistenteLancaException() {
-        FornecedorStatusDTO statusDTO = new FornecedorStatusDTO(false);
+        FornecedorStatusDto statusDTO = new FornecedorStatusDto(false);
 
         when(fornecedorRepository.findById(99L)).thenReturn(Optional.empty());
 

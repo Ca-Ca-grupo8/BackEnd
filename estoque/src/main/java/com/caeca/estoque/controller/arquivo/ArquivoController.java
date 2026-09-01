@@ -17,7 +17,7 @@ public class ArquivoController {
         this.arquivoService = arquivoService;
     }
 
-    @DeleteMapping("/joia/{joiaId}/deletar")
+    @DeleteMapping("/joia/{joiaId}")
     public ResponseEntity<ArquivoResponseDto> deleteByJoiaId(@PathVariable Long joiaId) {
         arquivoService.deletarPorJoiaId(joiaId);
         return ResponseEntity.noContent().build();
