@@ -10,9 +10,6 @@ public class JoiaAtualizacaoDTO {
     @Schema(description = "Quantidade miníma recomendada para se ter no estoque", example = "2")
     private Integer quantidadeMinima;
 
-    @Schema(description = "Quantidade de joias disponível", example = "2")
-    private Integer quantidade;
-
     @Schema(description = "Id da categoria (Ex: anel)", example = "1")
     private Long categoriaId;
 
@@ -29,7 +26,6 @@ public class JoiaAtualizacaoDTO {
     public JoiaAtualizacaoDTO(String nome, Integer quantidadeMinima, Integer quantidade, Long categoriaId, Integer banhoId, Integer materialId, Double precoFinal, Boolean isAtivo) {
         this.nome = nome;
         this.quantidadeMinima = quantidadeMinima;
-        this.quantidade = quantidade;
         this.categoriaId = categoriaId;
         this.banhoId = banhoId;
         this.materialId = materialId;
@@ -53,14 +49,6 @@ public class JoiaAtualizacaoDTO {
 
     public void setQuantidadeMinima(Integer quantidadeMinima) {
         this.quantidadeMinima = quantidadeMinima;
-    }
-
-    public Integer getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(Integer quantidade) {
-        this.quantidade = quantidade;
     }
 
     public Long getCategoriaId() {

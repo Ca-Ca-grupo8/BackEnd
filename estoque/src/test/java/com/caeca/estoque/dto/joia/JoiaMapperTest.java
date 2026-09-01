@@ -74,7 +74,7 @@ class JoiaMapperTest {
             assertEquals(joia.getPreco(), dto.getPreco());
             assertEquals(joia.getQuantidadeMinima(), dto.getQuantidadeMinima());
             assertEquals(joia.getAtivo(), dto.getAtivo());
-            assertEquals(JoiaStatus.ATIVO, dto.getStatus());
+            assertEquals(JoiaStatus.OK, dto.getStatus());
             assertEquals(joia.getDataCadastro(), dto.getDataCadastro());
             assertEquals(joia.getDataAtualizacao(), dto.getDataAtualizacao());
             assertEquals(joia.getQuantidade(), dto.getQuantidade());
@@ -87,11 +87,24 @@ class JoiaMapperTest {
         }
 
         @Test
-        @DisplayName("Deve marcar como critico quando a quantidade estiver na faixa minima")
+        @DisplayName("Deve marcar como alerta quando a quantidade atingir a faixa mínima")
         void deveMapearStatusCriticoQuandoQuantidadeAtingiuMinimo() {
             Joia joia = new Joia();
             joia.setAtivo(true);
             joia.setQuantidade(3);
+            joia.setQuantidadeMinima(3);
+
+            JoiaSaidaDTO dto = JoiaMapper.toResponse(joia);
+
+            assertEquals(JoiaStatus.ALERTA, dto.getStatus());
+        }
+
+        @Test
+        @DisplayName("Deve marcar como critico quando a quantidade estiver zerada")
+        void deveMapearStatusCriticoQuandoQuantidadeZerada() {
+            Joia joia = new Joia();
+            joia.setAtivo(true);
+            joia.setQuantidade(0);
             joia.setQuantidadeMinima(3);
 
             JoiaSaidaDTO dto = JoiaMapper.toResponse(joia);

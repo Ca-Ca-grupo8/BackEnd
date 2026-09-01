@@ -5,9 +5,11 @@ import com.caeca.estoque.database.model.categoria.Categoria;
 import com.caeca.estoque.dto.arquivo.ArquivoResponseDto;
 import com.caeca.estoque.dto.banho.BanhoResponseDto;
 import com.caeca.estoque.dto.categoria.CategoriaSaidaDTO;
+import com.caeca.estoque.dto.fornecedor.FornecedorResponseDTO;
 import com.caeca.estoque.dto.material.MaterialResponseDto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class JoiaSaidaDTO {
 
@@ -36,6 +38,8 @@ public class JoiaSaidaDTO {
     private LocalDateTime dataAtualizacao;
 
     private ArquivoResponseDto arquivo;
+
+    private List<FornecedorResponseDTO> fornecedores;
 
     public CategoriaSaidaDTO getCategoria() {
         return categoria;
@@ -152,5 +156,13 @@ public class JoiaSaidaDTO {
 
     public void setArquivo(ArquivoResponseDto arquivo) {
         this.arquivo = arquivo;
+    }
+
+    public List<FornecedorResponseDTO> getFornecedores() {
+        return fornecedores;
+    }
+
+    public void setFornecedores(List<FornecedorResponseDTO> fornecedores) {
+        this.fornecedores = fornecedores;
     }
 }
