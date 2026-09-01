@@ -8,6 +8,7 @@ import com.caeca.estoque.dto.endereco.ViaCepResponseDTO;
 import com.caeca.estoque.service.endereco.EnderecoService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +47,7 @@ public class EnderecoController {
 
 
     @PostMapping
-    public ResponseEntity<EnderecoResponseDTO> criar(@RequestBody EnderecoRequestDTO dto) {
+    public ResponseEntity<EnderecoResponseDTO> criar(@RequestBody @Valid EnderecoRequestDTO dto) {
         Endereco criado = enderecoService.criar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(EnderecoMapper.toResponse(criado));
     }
@@ -55,7 +56,7 @@ public class EnderecoController {
     @PutMapping("/{id}")
     public ResponseEntity<EnderecoResponseDTO> atualizar(
             @PathVariable Long id,
-            @RequestBody EnderecoRequestDTO dto) {
+            @RequestBody @Valid EnderecoRequestDTO dto) {
         return ResponseEntity.ok(EnderecoMapper.toResponse(enderecoService.atualizar(id, dto)));
     }
 

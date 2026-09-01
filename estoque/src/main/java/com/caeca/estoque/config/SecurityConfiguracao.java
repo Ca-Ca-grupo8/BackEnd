@@ -116,7 +116,6 @@ public class SecurityConfiguracao {
                 // Define quais URLs são públicas e quais exigem autenticação
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(URLS_PERMITIDAS).permitAll()   // rotas públicas
-                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll() // criação de usuário é pública
                         .anyRequest().authenticated()                   // todas as outras exigem token
                 )
 

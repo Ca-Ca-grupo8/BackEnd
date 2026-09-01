@@ -84,6 +84,12 @@ class JoiaControllerTest {
         @DisplayName("Deve retornar status 201 e dados da joia criada")
         void deveRetornarStatus201ECriarJoia() throws Exception {
             JoiaEntradaDTO entradaDTO = new JoiaEntradaDTO();
+            entradaDTO.setNome("Anel Coração");
+            entradaDTO.setQuantidade(2);
+            entradaDTO.setQuantidadeMinima(2);
+            entradaDTO.setCategoria(1L);
+            entradaDTO.setBanho(1);
+            entradaDTO.setMaterial(1);
             JoiaSaidaDTO saidaDTO = new JoiaSaidaDTO();
 
             when(joiaService.criarJoia(any(JoiaEntradaDTO.class))).thenReturn(saidaDTO);
