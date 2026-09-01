@@ -5,10 +5,10 @@ import com.caeca.estoque.database.model.categoria.Categoria;
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.material.Material;
 import com.caeca.estoque.database.repository.joia.JoiaRepository;
-import com.caeca.estoque.dto.joia.JoiaAtualizacaoDTO;
-import com.caeca.estoque.dto.joia.JoiaEntradaDTO;
-import com.caeca.estoque.dto.joia.JoiaMapper;
-import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
+import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
+import com.caeca.estoque.dto.fornecedor.FornecedorMapper;
+import com.caeca.estoque.dto.fornecedor.FornecedorResponseDTO;
+import com.caeca.estoque.dto.joia.*;
 import com.caeca.estoque.service.Material.MaterialService;
 import com.caeca.estoque.service.banho.BanhoService;
 import com.caeca.estoque.service.categoria.CategoriaService;
@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,23 +28,50 @@ public class JoiaService {
     private final BanhoService banhoService;
     private final CategoriaService categoriaService;
     private final MaterialService materialService;
+    private final MovimentacaoRepository movimentacaoRepository;
 
-    public JoiaService(JoiaRepository joiaRepository, BanhoService banhoService, CategoriaService categoriaService, MaterialService materialService) {
+    public JoiaService(JoiaRepository joiaRepository, BanhoService banhoService, CategoriaService categoriaService, MaterialService materialService, MovimentacaoRepository movimentacaoRepository) {
         this.joiaRepository = joiaRepository;
         this.banhoService = banhoService;
         this.categoriaService = categoriaService;
         this.materialService = materialService;
+        this.movimentacaoRepository = movimentacaoRepository;
     }
 
-    public List<JoiaSaidaDTO> listarTodasAsJoias() {
+    public List<JoiaSaidaDTO> listarTodasAsJoias(
+            String nome,
+            Long categoria,
+            Long material,
+            Long banho,
+            JoiaStatus joiaStatus,
+            LocalDate dataInicio,
+            LocalDate dataFim) {
 
-        List<Joia> joias = joiaRepository.findAll();
+        List<Joia> joias = joiaRepository.listarTodosFiltrado(
+                nome,
+                categoria,
+                material,
+                banho,
+                dataInicio,
+                dataFim
+        );
 
         if (joias.isEmpty()) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Nenhuma jóia foi encontrada!");
         }
 
-        return JoiaMapper.toResponseList(joias);
+        List<JoiaSaidaDTO> response = JoiaMapper.toResponseList(joias);
+        response.forEach(dto -> preencherFornecedores(dto, dto.getId()));
+
+        if (joiaStatus != null) {
+            response = response
+                    .stream()
+                    .filter(joia -> joia.getStatus() == joiaStatus)
+                    .toList();
+        }
+
+
+        return response;
     }
 
     public JoiaSaidaDTO listarJoiaPorId(Long id) {
@@ -51,7 +79,10 @@ public class JoiaService {
         Joia joia = joiaRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Nenhuma jóia foi encontrada com este id"));
 
-        return JoiaMapper.toResponse(joia);
+        JoiaSaidaDTO response = JoiaMapper.toResponse(joia);
+        preencherFornecedores(response, joia.getId());
+
+        return response;
     }
 
     public Joia obterEntityJoiaPorId(Long id){
@@ -81,7 +112,10 @@ public class JoiaService {
 
         Joia joiaCriada = joiaRepository.save(joia);
 
-        return JoiaMapper.toResponse(joiaCriada);
+        JoiaSaidaDTO response = JoiaMapper.toResponse(joiaCriada);
+        preencherFornecedores(response, joiaCriada.getId());
+
+        return response;
     }
 
     @Transactional
@@ -97,10 +131,6 @@ public class JoiaService {
 
         if (dto.getQuantidadeMinima() != null && dto.getQuantidadeMinima() >= 0) {
             joia.setQuantidadeMinima(dto.getQuantidadeMinima());
-        }
-
-        if (dto.getQuantidade() != null && dto.getQuantidade() > 0) {
-            joia.setQuantidade(dto.getQuantidade());
         }
 
         if (dto.getCategoriaId() != null) {
@@ -130,7 +160,20 @@ public class JoiaService {
 
         Joia joiaSalva = joiaRepository.save(joia);
 
-        return JoiaMapper.toResponse(joiaSalva);
+        JoiaSaidaDTO response = JoiaMapper.toResponse(joiaSalva);
+        preencherFornecedores(response, joiaSalva.getId());
+
+        return response;
+    }
+
+    private void preencherFornecedores(JoiaSaidaDTO joiaSaidaDTO, Long joiaId) {
+        List<FornecedorResponseDTO> fornecedores = movimentacaoRepository
+                .buscarFornecedoresDaJoia(joiaId)
+                .stream()
+                .map(FornecedorMapper::toResponseDTO)
+                .toList();
+
+        joiaSaidaDTO.setFornecedores(fornecedores);
     }
 
     public void adicionarEstoque(Long id, Integer quantidade) {

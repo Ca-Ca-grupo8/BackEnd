@@ -7,8 +7,8 @@ public class FornecedorMapper {
         return new FornecedorResponseDTO(
                 f.getId(),
                 f.getNome(),
-                f.getTelefone(),
                 f.getInstagram(),
+                f.getTelefone(),
                 f.getIsAtivo(),
                 f.getDataCadastro()
         );
