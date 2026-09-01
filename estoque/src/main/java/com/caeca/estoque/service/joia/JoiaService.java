@@ -122,7 +122,7 @@ public class JoiaService {
     public JoiaSaidaDTO atualizarJoiaPorId(Long id, JoiaAtualizacaoDTO dto) {
 
         Joia joia = joiaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Jóia não encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Nenhuma jóia foi encontrada com este id"));
 
         // Atualizações simples
         if (dto.getNome() != null && !dto.getNome().isBlank()) {
