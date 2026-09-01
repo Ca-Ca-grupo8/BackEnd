@@ -2,9 +2,9 @@ package com.caeca.estoque.controller.endereco;
 
 import com.caeca.estoque.database.model.endereco.Endereco;
 import com.caeca.estoque.dto.endereco.EnderecoMapper;
-import com.caeca.estoque.dto.endereco.EnderecoRequestDTO;
-import com.caeca.estoque.dto.endereco.EnderecoResponseDTO;
-import com.caeca.estoque.dto.endereco.ViaCepResponseDTO;
+import com.caeca.estoque.dto.endereco.EnderecoRequestDto;
+import com.caeca.estoque.dto.endereco.EnderecoResponseDto;
+import com.caeca.estoque.dto.endereco.ViaCepResponseDto;
 import com.caeca.estoque.service.endereco.EnderecoService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,7 +25,7 @@ public class EnderecoController {
     private final EnderecoService enderecoService;
 
     @GetMapping
-    public ResponseEntity<List<EnderecoResponseDTO>> listar(){
+    public ResponseEntity<List<EnderecoResponseDto>> listar(){
         return ResponseEntity.ok(enderecoService.listarTodos()
                 .stream()
                 .map(EnderecoMapper::toResponse)
@@ -33,29 +33,29 @@ public class EnderecoController {
     }
 
     @GetMapping("/cep/{cep}")
-    public ResponseEntity<ViaCepResponseDTO> consultarCep(@PathVariable String cep) {
-        ViaCepResponseDTO resposta = enderecoService.consultarCep(cep);
+    public ResponseEntity<ViaCepResponseDto> consultarCep(@PathVariable String cep) {
+        ViaCepResponseDto resposta = enderecoService.consultarCep(cep);
         return ResponseEntity.ok(resposta);
     }
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<EnderecoResponseDTO> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<EnderecoResponseDto> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(EnderecoMapper.toResponse(enderecoService.buscarPorId(id)));
     }
 
 
     @PostMapping
-    public ResponseEntity<EnderecoResponseDTO> criar(@RequestBody EnderecoRequestDTO dto) {
+    public ResponseEntity<EnderecoResponseDto> criar(@RequestBody EnderecoRequestDto dto) {
         Endereco criado = enderecoService.criar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(EnderecoMapper.toResponse(criado));
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<EnderecoResponseDTO> atualizar(
+    public ResponseEntity<EnderecoResponseDto> atualizar(
             @PathVariable Long id,
-            @RequestBody EnderecoRequestDTO dto) {
+            @RequestBody EnderecoRequestDto dto) {
         return ResponseEntity.ok(EnderecoMapper.toResponse(enderecoService.atualizar(id, dto)));
     }
 

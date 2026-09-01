@@ -2,7 +2,7 @@ package com.caeca.estoque.service.categoria;
 
 import com.caeca.estoque.database.model.categoria.Categoria;
 import com.caeca.estoque.database.repository.categoria.CategoriaRepository;
-import com.caeca.estoque.dto.categoria.CategoriaSaidaDTO;
+import com.caeca.estoque.dto.categoria.CategoriaSaidaDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ public class CategoriaServiceTest {
         Mockito.when(categoriaRepository.findAll())
                 .thenReturn(List.of(categoria));
 
-        List<CategoriaSaidaDTO> resultado =
+        List<CategoriaSaidaDto> resultado =
                 categoriaService.listarTodasAsCategorias();
 
         Assertions.assertEquals(1, resultado.size());
@@ -96,7 +96,7 @@ public class CategoriaServiceTest {
         Mockito.when(categoriaRepository.save(categoria))
                 .thenReturn(categoria);
 
-        CategoriaSaidaDTO resultado =
+        CategoriaSaidaDto resultado =
                 categoriaService.criarCategoria(categoria);
 
         Assertions.assertEquals("Colares", resultado.getNome());

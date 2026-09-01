@@ -5,7 +5,7 @@ import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.dto.dashboard.GraficoMotivoDto;
 import com.caeca.estoque.dto.dashboard.TopCincoDto;
-import com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDTO;
+import com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDto;
 import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -139,7 +139,7 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
     List<Fornecedor> buscarFornecedoresDaJoia(@Param("joiaId") Long joiaId);
 
     @Query("""
-    SELECT new com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDTO(
+    SELECT new com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDto(
         j.nome,
         j.quantidade,
         MAX(m.data)
@@ -156,7 +156,7 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
         CASE WHEN MAX(m.data) IS NULL THEN 0 ELSE 1 END,
         MAX(m.data) ASC
     """)
-    List<TopCincoMaisFriasDTO> buscarProdutosFrios(
+    List<TopCincoMaisFriasDto> buscarProdutosFrios(
             LocalDateTime inicio,
             LocalDateTime fim,
             Long categoriaId,

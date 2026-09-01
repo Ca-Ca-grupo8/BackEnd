@@ -1,9 +1,9 @@
 package com.caeca.estoque.controller.categoria;
 
 import com.caeca.estoque.database.model.categoria.Categoria;
-import com.caeca.estoque.dto.categoria.CategoriaEntradaDTO;
+import com.caeca.estoque.dto.categoria.CategoriaEntradaDto;
 import com.caeca.estoque.dto.categoria.CategoriaMapper;
-import com.caeca.estoque.dto.categoria.CategoriaSaidaDTO;
+import com.caeca.estoque.dto.categoria.CategoriaSaidaDto;
 import com.caeca.estoque.service.categoria.CategoriaService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,19 +27,19 @@ public class CategoriaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoriaSaidaDTO>> listarTodasAsCategorias() {
+    public ResponseEntity<List<CategoriaSaidaDto>> listarTodasAsCategorias() {
 
-        List<CategoriaSaidaDTO> categorias = categoriaService.listarTodasAsCategorias();
+        List<CategoriaSaidaDto> categorias = categoriaService.listarTodasAsCategorias();
 
         return ResponseEntity.status(200).body(categorias);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoriaSaidaDTO> listarCategoriaPorId(@PathVariable Long id) {
+    public ResponseEntity<CategoriaSaidaDto> listarCategoriaPorId(@PathVariable Long id) {
 
         Categoria categoria = categoriaService.listarCategoriaPorId(id);
 
-        CategoriaSaidaDTO categoriaSaidaDTO = CategoriaMapper.toResponse(categoria);
+        CategoriaSaidaDto categoriaSaidaDTO = CategoriaMapper.toResponse(categoria);
 
         return ResponseEntity.status(200).body(categoriaSaidaDTO);
     }
@@ -47,11 +47,11 @@ public class CategoriaController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<CategoriaSaidaDTO> criarCategoria(@RequestBody @Valid CategoriaEntradaDTO categoriaEntradaDTO) {
+    public ResponseEntity<CategoriaSaidaDto> criarCategoria(@RequestBody @Valid CategoriaEntradaDto categoriaEntradaDTO) {
 
         Categoria categoria = CategoriaMapper.toEntity(categoriaEntradaDTO);
 
-        CategoriaSaidaDTO categoriaSaidaDTO = categoriaService.criarCategoria(categoria);
+        CategoriaSaidaDto categoriaSaidaDTO = categoriaService.criarCategoria(categoria);
 
         return ResponseEntity.status(201).body(categoriaSaidaDTO);
     }

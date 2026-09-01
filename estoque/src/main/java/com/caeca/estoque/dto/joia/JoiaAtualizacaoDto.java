@@ -2,7 +2,7 @@ package com.caeca.estoque.dto.joia;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public class JoiaAtualizacaoDTO {
+public class JoiaAtualizacaoDto {
 
     @Schema(description = "Nome da joia", example = "Anel Coração")
     private String nome;
@@ -23,7 +23,7 @@ public class JoiaAtualizacaoDTO {
 
     private Boolean isAtivo;
 
-    public JoiaAtualizacaoDTO(String nome, Integer quantidadeMinima, Integer quantidade, Long categoriaId, Integer banhoId, Integer materialId, Double precoFinal, Boolean isAtivo) {
+    public JoiaAtualizacaoDto(String nome, Integer quantidadeMinima, Integer quantidade, Long categoriaId, Integer banhoId, Integer materialId, Double precoFinal, Boolean isAtivo) {
         this.nome = nome;
         this.quantidadeMinima = quantidadeMinima;
         this.categoriaId = categoriaId;
@@ -33,7 +33,7 @@ public class JoiaAtualizacaoDTO {
         this.isAtivo = isAtivo;
     }
 
-    public JoiaAtualizacaoDTO() {}
+    public JoiaAtualizacaoDto() {}
 
     public String getNome() {
         return nome;

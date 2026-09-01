@@ -1,6 +1,6 @@
 package com.caeca.estoque.client;
 
-import com.caeca.estoque.dto.endereco.ViaCepResponseDTO;
+import com.caeca.estoque.dto.endereco.ViaCepResponseDto;
 import com.caeca.estoque.exception.CepNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,12 +15,12 @@ public class ViaCepClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public ViaCepResponseDTO buscarPorCep(String cep) {
+    public ViaCepResponseDto buscarPorCep(String cep) {
         String cepLimpo = cep.replaceAll("[^0-9]", "");
 
         try {
-            ViaCepResponseDTO resposta = restTemplate.getForObject(
-                    VIA_CEP_URL, ViaCepResponseDTO.class, cepLimpo
+            ViaCepResponseDto resposta = restTemplate.getForObject(
+                    VIA_CEP_URL, ViaCepResponseDto.class, cepLimpo
             );
 
             if (resposta == null || resposta.isErro()) {

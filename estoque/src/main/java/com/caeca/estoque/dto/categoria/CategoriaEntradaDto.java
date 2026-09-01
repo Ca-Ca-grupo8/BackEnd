@@ -2,16 +2,16 @@ package com.caeca.estoque.dto.categoria;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class CategoriaEntradaDTO {
+public class CategoriaEntradaDto {
 
     @NotBlank
     public String nome;
 
-    public CategoriaEntradaDTO(String nome) {
+    public CategoriaEntradaDto(String nome) {
         this.nome = nome;
     }
 
-    public CategoriaEntradaDTO() {}
+    public CategoriaEntradaDto() {}
 
     public String getNome() {
         return nome;

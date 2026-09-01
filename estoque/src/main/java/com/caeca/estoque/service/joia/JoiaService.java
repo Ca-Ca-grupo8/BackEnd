@@ -7,7 +7,7 @@ import com.caeca.estoque.database.model.material.Material;
 import com.caeca.estoque.database.repository.joia.JoiaRepository;
 import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
 import com.caeca.estoque.dto.fornecedor.FornecedorMapper;
-import com.caeca.estoque.dto.fornecedor.FornecedorResponseDTO;
+import com.caeca.estoque.dto.fornecedor.FornecedorResponseDto;
 import com.caeca.estoque.dto.joia.*;
 import com.caeca.estoque.service.Material.MaterialService;
 import com.caeca.estoque.service.banho.BanhoService;
@@ -38,7 +38,7 @@ public class JoiaService {
         this.movimentacaoRepository = movimentacaoRepository;
     }
 
-    public List<JoiaSaidaDTO> listarTodasAsJoias(
+    public List<JoiaSaidaDto> listarTodasAsJoias(
             String nome,
             Long categoria,
             Long material,
@@ -60,7 +60,7 @@ public class JoiaService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Nenhuma jóia foi encontrada!");
         }
 
-        List<JoiaSaidaDTO> response = JoiaMapper.toResponseList(joias);
+        List<JoiaSaidaDto> response = JoiaMapper.toResponseList(joias);
         response.forEach(dto -> preencherFornecedores(dto, dto.getId()));
 
         if (joiaStatus != null) {
@@ -74,12 +74,12 @@ public class JoiaService {
         return response;
     }
 
-    public JoiaSaidaDTO listarJoiaPorId(Long id) {
+    public JoiaSaidaDto listarJoiaPorId(Long id) {
 
         Joia joia = joiaRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Nenhuma jóia foi encontrada com este id"));
 
-        JoiaSaidaDTO response = JoiaMapper.toResponse(joia);
+        JoiaSaidaDto response = JoiaMapper.toResponse(joia);
         preencherFornecedores(response, joia.getId());
 
         return response;
@@ -93,7 +93,7 @@ public class JoiaService {
     }
 
     @Transactional
-    public JoiaSaidaDTO criarJoia(JoiaEntradaDTO dto) {
+    public JoiaSaidaDto criarJoia(JoiaEntradaDto dto) {
 
         Categoria categoria = categoriaService.listarCategoriaPorId(dto.getCategoria());
 
@@ -112,19 +112,31 @@ public class JoiaService {
 
         Joia joiaCriada = joiaRepository.save(joia);
 
-        JoiaSaidaDTO response = JoiaMapper.toResponse(joiaCriada);
+        JoiaSaidaDto response = JoiaMapper.toResponse(joiaCriada);
         preencherFornecedores(response, joiaCriada.getId());
 
         return response;
     }
 
     @Transactional
-    public JoiaSaidaDTO atualizarJoiaPorId(Long id, JoiaAtualizacaoDTO dto) {
+    public JoiaSaidaDto atualizarJoiaPorId(Long id, JoiaAtualizacaoDto dto) {
 
         Joia joia = joiaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Jóia não encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Nenhuma jóia foi encontrada com este id"));
 
-        // Atualizações simples
+        aplicarAtualizacao(joia, dto);
+
+        joia.setDataAtualizacao(LocalDateTime.now());
+
+        Joia joiaSalva = joiaRepository.save(joia);
+
+        JoiaSaidaDto response = JoiaMapper.toResponse(joiaSalva);
+        preencherFornecedores(response, joiaSalva.getId());
+
+        return response;
+    }
+
+    private void aplicarAtualizacao(Joia joia, JoiaAtualizacaoDto dto) {
         if (dto.getNome() != null && !dto.getNome().isBlank()) {
             joia.setNome(dto.getNome());
         }
@@ -155,19 +167,10 @@ public class JoiaService {
         if(dto.getIsAtivo() != null){
             joia.setAtivo(dto.getIsAtivo());
         }
-
-        joia.setDataAtualizacao(LocalDateTime.now());
-
-        Joia joiaSalva = joiaRepository.save(joia);
-
-        JoiaSaidaDTO response = JoiaMapper.toResponse(joiaSalva);
-        preencherFornecedores(response, joiaSalva.getId());
-
-        return response;
     }
 
-    private void preencherFornecedores(JoiaSaidaDTO joiaSaidaDTO, Long joiaId) {
-        List<FornecedorResponseDTO> fornecedores = movimentacaoRepository
+    private void preencherFornecedores(JoiaSaidaDto joiaSaidaDTO, Long joiaId) {
+        List<FornecedorResponseDto> fornecedores = movimentacaoRepository
                 .buscarFornecedoresDaJoia(joiaId)
                 .stream()
                 .map(FornecedorMapper::toResponseDTO)
