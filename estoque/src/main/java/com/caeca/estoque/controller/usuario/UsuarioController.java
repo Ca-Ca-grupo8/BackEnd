@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -34,6 +35,7 @@ public class UsuarioController {
 
     @PostMapping
     @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> criar(@RequestBody @Valid UsuarioCriacaoDto usuarioCriacaoDto) {
         final Usuario novoUsuario = UsuarioMapper.of(usuarioCriacaoDto);
         this.usuarioService.criar(novoUsuario);
@@ -108,6 +110,7 @@ public class UsuarioController {
 
     @GetMapping
     @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<UsuarioListarDto>> listarTodos() {
         List<UsuarioListarDto> usuariosEncontrados = this.usuarioService.listarTodos();
 
