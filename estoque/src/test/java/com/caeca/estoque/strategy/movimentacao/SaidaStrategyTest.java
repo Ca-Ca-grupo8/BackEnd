@@ -181,13 +181,14 @@ class SaidaStrategyTest {
         }
 
         @Test
-        @DisplayName("Deve não associar revendedora quando idRevendedora for informado mas tipo não for venda")
-        void deveNaoAssociarRevendedoraQuandoIdRevendedoraForInformadoMasTipoNaoForVenda() {
+        @DisplayName("Deve associar revendedora quando idRevendedora for informado, mesmo que o tipo não seja venda")
+        void deveAssociarRevendedoraQuandoIdRevendedoraForInformadoMesmoQueTipoNaoSejaVenda() {
             Joia joia = new Joia();
             joia.setId(1L);
             joia.setQuantidade(10);
             joia.setPreco(150.0);
 
+            MovimentacaoRevendedora movimentacaoRevendedora = new MovimentacaoRevendedora();
             MotivoMovimentacao tipo = new MotivoMovimentacao();
             tipo.setDescricao("Saída de estoque");
 
@@ -200,12 +201,15 @@ class SaidaStrategyTest {
             MovimentacaoContextDto dto = new MovimentacaoContextDto(tipo, usuario, dados, arquivo);
 
             when(joiaService.obterEntityJoiaPorId(1L)).thenReturn(joia);
+            when(mrService.buscarOuCriarVendaPorRevendedora(any(MovimentacaoRevendedoraRequestDto.class)))
+                    .thenReturn(movimentacaoRevendedora);
 
             Movimentacao resultado = saidaStrategy.realizarMovimentacao(dto);
 
             assertNotNull(resultado);
-            assertNull(resultado.getMovimentacaoRevendedora());
-            verify(mrService, never()).buscarOuCriarVendaPorRevendedora(any());
+            assertEquals(movimentacaoRevendedora, resultado.getMovimentacaoRevendedora());
+            verify(mrService, times(1)).buscarOuCriarVendaPorRevendedora(
+                    argThat(r -> r.getIdRevendedora().equals(7L)));
         }
     }
 

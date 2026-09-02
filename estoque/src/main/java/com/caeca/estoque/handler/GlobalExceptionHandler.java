@@ -30,6 +30,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(409).body(response);
     }
 
+    @ExceptionHandler(QtdInsuficienteException.class)
+    public ResponseEntity<ErrorResponse> handlerQtdInsuficiente(QtdInsuficienteException exception){
+        ErrorResponse response = new ErrorResponse(
+                409, exception.getMessage()
+        );
+        return ResponseEntity.status(409).body(response);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponse> handlerBadRequest(BadRequestException exception){
+        ErrorResponse response = new ErrorResponse(
+                400, exception.getMessage()
+        );
+        return ResponseEntity.status(400).body(response);
+    }
+
     @ExceptionHandler(EnderecoNotFoundException.class)
     public ResponseEntity<ErroResponseDto> handleEnderecoNotFound(EnderecoNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

@@ -41,8 +41,7 @@ public class SaidaStrategy implements MovimentacaoStrategy {
         movimentacao.setPrecoSaida(joia.getPreco());
         movimentacao.setUsuario(dto.usuario());
 
-        if(dto.tipo().getDescricao().toLowerCase().contains("venda") &&
-                dto.dadosOriginais().getIdRevendedora() != null){
+        if(dto.dadosOriginais().getIdRevendedora() != null){
             movimentacao.setMovimentacaoRevendedora(mrService.buscarOuCriarVendaPorRevendedora(
                     new MovimentacaoRevendedoraRequestDto(dto.dadosOriginais().getIdRevendedora())));
         }
