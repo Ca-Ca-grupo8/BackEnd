@@ -49,7 +49,7 @@ public class MovimentacaoService {
     }
 
     public Movimentacao buscarPorId(Long id) {
-        return movimentacaoRepository.findById(id.intValue())
+        return movimentacaoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Movimentação com o Id " + id + " inexistente"));
     }
 

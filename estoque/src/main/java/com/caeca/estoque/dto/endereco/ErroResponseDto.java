@@ -19,6 +19,7 @@ public class ErroResponseDto {
     }
 
     public ErroResponseDto(String message) {
+        this.erro = message;
     }
 
     public String getErro() {

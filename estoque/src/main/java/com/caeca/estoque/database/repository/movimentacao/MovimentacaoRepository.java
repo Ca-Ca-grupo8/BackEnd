@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Integer> {
+public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long> {
     @Query("""
             SELECT COALESCE(SUM(m.precoSaida), 0.0)
             FROM Movimentacao m
