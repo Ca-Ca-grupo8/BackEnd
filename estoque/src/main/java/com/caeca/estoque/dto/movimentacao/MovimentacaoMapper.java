@@ -32,7 +32,7 @@ public class MovimentacaoMapper {
         return dto;
     }
 
-    public static List<MovimentacaoResponseDto> toReponseList(List<Movimentacao> listar) {
+    public static List<MovimentacaoResponseDto> toResponseList(List<Movimentacao> listar) {
         return listar.stream().map(MovimentacaoMapper::toResponse).toList();
     }
 

@@ -139,6 +139,15 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
     List<Fornecedor> buscarFornecedoresDaJoia(@Param("joiaId") Long joiaId);
 
     @Query("""
+            SELECT new com.caeca.estoque.database.repository.movimentacao.FornecedorJoiaProjecao(
+                m.joia.id, m.fornecedor)
+            FROM Movimentacao m
+            WHERE m.joia.id IN :joiaIds
+              AND m.fornecedor IS NOT NULL
+    """)
+    List<FornecedorJoiaProjecao> buscarFornecedoresDasJoias(@Param("joiaIds") List<Long> joiaIds);
+
+    @Query("""
     SELECT new com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDto(
         j.nome,
         j.quantidade,

@@ -2,9 +2,11 @@ package com.caeca.estoque.service.joia;
 
 import com.caeca.estoque.database.model.banho.Banho;
 import com.caeca.estoque.database.model.categoria.Categoria;
+import com.caeca.estoque.database.model.fornecedores.Fornecedor;
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.material.Material;
 import com.caeca.estoque.database.repository.joia.JoiaRepository;
+import com.caeca.estoque.database.repository.movimentacao.FornecedorJoiaProjecao;
 import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
 import com.caeca.estoque.dto.fornecedor.FornecedorMapper;
 import com.caeca.estoque.dto.fornecedor.FornecedorResponseDto;
@@ -19,7 +21,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class JoiaService {
@@ -61,7 +66,6 @@ public class JoiaService {
         }
 
         List<JoiaSaidaDto> response = JoiaMapper.toResponseList(joias);
-        response.forEach(dto -> preencherFornecedores(dto, dto.getId()));
 
         if (joiaStatus != null) {
             response = response
@@ -70,6 +74,7 @@ public class JoiaService {
                     .toList();
         }
 
+        preencherFornecedoresEmLote(response);
 
         return response;
     }
@@ -177,6 +182,32 @@ public class JoiaService {
                 .toList();
 
         joiaSaidaDTO.setFornecedores(fornecedores);
+    }
+
+    private void preencherFornecedoresEmLote(List<JoiaSaidaDto> joias) {
+        if (joias.isEmpty()) {
+            return;
+        }
+
+        List<Long> joiaIds = joias.stream().map(JoiaSaidaDto::getId).toList();
+
+        Map<Long, List<Fornecedor>> fornecedoresPorJoia = new HashMap<>();
+        for (FornecedorJoiaProjecao projecao : movimentacaoRepository.buscarFornecedoresDasJoias(joiaIds)) {
+            Long joiaId = projecao.joiaId();
+            List<Fornecedor> lista = fornecedoresPorJoia.get(joiaId);
+            if (lista == null) {           // primeira ocorrência -> ainda não existe lista
+                lista = new ArrayList<>();
+                fornecedoresPorJoia.put(joiaId, lista);
+            }
+            lista.add(projecao.fornecedor());
+        }
+
+        joias.forEach(joia -> joia.setFornecedores(
+                fornecedoresPorJoia
+                        .getOrDefault(joia.getId(), List.of())
+                        .stream()
+                        .map(FornecedorMapper::toResponseDTO)
+                        .toList()));
     }
 
     public void adicionarEstoque(Long id, Integer quantidade) {
