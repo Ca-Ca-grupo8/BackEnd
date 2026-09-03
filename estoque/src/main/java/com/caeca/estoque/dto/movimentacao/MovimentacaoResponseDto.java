@@ -1,7 +1,7 @@
 package com.caeca.estoque.dto.movimentacao;
 
-import com.caeca.estoque.dto.fornecedor.FornecedorResponseDTO;
-import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
+import com.caeca.estoque.dto.fornecedor.FornecedorResponseDto;
+import com.caeca.estoque.dto.joia.JoiaSaidaDto;
 import com.caeca.estoque.dto.motivoMovimentacao.MotivoMovimentacaoResponseDto;
 import com.caeca.estoque.dto.usuario.UsuarioListarDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResponseDto;
@@ -12,17 +12,17 @@ public class MovimentacaoResponseDto {
     private Long id;
     private Integer quantidade;
     private Double precoSaida;
-    private JoiaSaidaDTO joia;
+    private JoiaSaidaDto joia;
     private MotivoMovimentacaoResponseDto motivoMovimentacao;
     private UsuarioListarDto usuario;
-    private FornecedorResponseDTO fornecedor;
+    private FornecedorResponseDto fornecedor;
     private MovimentacaoRevendedoraResponseDto movimentacaoRevendedora;
     private LocalDateTime data;
 
     public MovimentacaoResponseDto() {
     }
 
-    public MovimentacaoResponseDto(Long id, Integer quantidade, Double precoSaida, JoiaSaidaDTO joia, MotivoMovimentacaoResponseDto motivoMovimentacao, UsuarioListarDto usuario, FornecedorResponseDTO fornecedor, MovimentacaoRevendedoraResponseDto movimentacaoRevendedora, LocalDateTime data) {
+    public MovimentacaoResponseDto(Long id, Integer quantidade, Double precoSaida, JoiaSaidaDto joia, MotivoMovimentacaoResponseDto motivoMovimentacao, UsuarioListarDto usuario, FornecedorResponseDto fornecedor, MovimentacaoRevendedoraResponseDto movimentacaoRevendedora, LocalDateTime data) {
         this.id = id;
         this.quantidade = quantidade;
         this.precoSaida = precoSaida;
@@ -58,11 +58,11 @@ public class MovimentacaoResponseDto {
         this.precoSaida = precoSaida;
     }
 
-    public JoiaSaidaDTO getJoia() {
+    public JoiaSaidaDto getJoia() {
         return joia;
     }
 
-    public void setJoia(JoiaSaidaDTO joia) {
+    public void setJoia(JoiaSaidaDto joia) {
         this.joia = joia;
     }
 
@@ -82,11 +82,11 @@ public class MovimentacaoResponseDto {
         this.usuario = usuario;
     }
 
-    public FornecedorResponseDTO getFornecedor() {
+    public FornecedorResponseDto getFornecedor() {
         return fornecedor;
     }
 
-    public void setFornecedor(FornecedorResponseDTO fornecedor) {
+    public void setFornecedor(FornecedorResponseDto fornecedor) {
         this.fornecedor = fornecedor;
     }
 

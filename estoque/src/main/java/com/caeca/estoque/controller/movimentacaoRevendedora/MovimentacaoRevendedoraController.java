@@ -36,12 +36,12 @@ public class MovimentacaoRevendedoraController {
         return ResponseEntity.ok(MovimentacaoRevendedoraMapper.toResponseList(response));
     }
 
-    @GetMapping("/id")
+    @GetMapping("/{id}")
     public ResponseEntity<MovimentacaoRevendedoraResponseDto> buscarPorId(@PathVariable Long id){
         return ResponseEntity.ok(MovimentacaoRevendedoraMapper.toResponse(mrService.buscarPorId(id)));
     }
 
-    @PatchMapping("/id")
+    @PatchMapping("/{id}")
     public ResponseEntity<MovimentacaoRevendedoraResponseDto> alterarFinalizacao(
             @PathVariable Long id,
             @RequestBody @Valid MovimentacaoRevendedoraPatchDto patch){

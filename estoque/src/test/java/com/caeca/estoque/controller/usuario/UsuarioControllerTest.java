@@ -2,10 +2,9 @@ package com.caeca.estoque.controller.usuario;
 
 import com.caeca.estoque.dto.usuario.*;
 import com.caeca.estoque.service.usuario.UsuarioService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
@@ -19,11 +18,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class UsuarioControllerTest {
 
-    @Mock
     private UsuarioService usuarioService;
 
-    @InjectMocks
     private UsuarioController usuarioController;
+
+    @BeforeEach
+    void setup() {
+        usuarioService = Mockito.mock(UsuarioService.class);
+        usuarioController = new UsuarioController(usuarioService, 3600L);
+    }
 
     @Test
     void criar_deveRetornar201() {

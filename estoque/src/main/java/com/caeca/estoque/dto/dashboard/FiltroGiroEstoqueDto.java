@@ -1,6 +1,6 @@
 package com.caeca.estoque.dto.dashboard;
 
-public record FiltroGiroEstoque(
+public record FiltroGiroEstoqueDto(
         double valorAtual,
         double valorAntigo,
         double varianca

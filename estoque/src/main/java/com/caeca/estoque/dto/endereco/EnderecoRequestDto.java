@@ -2,7 +2,7 @@ package com.caeca.estoque.dto.endereco;
 
 import jakarta.validation.constraints.*;
 
-public class EnderecoRequestDTO {
+public class EnderecoRequestDto {
 
     @NotBlank(message = "CEP obrigatório")
     @Pattern(regexp = "\\d{8}", message = "CEP deve ter 8 números")
@@ -30,10 +30,10 @@ public class EnderecoRequestDTO {
     @Size(min = 2, max = 2)
     private String uf;
 
-    public EnderecoRequestDTO() {
+    public EnderecoRequestDto() {
     }
 
-    public EnderecoRequestDTO(String cep, String logradouro, Integer numero, String complemento, String bairro, String cidade, String uf) {
+    public EnderecoRequestDto(String cep, String logradouro, Integer numero, String complemento, String bairro, String cidade, String uf) {
         this.cep = cep;
         this.logradouro = logradouro;
         this.numero = numero;

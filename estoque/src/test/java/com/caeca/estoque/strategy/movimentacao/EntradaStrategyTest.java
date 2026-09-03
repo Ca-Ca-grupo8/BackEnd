@@ -9,10 +9,11 @@ import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.database.model.usuario.Usuario;
 import com.caeca.estoque.database.repository.fornecedor.FornecedorRepository;
-import com.caeca.estoque.dto.joia.JoiaEntradaDTO;
-import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
+import com.caeca.estoque.dto.joia.JoiaEntradaDto;
+import com.caeca.estoque.dto.joia.JoiaSaidaDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
+import com.caeca.estoque.exception.BadRequestException;
 import com.caeca.estoque.exception.ConflictException;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.joia.JoiaService;
@@ -105,8 +106,8 @@ class EntradaStrategyTest {
         @Test
         @DisplayName("Deve criar nova joia quando idJoia não for informado")
         void deveCriarNovaJoiaQuandoIdJoiaNaoForInformado() {
-            JoiaEntradaDTO joiaEntradaDTO = new JoiaEntradaDTO();
-            JoiaSaidaDTO joiaSaidaDTO = new JoiaSaidaDTO();
+            JoiaEntradaDto joiaEntradaDTO = new JoiaEntradaDto();
+            JoiaSaidaDto joiaSaidaDTO = new JoiaSaidaDto();
             joiaSaidaDTO.setId(2L);
 
             Joia joia = new Joia();
@@ -174,7 +175,6 @@ class EntradaStrategyTest {
             joia.setId(1L);
             joia.setArquivo(arquivoExistente);
 
-            Fornecedor fornecedor = new Fornecedor();
             MotivoMovimentacao tipo = new MotivoMovimentacao();
             Usuario usuario = new Usuario();
             MultipartFile arquivo = mock(MultipartFile.class);
@@ -185,12 +185,12 @@ class EntradaStrategyTest {
             MovimentacaoContextDto dto = new MovimentacaoContextDto(tipo, usuario, dados, arquivo);
 
             when(joiaService.obterEntityJoiaPorId(1L)).thenReturn(joia);
-            when(fornecedorRepository.findById(1L)).thenReturn(Optional.of(fornecedor));
 
             assertThrows(ConflictException.class, () -> {
                 entradaStrategy.realizarMovimentacao(dto);
             });
 
+            verify(joiaService, never()).atualizarJoiaPorId(any(), any());
             verify(arquivoStrategy, never()).adicionar(any());
         }
 
@@ -245,6 +245,31 @@ class EntradaStrategyTest {
 
             verify(joiaService, times(1)).atualizarJoiaPorId(eq(1L), argThat(dto2 ->
                     dto2.getPrecoFinal() == 180.0));
+        }
+
+        @Test
+        @DisplayName("Deve lançar BadRequestException quando preço de banho, compra ou multiplicador forem nulos")
+        void deveLancarBadRequestExceptionQuandoPrecosForemNulos() {
+            Joia joia = new Joia();
+            joia.setId(1L);
+            joia.setArquivo(null);
+
+            MotivoMovimentacao tipo = new MotivoMovimentacao();
+            Usuario usuario = new Usuario();
+            MultipartFile arquivo = mock(MultipartFile.class);
+
+            MovimentacaoRequestDto dados = new MovimentacaoRequestDto(
+                    2, 1L, null, 1, 1L, null, 50.0, 10.0, null);
+
+            MovimentacaoContextDto dto = new MovimentacaoContextDto(tipo, usuario, dados, arquivo);
+
+            when(joiaService.obterEntityJoiaPorId(1L)).thenReturn(joia);
+
+            assertThrows(BadRequestException.class, () -> {
+                entradaStrategy.realizarMovimentacao(dto);
+            });
+
+            verify(joiaService, never()).atualizarJoiaPorId(any(), any());
         }
     }
 

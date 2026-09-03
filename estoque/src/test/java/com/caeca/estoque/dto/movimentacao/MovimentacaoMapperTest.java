@@ -143,7 +143,7 @@ class MovimentacaoMapperTest {
             entity2.setMotivoMovimentacao(new MotivoMovimentacao());
             entity2.setUsuario(new Usuario());
 
-            List<MovimentacaoResponseDto> resultado = MovimentacaoMapper.toReponseList(List.of(entity1, entity2));
+            List<MovimentacaoResponseDto> resultado = MovimentacaoMapper.toResponseList(List.of(entity1, entity2));
 
             assertNotNull(resultado);
             assertEquals(2, resultado.size());
@@ -154,7 +154,7 @@ class MovimentacaoMapperTest {
         @Test
         @DisplayName("Deve retornar lista vazia quando lista de entidades estiver vazia")
         void deveRetornarListaVaziaQuandoListaDeEntidadesEstiverVazia() {
-            List<MovimentacaoResponseDto> resultado = MovimentacaoMapper.toReponseList(List.of());
+            List<MovimentacaoResponseDto> resultado = MovimentacaoMapper.toResponseList(List.of());
 
             assertNotNull(resultado);
             assertTrue(resultado.isEmpty());

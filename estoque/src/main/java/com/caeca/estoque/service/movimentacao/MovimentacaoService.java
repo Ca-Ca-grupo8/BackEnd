@@ -29,14 +29,14 @@ public class MovimentacaoService {
 
     private final List<MovimentacaoStrategy> movimentacaoStrategies;
     private final MovimentacaoRepository movimentacaoRepository;
-    private final MotivoMovimentacaoService tipoService;
+    private final MotivoMovimentacaoService motivoMovimentacaoService;
     private final JoiaService joiaService;
     private final UsuarioService usuarioService;
 
-    public MovimentacaoService(List<MovimentacaoStrategy> movimentacaoStrategies, MovimentacaoRepository movimentacaoRepository, MotivoMovimentacaoService tipoService, JoiaService joiaService, UsuarioService usuarioService) {
+    public MovimentacaoService(List<MovimentacaoStrategy> movimentacaoStrategies, MovimentacaoRepository movimentacaoRepository, MotivoMovimentacaoService motivoMovimentacaoService, JoiaService joiaService, UsuarioService usuarioService) {
         this.movimentacaoStrategies = movimentacaoStrategies;
         this.movimentacaoRepository = movimentacaoRepository;
-        this.tipoService = tipoService;
+        this.motivoMovimentacaoService = motivoMovimentacaoService;
         this.joiaService = joiaService;
         this.usuarioService = usuarioService;
     }
@@ -49,13 +49,13 @@ public class MovimentacaoService {
     }
 
     public Movimentacao buscarPorId(Long id) {
-        return movimentacaoRepository.findById(id.intValue())
+        return movimentacaoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Movimentação com o Id " + id + " inexistente"));
     }
 
     @Transactional
     public Movimentacao cadastrar(MovimentacaoRequestDto request, MultipartFile arquivo) {
-            MotivoMovimentacao motivoMovimentacao = tipoService.buscarPorId(request.getIdMotivoMovimentacao());
+            MotivoMovimentacao motivoMovimentacao = motivoMovimentacaoService.buscarPorId(request.getIdMotivoMovimentacao());
             MovimentacaoContextDto movimentacaoContextDto = new MovimentacaoContextDto(
                     motivoMovimentacao,
                     usuarioService.getUsuarioLogado(),

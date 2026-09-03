@@ -7,11 +7,12 @@ import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.database.repository.fornecedor.FornecedorRepository;
-import com.caeca.estoque.dto.joia.JoiaAtualizacaoDTO;
-import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
+import com.caeca.estoque.dto.joia.JoiaAtualizacaoDto;
+import com.caeca.estoque.dto.joia.JoiaSaidaDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
+import com.caeca.estoque.exception.BadRequestException;
 import com.caeca.estoque.exception.ConflictException;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.joia.JoiaService;
@@ -41,16 +42,24 @@ public class EntradaStrategy implements MovimentacaoStrategy {
         MovimentacaoRequestDto dados = dto.dadosOriginais();
 
         if(dados.getIdJoia() == null) {
-            JoiaSaidaDTO joiaSaidaDTO = joiaService.criarJoia(dados.getDadosNovaJoia());
+            JoiaSaidaDto joiaSaidaDTO = joiaService.criarJoia(dados.getDadosNovaJoia());
             joia = joiaService.obterEntityJoiaPorId(joiaSaidaDTO.getId());
         } else {
             joia = joiaService.obterEntityJoiaPorId(dados.getIdJoia());
         }
 
+        if(joia.getArquivo() != null) {
+            throw new ConflictException("Esta jóia já possui uma imagem cadastrada. Remova a antiga antes de adicionar uma nova.");
+        }
+
+        if(dados.getPrecoBanho() == null || dados.getPrecoCompraRevendedor() == null || dados.getMultiplicador() == null) {
+            throw new BadRequestException("Preço de banho, preço de compra e multiplicador são obrigatórios para entrada de jóia.");
+        }
+
         Double custoOriginal = dados.getPrecoBanho() + dados.getPrecoCompraRevendedor();
         Double precoJoia = custoOriginal * dados.getMultiplicador();
 
-        JoiaAtualizacaoDTO joiaAtualizacaoDTO = new JoiaAtualizacaoDTO();
+        JoiaAtualizacaoDto joiaAtualizacaoDTO = new JoiaAtualizacaoDto();
         joiaAtualizacaoDTO.setPrecoFinal(precoJoia);
         joiaService.atualizarJoiaPorId(joia.getId(), joiaAtualizacaoDTO);
 
@@ -65,10 +74,6 @@ public class EntradaStrategy implements MovimentacaoStrategy {
         movimentacao.setPrecoOriginal(dto.dadosOriginais().getPrecoCompraRevendedor());
         movimentacao.setPrecoBanho(dto.dadosOriginais().getPrecoBanho());
         movimentacao.setMultiplicador(dto.dadosOriginais().getMultiplicador());
-
-        if(joia.getArquivo() != null) {
-            throw new ConflictException("Esta jóia já possui uma imagem cadastrada. Remova a antiga antes de adicionar uma nova.");
-        }
 
         if(dto.arquivo() != null && !dto.arquivo().isEmpty()) {
             Arquivo arquivoEntity = arquivoStrategy.adicionar(dto.arquivo());

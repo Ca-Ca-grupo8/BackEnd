@@ -3,7 +3,7 @@ package com.caeca.estoque.service.categoria;
 import com.caeca.estoque.database.model.categoria.Categoria;
 import com.caeca.estoque.database.repository.categoria.CategoriaRepository;
 import com.caeca.estoque.dto.categoria.CategoriaMapper;
-import com.caeca.estoque.dto.categoria.CategoriaSaidaDTO;
+import com.caeca.estoque.dto.categoria.CategoriaSaidaDto;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,7 +19,7 @@ public class CategoriaService {
         this.categoriaRepository = categoriaRepository;
     }
 
-    public List<CategoriaSaidaDTO> listarTodasAsCategorias() {
+    public List<CategoriaSaidaDto> listarTodasAsCategorias() {
 
         List<Categoria> categorias = categoriaRepository.findAll();
 
@@ -27,7 +27,7 @@ public class CategoriaService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Nenhuma categoria encontrada!");
         }
 
-        List<CategoriaSaidaDTO> categoriasSaidaDTO = CategoriaMapper.toResponseList(categorias);
+        List<CategoriaSaidaDto> categoriasSaidaDTO = CategoriaMapper.toResponseList(categorias);
 
         return categoriasSaidaDTO;
     }
@@ -40,7 +40,7 @@ public class CategoriaService {
         return categoria;
     }
 
-    public CategoriaSaidaDTO criarCategoria(Categoria categoria) {
+    public CategoriaSaidaDto criarCategoria(Categoria categoria) {
 
         if (categoria.getNome().isBlank()) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(409), "Nome da categoria não pode estar vazio!");
@@ -48,7 +48,7 @@ public class CategoriaService {
 
         Categoria categoriaCriada = categoriaRepository.save(categoria);
 
-        CategoriaSaidaDTO categoriaSaidaDTO = CategoriaMapper.toResponse(categoriaCriada);
+        CategoriaSaidaDto categoriaSaidaDTO = CategoriaMapper.toResponse(categoriaCriada);
 
         return categoriaSaidaDTO;
     }

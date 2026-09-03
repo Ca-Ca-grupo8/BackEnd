@@ -5,7 +5,7 @@ import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.dto.dashboard.GraficoMotivoDto;
 import com.caeca.estoque.dto.dashboard.TopCincoDto;
-import com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDTO;
+import com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDto;
 import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Integer> {
+public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long> {
     @Query("""
             SELECT COALESCE(SUM(m.precoSaida), 0.0)
             FROM Movimentacao m
@@ -139,7 +139,16 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
     List<Fornecedor> buscarFornecedoresDaJoia(@Param("joiaId") Long joiaId);
 
     @Query("""
-    SELECT new com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDTO(
+            SELECT new com.caeca.estoque.database.repository.movimentacao.FornecedorJoiaProjecao(
+                m.joia.id, m.fornecedor)
+            FROM Movimentacao m
+            WHERE m.joia.id IN :joiaIds
+              AND m.fornecedor IS NOT NULL
+    """)
+    List<FornecedorJoiaProjecao> buscarFornecedoresDasJoias(@Param("joiaIds") List<Long> joiaIds);
+
+    @Query("""
+    SELECT new com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDto(
         j.nome,
         j.quantidade,
         MAX(m.data)
@@ -156,7 +165,7 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
         CASE WHEN MAX(m.data) IS NULL THEN 0 ELSE 1 END,
         MAX(m.data) ASC
     """)
-    List<TopCincoMaisFriasDTO> buscarProdutosFrios(
+    List<TopCincoMaisFriasDto> buscarProdutosFrios(
             LocalDateTime inicio,
             LocalDateTime fim,
             Long categoriaId,

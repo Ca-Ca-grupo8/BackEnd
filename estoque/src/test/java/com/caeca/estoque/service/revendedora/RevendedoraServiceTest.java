@@ -156,14 +156,14 @@ class RevendedoraServiceTest {
         Mockito.when(revendedoraRepository.existsById(1L))
                 .thenReturn(true);
 
-        Mockito.when(revendedoraRepository.findByEmail(dto.getEmail()))
-                .thenReturn(Optional.empty());
+        Mockito.when(revendedoraRepository.existsByEmailAndIdNot(dto.getEmail(), 1L))
+                .thenReturn(false);
 
-        Mockito.when(revendedoraRepository.findByTelefone(dto.getTelefone()))
-                .thenReturn(Optional.empty());
+        Mockito.when(revendedoraRepository.existsByTelefoneAndIdNot(dto.getTelefone(), 1L))
+                .thenReturn(false);
 
-        Mockito.when(revendedoraRepository.findByEnderecoId(dto.getEnderecoId()))
-                .thenReturn(Optional.empty());
+        Mockito.when(revendedoraRepository.existsByEnderecoIdAndIdNot(dto.getEnderecoId(), 1L))
+                .thenReturn(false);
 
         Mockito.when(enderecoService.buscarPorId(1L))
                 .thenReturn(endereco);
@@ -237,18 +237,14 @@ class RevendedoraServiceTest {
         Revendedora revendedora = new Revendedora();
         revendedora.setId(1L);
 
-        Revendedora outraRevendedora = new Revendedora();
-        outraRevendedora.setId(2L);
-        outraRevendedora.setEmail("duplicado@email.com");
-
         RevendedoraPatchDto dto = new RevendedoraPatchDto();
         dto.setEmail("duplicado@email.com");
 
         Mockito.when(revendedoraRepository.findById(1L))
                 .thenReturn(Optional.of(revendedora));
 
-        Mockito.when(revendedoraRepository.findByEmail(dto.getEmail()))
-                .thenReturn(Optional.of(outraRevendedora));
+        Mockito.when(revendedoraRepository.existsByEmailAndIdNot(dto.getEmail(), 1L))
+                .thenReturn(true);
 
         Assertions.assertThrows(
                 ConflictException.class,
@@ -308,18 +304,14 @@ class RevendedoraServiceTest {
         Revendedora atual = new Revendedora();
         atual.setId(1L);
 
-        Revendedora outra = new Revendedora();
-        outra.setId(2L);
-        outra.setTelefone("11999999999");
-
         RevendedoraPatchDto dto = new RevendedoraPatchDto();
         dto.setTelefone("11999999999");
 
         Mockito.when(revendedoraRepository.findById(1L))
                 .thenReturn(Optional.of(atual));
 
-        Mockito.when(revendedoraRepository.findByTelefone(dto.getTelefone()))
-                .thenReturn(Optional.of(outra));
+        Mockito.when(revendedoraRepository.existsByTelefoneAndIdNot(dto.getTelefone(), 1L))
+                .thenReturn(true);
 
         Assertions.assertThrows(
                 ConflictException.class,
@@ -334,17 +326,14 @@ class RevendedoraServiceTest {
         Revendedora atual = new Revendedora();
         atual.setId(1L);
 
-        Revendedora outra = new Revendedora();
-        outra.setId(2L);
-
         RevendedoraPatchDto dto = new RevendedoraPatchDto();
         dto.setEnderecoId(10L);
 
         Mockito.when(revendedoraRepository.findById(1L))
                 .thenReturn(Optional.of(atual));
 
-        Mockito.when(revendedoraRepository.findByEnderecoId(10L))
-                .thenReturn(Optional.of(outra));
+        Mockito.when(revendedoraRepository.existsByEnderecoIdAndIdNot(10L, 1L))
+                .thenReturn(true);
 
         Assertions.assertThrows(
                 ConflictException.class,

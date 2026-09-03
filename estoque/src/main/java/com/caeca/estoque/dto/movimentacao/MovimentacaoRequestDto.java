@@ -1,6 +1,6 @@
 package com.caeca.estoque.dto.movimentacao;
 
-import com.caeca.estoque.dto.joia.JoiaEntradaDTO;
+import com.caeca.estoque.dto.joia.JoiaEntradaDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -14,7 +14,7 @@ public class MovimentacaoRequestDto {
     @Schema(example = "1", description = "Id da jóia")
     private Long idJoia;
 
-    private JoiaEntradaDTO dadosNovaJoia;
+    private JoiaEntradaDto dadosNovaJoia;
 
     @Schema(example = "1", description = "Id do tipo de movimentação (Entrada, saída, etc)")
     @NotNull
@@ -33,7 +33,7 @@ public class MovimentacaoRequestDto {
     public MovimentacaoRequestDto() {
     }
 
-    public MovimentacaoRequestDto(Integer quantidade, Long idJoia, JoiaEntradaDTO dadosNovaJoia, Integer idTipoMovimentacao, Long idFornecedor, Long idRevendedora, Double precoCompraRevendedor, Double precoBanho, Double multiplicador) {
+    public MovimentacaoRequestDto(Integer quantidade, Long idJoia, JoiaEntradaDto dadosNovaJoia, Integer idTipoMovimentacao, Long idFornecedor, Long idRevendedora, Double precoCompraRevendedor, Double precoBanho, Double multiplicador) {
         this.quantidade = quantidade;
         this.idJoia = idJoia;
         this.dadosNovaJoia = dadosNovaJoia;
@@ -61,11 +61,11 @@ public class MovimentacaoRequestDto {
         this.idJoia = idJoia;
     }
 
-    public JoiaEntradaDTO getDadosNovaJoia() {
+    public JoiaEntradaDto getDadosNovaJoia() {
         return dadosNovaJoia;
     }
 
-    public void setDadosNovaJoia(JoiaEntradaDTO dadosNovaJoia) {
+    public void setDadosNovaJoia(JoiaEntradaDto dadosNovaJoia) {
         this.dadosNovaJoia = dadosNovaJoia;
     }
 
