@@ -2,13 +2,16 @@ package com.caeca.estoque.service.joia;
 
 import com.caeca.estoque.database.model.banho.Banho;
 import com.caeca.estoque.database.model.categoria.Categoria;
+import com.caeca.estoque.database.model.fornecedores.Fornecedor;
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.material.Material;
 import com.caeca.estoque.database.repository.joia.JoiaRepository;
+import com.caeca.estoque.database.repository.movimentacao.FornecedorJoiaProjecao;
 import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
 import com.caeca.estoque.dto.joia.JoiaAtualizacaoDto;
 import com.caeca.estoque.dto.joia.JoiaEntradaDto;
 import com.caeca.estoque.dto.joia.JoiaSaidaDto;
+import com.caeca.estoque.dto.joia.JoiaStatus;
 import com.caeca.estoque.service.Material.MaterialService;
 import com.caeca.estoque.service.banho.BanhoService;
 import com.caeca.estoque.service.categoria.CategoriaService;
@@ -48,7 +51,7 @@ class JoiaServiceTest {
             joia.setId(1L);
             when(joiaRepository.listarTodosFiltrado(any(), any(), any(), any(), any(), any()))
                     .thenReturn(List.of(joia));
-            when(movimentacaoRepository.buscarFornecedoresDaJoia(anyLong())).thenReturn(List.of());
+            when(movimentacaoRepository.buscarFornecedoresDasJoias(anyList())).thenReturn(List.of());
 
             List<JoiaSaidaDto> resultado = joiaService.listarTodasAsJoias(null, null, null, null, null, null, null);
 
@@ -56,6 +59,56 @@ class JoiaServiceTest {
             assertFalse(resultado.isEmpty());
             assertEquals(1, resultado.size());
             verify(joiaRepository, times(1)).listarTodosFiltrado(any(), any(), any(), any(), any(), any());
+        }
+
+        @Test
+        @DisplayName("Deve buscar fornecedores em lote único e preencher por joia")
+        void deveBuscarFornecedoresEmLoteUnico() {
+            Joia joia1 = new Joia();
+            joia1.setId(1L);
+            Joia joia2 = new Joia();
+            joia2.setId(2L);
+
+            Fornecedor fornecedor1 = new Fornecedor();
+            fornecedor1.setId(10L);
+            fornecedor1.setNome("Fornecedor A");
+            Fornecedor fornecedor2 = new Fornecedor();
+            fornecedor2.setId(20L);
+            fornecedor2.setNome("Fornecedor B");
+
+            when(joiaRepository.listarTodosFiltrado(any(), any(), any(), any(), any(), any()))
+                    .thenReturn(List.of(joia1, joia2));
+            when(movimentacaoRepository.buscarFornecedoresDasJoias(anyList()))
+                    .thenReturn(List.of(
+                            new FornecedorJoiaProjecao(1L, fornecedor1),
+                            new FornecedorJoiaProjecao(2L, fornecedor2)));
+
+            List<JoiaSaidaDto> resultado = joiaService.listarTodasAsJoias(null, null, null, null, null, null, null);
+
+            assertNotNull(resultado);
+            assertEquals(2, resultado.size());
+            assertEquals("Fornecedor A", resultado.get(0).getFornecedores().get(0).getNome());
+            assertEquals("Fornecedor B", resultado.get(1).getFornecedores().get(0).getNome());
+            verify(movimentacaoRepository, times(1)).buscarFornecedoresDasJoias(List.of(1L, 2L));
+        }
+
+        @Test
+        @DisplayName("Deve filtrar por status antes de buscar fornecedores em lote")
+        void deveFiltrarPorStatusAntesDoLote() {
+            Joia joiaAtiva = new Joia();
+            joiaAtiva.setId(1L);
+            joiaAtiva.setQuantidade(10);
+            joiaAtiva.setQuantidadeMinima(5);
+            joiaAtiva.setAtivo(true);
+
+            when(joiaRepository.listarTodosFiltrado(any(), any(), any(), any(), any(), any()))
+                    .thenReturn(List.of(joiaAtiva));
+            when(movimentacaoRepository.buscarFornecedoresDasJoias(anyList())).thenReturn(List.of());
+
+            List<JoiaSaidaDto> resultado = joiaService.listarTodasAsJoias(null, null, null, null, JoiaStatus.OK, null, null);
+
+            assertNotNull(resultado);
+            assertEquals(1, resultado.size());
         }
 
         @Test
