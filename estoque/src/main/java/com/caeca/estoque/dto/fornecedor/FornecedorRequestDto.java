@@ -11,10 +11,12 @@ public class FornecedorRequestDto {
 
     @Schema(example = "Joias Brasil Ltda", description = "Nome do fornecedor")
     @NotBlank
+    @Size(max = 150)
     private String nome;
 
     @Schema(example = "11999990000", description = "Telefone do fornecedor")
     @NotBlank
+    @Size(max = 20)
     private String telefone;
 
     @Schema(example = "@joiasbrasil", description = "Instagram do fornecedor")

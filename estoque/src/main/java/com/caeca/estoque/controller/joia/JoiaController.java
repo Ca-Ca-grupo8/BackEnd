@@ -72,14 +72,14 @@ public class JoiaController {
     }
 
     @PostMapping
-    public ResponseEntity<JoiaSaidaDto> criarJoia(@RequestBody JoiaEntradaDto joia) throws NotFoundException {
+    public ResponseEntity<JoiaSaidaDto> criarJoia(@RequestBody @Valid JoiaEntradaDto joia) throws NotFoundException {
         JoiaSaidaDto joiaSaidaDTO = joiaService.criarJoia(joia);
 
         return ResponseEntity.status(201).body(joiaSaidaDTO);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<JoiaSaidaDto> atualizarJoiaPorId(@PathVariable Long id, @RequestBody JoiaAtualizacaoDto dto) {
+    public ResponseEntity<JoiaSaidaDto> atualizarJoiaPorId(@PathVariable Long id, @RequestBody @Valid JoiaAtualizacaoDto dto) {
 
         JoiaSaidaDto response = joiaService.atualizarJoiaPorId(id, dto);
 
