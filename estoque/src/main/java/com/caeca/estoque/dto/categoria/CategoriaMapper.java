@@ -6,7 +6,7 @@ import java.util.List;
 
 public class CategoriaMapper {
 
-    public static Categoria toEntity(CategoriaEntradaDTO categoriaEntradaDTO) {
+    public static Categoria toEntity(CategoriaEntradaDto categoriaEntradaDTO) {
 
         if (categoriaEntradaDTO == null) {
             return null;
@@ -19,13 +19,13 @@ public class CategoriaMapper {
         return categoria;
     }
 
-    public static CategoriaSaidaDTO toResponse(Categoria categoria) {
+    public static CategoriaSaidaDto toResponse(Categoria categoria) {
 
         if (categoria == null) {
             return null;
         }
 
-        CategoriaSaidaDTO categoriaSaidaDTO = new CategoriaSaidaDTO();
+        CategoriaSaidaDto categoriaSaidaDTO = new CategoriaSaidaDto();
 
         categoriaSaidaDTO.setId(categoria.getId());
         categoriaSaidaDTO.setNome(categoria.getNome());
@@ -33,7 +33,7 @@ public class CategoriaMapper {
         return categoriaSaidaDTO;
     }
 
-    public static List<CategoriaSaidaDTO> toResponseList(List<Categoria> categorias) {
+    public static List<CategoriaSaidaDto> toResponseList(List<Categoria> categorias) {
 
         return categorias
                 .stream()

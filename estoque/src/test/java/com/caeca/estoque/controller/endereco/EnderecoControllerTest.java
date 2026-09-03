@@ -1,7 +1,7 @@
 package com.caeca.estoque.controller.endereco;
 
 import com.caeca.estoque.database.model.endereco.Endereco;
-import com.caeca.estoque.dto.endereco.EnderecoRequestDTO;
+import com.caeca.estoque.dto.endereco.EnderecoRequestDto;
 import com.caeca.estoque.exception.EnderecoNotFoundException;
 import com.caeca.estoque.handler.GlobalExceptionHandler;
 import com.caeca.estoque.service.endereco.EnderecoService;
@@ -38,7 +38,7 @@ class EnderecoControllerTest {
 
     private ObjectMapper objectMapper;
     private Endereco endereco;
-    private EnderecoRequestDTO requestDTO;
+    private EnderecoRequestDto requestDTO;
 
     @BeforeEach
     void setUp() {
@@ -54,7 +54,7 @@ class EnderecoControllerTest {
         endereco.setCidade("São Paulo");
         endereco.setUf("SP");
 
-        requestDTO = new EnderecoRequestDTO();
+        requestDTO = new EnderecoRequestDto();
         requestDTO.setCep("01310100");
         requestDTO.setLogradouro("Avenida Paulista");
         requestDTO.setNumero(1000);
@@ -136,7 +136,7 @@ class EnderecoControllerTest {
         @Test
         @DisplayName("Deve retornar status 201 e dados do endereco criado")
         void deveRetornar201EEnderecoCriado() throws Exception {
-            when(enderecoService.criar(any(EnderecoRequestDTO.class))).thenReturn(endereco);
+            when(enderecoService.criar(any(EnderecoRequestDto.class))).thenReturn(endereco);
 
             mockMvc.perform(post("/enderecos")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -145,7 +145,7 @@ class EnderecoControllerTest {
                     .andExpect(jsonPath("$.cep").value("01310100"))
                     .andExpect(jsonPath("$.logradouro").value("Avenida Paulista"));
 
-            verify(enderecoService, times(1)).criar(any(EnderecoRequestDTO.class));
+            verify(enderecoService, times(1)).criar(any(EnderecoRequestDto.class));
         }
     }
 
@@ -156,7 +156,7 @@ class EnderecoControllerTest {
         @Test
         @DisplayName("Deve retornar status 200 e dados atualizados do endereco")
         void deveRetornar200EEnderecoAtualizado() throws Exception {
-            when(enderecoService.atualizar(eq(1L), any(EnderecoRequestDTO.class)))
+            when(enderecoService.atualizar(eq(1L), any(EnderecoRequestDto.class)))
                     .thenReturn(endereco);
 
             mockMvc.perform(put("/enderecos/{id}", 1L)
@@ -165,13 +165,13 @@ class EnderecoControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.logradouro").value("Avenida Paulista"));
 
-            verify(enderecoService, times(1)).atualizar(eq(1L), any(EnderecoRequestDTO.class));
+            verify(enderecoService, times(1)).atualizar(eq(1L), any(EnderecoRequestDto.class));
         }
 
         @Test
         @DisplayName("Deve retornar status 404 quando endereco nao encontrado")
         void deveRetornar404QuandoNaoEncontrado() throws Exception {
-            when(enderecoService.atualizar(eq(99L), any(EnderecoRequestDTO.class)))
+            when(enderecoService.atualizar(eq(99L), any(EnderecoRequestDto.class)))
                     .thenThrow(new EnderecoNotFoundException(99L));
 
             mockMvc.perform(put("/enderecos/{id}", 99L)
@@ -179,7 +179,7 @@ class EnderecoControllerTest {
                             .content(objectMapper.writeValueAsString(requestDTO)))
                     .andExpect(status().isNotFound());
 
-            verify(enderecoService, times(1)).atualizar(eq(99L), any(EnderecoRequestDTO.class));
+            verify(enderecoService, times(1)).atualizar(eq(99L), any(EnderecoRequestDto.class));
         }
     }
 

@@ -88,25 +88,25 @@ class MovimentacaoServiceTest {
         @DisplayName("Deve retornar movimentação quando encontrar pelo id")
         void deveRetornarMovimentacaoQuandoEncontrarPeloId() {
             Movimentacao movimentacao = new Movimentacao();
-            when(movimentacaoRepository.findById(anyInt())).thenReturn(Optional.of(movimentacao));
+            when(movimentacaoRepository.findById(anyLong())).thenReturn(Optional.of(movimentacao));
 
             Movimentacao resultado = movimentacaoService.buscarPorId(1L);
 
             assertNotNull(resultado);
             assertEquals(movimentacao, resultado);
-            verify(movimentacaoRepository, times(1)).findById(1);
+            verify(movimentacaoRepository, times(1)).findById(1L);
         }
 
         @Test
         @DisplayName("Deve lançar NotFoundException quando não encontrar a movimentação pelo id")
         void deveLancarNotFoundExceptionQuandoNaoEncontrarAMovimentacaoPeloId() {
-            when(movimentacaoRepository.findById(anyInt())).thenReturn(Optional.empty());
+            when(movimentacaoRepository.findById(anyLong())).thenReturn(Optional.empty());
 
             assertThrows(NotFoundException.class, () -> {
                 movimentacaoService.buscarPorId(1L);
             });
 
-            verify(movimentacaoRepository, times(1)).findById(1);
+            verify(movimentacaoRepository, times(1)).findById(1L);
         }
     }
 

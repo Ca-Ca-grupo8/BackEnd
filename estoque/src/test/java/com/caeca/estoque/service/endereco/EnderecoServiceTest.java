@@ -3,7 +3,7 @@ package com.caeca.estoque.service.endereco;
 import com.caeca.estoque.client.ViaCepClient;
 import com.caeca.estoque.database.model.endereco.Endereco;
 import com.caeca.estoque.database.repository.endereco.EnderecoRepository;
-import com.caeca.estoque.dto.endereco.EnderecoRequestDTO;
+import com.caeca.estoque.dto.endereco.EnderecoRequestDto;
 import com.caeca.estoque.exception.EnderecoNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +34,7 @@ class EnderecoServiceTest {
     private EnderecoService enderecoService;
 
     private Endereco endereco;
-    private EnderecoRequestDTO requestDTO;
+    private EnderecoRequestDto requestDTO;
 
     @BeforeEach
     void setUp() {
@@ -48,7 +48,7 @@ class EnderecoServiceTest {
         endereco.setCidade("São Paulo");
         endereco.setUf("SP");
 
-        requestDTO = new EnderecoRequestDTO();
+        requestDTO = new EnderecoRequestDto();
         requestDTO.setCep("01310100");
         requestDTO.setLogradouro("Avenida Paulista");
         requestDTO.setNumero(1000);

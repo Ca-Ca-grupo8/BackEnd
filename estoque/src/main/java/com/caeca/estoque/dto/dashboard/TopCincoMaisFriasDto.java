@@ -2,13 +2,13 @@ package com.caeca.estoque.dto.dashboard;
 
 import java.time.LocalDateTime;
 
-public class TopCincoMaisFriasDTO {
+public class TopCincoMaisFriasDto {
 
     private String nome;
     private Integer quantidade;
     private LocalDateTime ultimaMovimentacao;
 
-    public TopCincoMaisFriasDTO(String nome, Integer quantidade, LocalDateTime ultimaMovimentacao) {
+    public TopCincoMaisFriasDto(String nome, Integer quantidade, LocalDateTime ultimaMovimentacao) {
         this.nome = nome;
         this.quantidade = quantidade;
         this.ultimaMovimentacao = ultimaMovimentacao;

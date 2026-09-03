@@ -1,13 +1,13 @@
 package com.caeca.estoque.dto.fornecedor;
 
-import com.caeca.estoque.dto.endereco.EnderecoRequestDTO;
+import com.caeca.estoque.dto.endereco.EnderecoRequestDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class FornecedorRequestDTO {
+public class FornecedorRequestDto {
 
     @Schema(example = "Joias Brasil Ltda", description = "Nome do fornecedor")
     @NotBlank
@@ -23,10 +23,10 @@ public class FornecedorRequestDTO {
     @Size(max = 100)
     private String instagram;
 
-    public FornecedorRequestDTO() {
+    public FornecedorRequestDto() {
     }
 
-    public FornecedorRequestDTO(String nome, String telefone, String instagram) {
+    public FornecedorRequestDto(String nome, String telefone, String instagram) {
         this.nome = nome;
         this.telefone = telefone;
         this.instagram = instagram;

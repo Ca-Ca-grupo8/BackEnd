@@ -17,4 +17,10 @@ public interface RevendedoraRepository extends JpaRepository<Revendedora, Long> 
     Optional<Revendedora> findByTelefone(String telefone);
 
     Optional<Revendedora> findByEnderecoId(Long enderecoId);
+
+    boolean existsByEmailAndIdNot(String email, Long id);
+
+    boolean existsByTelefoneAndIdNot(String telefone, Long id);
+
+    boolean existsByEnderecoIdAndIdNot(Long enderecoId, Long id);
 }

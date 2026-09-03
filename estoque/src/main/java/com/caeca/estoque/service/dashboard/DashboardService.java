@@ -24,15 +24,10 @@ public class DashboardService {
         this.joiaRepository = joiaRepository;
     }
 
-    public ValorSaidaDto calcularValorSaida(FiltroDashboardDTO filtro){
-        LocalDateTime inicio = filtro.dataInicio();
-        LocalDateTime fim = filtro.dataTermino();
-
-        if (inicio == null || fim == null) {
-            LocalDateTime hoje = LocalDateTime.now();
-            inicio = hoje.minusMonths(1).withDayOfMonth(1).with(LocalTime.MIN);
-            fim = inicio.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX);
-        }
+    public ValorSaidaDto calcularValorSaida(FiltroDashboardDto filtro){
+        PeriodoFiltro periodo = resolverPeriodo(filtro);
+        LocalDateTime inicio = periodo.inicio();
+        LocalDateTime fim = periodo.fim();
 
         Double atualBusca = movimentacaoRepository.somarValorTotalDasSaidas(inicio, fim);
         Double atual = (atualBusca != null) ? atualBusca : 0.0;
@@ -55,15 +50,10 @@ public class DashboardService {
         );
     }
 
-    public List<TopCincoDto> buscarTopCincoMaisVendidos(FiltroDashboardDTO filtro) {
-        LocalDateTime inicio = filtro.dataInicio();
-        LocalDateTime fim = filtro.dataTermino();
-
-        if (inicio == null || fim == null) {
-            LocalDateTime hoje = LocalDateTime.now();
-            inicio = hoje.minusMonths(1).withDayOfMonth(1).with(LocalTime.MIN);
-            fim = inicio.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX);
-        }
+    public List<TopCincoDto> buscarTopCincoMaisVendidos(FiltroDashboardDto filtro) {
+        PeriodoFiltro periodo = resolverPeriodo(filtro);
+        LocalDateTime inicio = periodo.inicio();
+        LocalDateTime fim = periodo.fim();
 
         if(filtro.categoriaId() != null){
             return movimentacaoRepository.buscarTopCincoProdutos(
@@ -79,15 +69,10 @@ public class DashboardService {
                     PageRequest.of(0, 5));
     }
 
-    public FiltroGiroEstoque calcularGiroEstoque(FiltroDashboardDTO filtro) {
-        LocalDateTime inicio = filtro.dataInicio();
-        LocalDateTime fim = filtro.dataTermino();
-
-        if (inicio == null || fim == null) {
-            LocalDateTime hoje = LocalDateTime.now();
-            inicio = hoje.minusMonths(1).withDayOfMonth(1).with(LocalTime.MIN);
-            fim = inicio.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX);
-        }
+    public FiltroGiroEstoqueDto calcularGiroEstoque(FiltroDashboardDto filtro) {
+        PeriodoFiltro periodo = resolverPeriodo(filtro);
+        LocalDateTime inicio = periodo.inicio();
+        LocalDateTime fim = periodo.fim();
 
         double giroEstoque = calcularGiroEstoque(inicio, fim);
 
@@ -103,7 +88,7 @@ public class DashboardService {
             varianca = 100.0;
         }
 
-        return new FiltroGiroEstoque(
+        return new FiltroGiroEstoqueDto(
                 giroEstoque,
                 giroEstoqueAntigo,
                 varianca
@@ -140,22 +125,11 @@ public class DashboardService {
         return movimentacaoRepository.buscarGraficoMotivosReentrada(inicio, fim, categoriaId);
     }
 
-    public List<TopCincoMaisFriasDTO> buscarTopCincoMaisFrios(FiltroDashboardDTO filtro) {
+    public List<TopCincoMaisFriasDto> buscarTopCincoMaisFrios(FiltroDashboardDto filtro) {
 
-        LocalDateTime inicio = filtro.dataInicio();
-        LocalDateTime fim = filtro.dataTermino();
-
-        if (inicio == null || fim == null) {
-            LocalDateTime hoje = LocalDateTime.now();
-
-            inicio = hoje.minusMonths(1)
-                    .withDayOfMonth(1)
-                    .with(LocalTime.MIN);
-
-            fim = inicio
-                    .with(TemporalAdjusters.lastDayOfMonth())
-                    .with(LocalTime.MAX);
-        }
+        PeriodoFiltro periodo = resolverPeriodo(filtro);
+        LocalDateTime inicio = periodo.inicio();
+        LocalDateTime fim = periodo.fim();
 
         return movimentacaoRepository.buscarProdutosFrios(
                 inicio,
@@ -165,20 +139,22 @@ public class DashboardService {
         );
     }
 
-    public IndicePecasFriasDTO buscarIndicePecasFrias(
-            FiltroDashboardDTO filtro
+    public IndicePecasFriasDto buscarIndicePecasFrias(
+            FiltroDashboardDto filtro
     ) {
 
+        PeriodoFiltro periodo = resolverPeriodo(filtro);
+
         LocalDateTime inicioMesAnterior =
-                filtro.dataInicio().minusMonths(1);
+                periodo.inicio().minusMonths(1);
 
         LocalDateTime fimMesAnterior =
-                filtro.dataTermino().minusMonths(1);
+                periodo.fim().minusMonths(1);
 
         Number resultadoAtual =
                 movimentacaoRepository.buscarIndiceAtual(
-                        filtro.dataInicio(),
-                        filtro.dataTermino(),
+                        periodo.inicio(),
+                        periodo.fim(),
                         filtro.categoriaId()
                 );
 
@@ -202,10 +178,25 @@ public class DashboardService {
         double diferenca =
                 indiceAtual - indiceAnterior;
 
-        return new IndicePecasFriasDTO(
+        return new IndicePecasFriasDto(
                 indiceAtual,
                 indiceAnterior,
                 diferenca
         );
     }
+
+    private PeriodoFiltro resolverPeriodo(FiltroDashboardDto filtro) {
+        LocalDateTime inicio = filtro.dataInicio();
+        LocalDateTime fim = filtro.dataTermino();
+
+        if (inicio == null || fim == null) {
+            LocalDateTime hoje = LocalDateTime.now();
+            inicio = hoje.minusMonths(1).withDayOfMonth(1).with(LocalTime.MIN);
+            fim = inicio.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX);
+        }
+
+        return new PeriodoFiltro(inicio, fim);
+    }
+
+    private record PeriodoFiltro(LocalDateTime inicio, LocalDateTime fim) {}
 }

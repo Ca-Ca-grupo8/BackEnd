@@ -4,7 +4,7 @@ import jdk.jshell.Snippet;
 import lombok.Builder;
 
 @Builder
-public class EnderecoResponseDTO {
+public class EnderecoResponseDto {
     private Long id;
     private String cep;
     private String logradouro;
@@ -14,10 +14,10 @@ public class EnderecoResponseDTO {
     private String cidade;
     private String uf;
 
-    public EnderecoResponseDTO() {
+    public EnderecoResponseDto() {
     }
 
-    public EnderecoResponseDTO(Long id, String cep, String logradouro, Integer numero, String complemento, String bairro, String cidade, String uf) {
+    public EnderecoResponseDto(Long id, String cep, String logradouro, Integer numero, String complemento, String bairro, String cidade, String uf) {
         this.id = id;
         this.cep = cep;
         this.logradouro = logradouro;

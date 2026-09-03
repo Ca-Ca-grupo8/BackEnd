@@ -27,17 +27,17 @@ public class DashboardController {
     }
 
     @GetMapping
-    public ResponseEntity<ValorSaidaDto> buscarValorSaida(FiltroDashboardDTO filtros){
+    public ResponseEntity<ValorSaidaDto> buscarValorSaida(FiltroDashboardDto filtros){
         return ResponseEntity.ok(dashboardService.calcularValorSaida(filtros));
     }
 
     @GetMapping("/top-cinco")
-    public ResponseEntity<List<TopCincoDto>> buscarTopCinco(FiltroDashboardDTO filtros) {
+    public ResponseEntity<List<TopCincoDto>> buscarTopCinco(FiltroDashboardDto filtros) {
         return ResponseEntity.ok(dashboardService.buscarTopCincoMaisVendidos(filtros));
     }
 
     @GetMapping("/giro-estoque")
-    public ResponseEntity<FiltroGiroEstoque> calcularGiroEstoque(FiltroDashboardDTO filtros) {
+    public ResponseEntity<FiltroGiroEstoqueDto> calcularGiroEstoque(FiltroDashboardDto filtros) {
         return ResponseEntity.ok(dashboardService.calcularGiroEstoque(filtros));
     }
     @GetMapping("/graficos/motivos-saida")
@@ -61,15 +61,15 @@ public class DashboardController {
     }
 
     @GetMapping("/top-cinco-mais-frios")
-    public ResponseEntity<List<TopCincoMaisFriasDTO>> buscarTopCincoMaisFrios(FiltroDashboardDTO filtro) {
+    public ResponseEntity<List<TopCincoMaisFriasDto>> buscarTopCincoMaisFrios(FiltroDashboardDto filtro) {
         return ResponseEntity.ok(
                 dashboardService.buscarTopCincoMaisFrios(filtro)
         );
     }
 
     @GetMapping("/indice-pecas-frias")
-    public ResponseEntity<IndicePecasFriasDTO> buscarIndicePecasFrias(
-            FiltroDashboardDTO filtro
+    public ResponseEntity<IndicePecasFriasDto> buscarIndicePecasFrias(
+            FiltroDashboardDto filtro
     ) {
         return ResponseEntity.ok(
                 dashboardService.buscarIndicePecasFrias(filtro)

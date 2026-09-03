@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
-public class JoiaEntradaDTO {
+public class JoiaEntradaDto {
 
     @NotBlank
     @Size(max = 100)
@@ -39,7 +39,7 @@ public class JoiaEntradaDTO {
     @Schema(description = "Id do material (Ex: aço)", example = "1")
     private Integer material;
 
-    public JoiaEntradaDTO(Integer material, Integer banho, Long categoria, Integer quantidadeMinima, Integer quantidade, String nome) {
+    public JoiaEntradaDto(Integer material, Integer banho, Long categoria, Integer quantidadeMinima, Integer quantidade, String nome) {
         this.material = material;
         this.banho = banho;
         this.categoria = categoria;
@@ -48,7 +48,7 @@ public class JoiaEntradaDTO {
         this.nome = nome;
     }
 
-    public JoiaEntradaDTO() {
+    public JoiaEntradaDto() {
 
     }
 
