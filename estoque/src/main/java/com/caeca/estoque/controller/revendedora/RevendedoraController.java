@@ -63,7 +63,7 @@ class RevendedoraController {
     @PatchMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<RevendedoraResponseDto> atualizarParcialmente(
-            @RequestBody RevendedoraPatchDto dto,
+            @RequestBody @Valid RevendedoraPatchDto dto,
             @PathVariable Long id
     ){
         return ResponseEntity.ok(RevendedoraMapper.toResponse(revendedoraService.atualizarParcialmente(id, dto)));

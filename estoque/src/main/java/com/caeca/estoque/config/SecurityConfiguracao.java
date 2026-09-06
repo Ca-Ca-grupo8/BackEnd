@@ -1,6 +1,5 @@
 package com.caeca.estoque.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -50,12 +49,16 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfiguracao {
 
-    @Autowired
-    private AutenticacaoService autenticacaoService;
+    private final AutenticacaoService autenticacaoService;
 
     // AutenticacaoEntryPoint é registrado como @Component, o Spring injeta automaticamente
-    @Autowired
-    private AutenticacaoEntryPoint autenticacaoJwtEntryPoint;
+    private final AutenticacaoEntryPoint autenticacaoJwtEntryPoint;
+
+    public SecurityConfiguracao(AutenticacaoService autenticacaoService,
+                                AutenticacaoEntryPoint autenticacaoJwtEntryPoint) {
+        this.autenticacaoService = autenticacaoService;
+        this.autenticacaoJwtEntryPoint = autenticacaoJwtEntryPoint;
+    }
 
     /**
      * URLs que não exigem autenticação (acesso público).
@@ -116,7 +119,6 @@ public class SecurityConfiguracao {
                 // Define quais URLs são públicas e quais exigem autenticação
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(URLS_PERMITIDAS).permitAll()   // rotas públicas
-                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll() // criação de usuário é pública
                         .anyRequest().authenticated()                   // todas as outras exigem token
                 )
 

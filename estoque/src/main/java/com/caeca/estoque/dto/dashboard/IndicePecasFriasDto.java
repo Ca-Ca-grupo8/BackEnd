@@ -2,13 +2,13 @@ package com.caeca.estoque.dto.dashboard;
 
 import java.math.BigDecimal;
 
-public class IndicePecasFriasDTO {
+public class IndicePecasFriasDto {
 
     private Double indiceAtual;
     private Double indiceMesAnterior;
     private Double diferenca;
 
-    public IndicePecasFriasDTO(Double indiceAtual, Double indiceMesAnterior, Double diferenca) {
+    public IndicePecasFriasDto(Double indiceAtual, Double indiceMesAnterior, Double diferenca) {
         this.indiceAtual = indiceAtual;
         this.indiceMesAnterior = indiceMesAnterior;
         this.diferenca = diferenca;

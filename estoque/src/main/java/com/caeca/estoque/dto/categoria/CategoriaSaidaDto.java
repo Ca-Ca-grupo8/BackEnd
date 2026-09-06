@@ -1,16 +1,16 @@
 package com.caeca.estoque.dto.categoria;
 
-public class CategoriaSaidaDTO {
+public class CategoriaSaidaDto {
 
     private Long id;
     private String nome;
 
-    public CategoriaSaidaDTO(Long id, String nome) {
+    public CategoriaSaidaDto(Long id, String nome) {
         this.id = id;
         this.nome = nome;
     }
 
-    public CategoriaSaidaDTO() {}
+    public CategoriaSaidaDto() {}
 
     public Long getId() {
         return id;

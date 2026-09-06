@@ -5,9 +5,9 @@ import com.caeca.estoque.client.ViaCepClient;
 import com.caeca.estoque.database.model.endereco.Endereco;
 import com.caeca.estoque.database.repository.endereco.EnderecoRepository;
 import com.caeca.estoque.dto.endereco.EnderecoMapper;
-import com.caeca.estoque.dto.endereco.EnderecoRequestDTO;
-import com.caeca.estoque.dto.endereco.EnderecoResponseDTO;
-import com.caeca.estoque.dto.endereco.ViaCepResponseDTO;
+import com.caeca.estoque.dto.endereco.EnderecoRequestDto;
+import com.caeca.estoque.dto.endereco.EnderecoResponseDto;
+import com.caeca.estoque.dto.endereco.ViaCepResponseDto;
 import com.caeca.estoque.exception.EnderecoNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ public class EnderecoService {
     private final ViaCepClient viaCepClient;
 
     // GET /enderecos/cep/:cep — consulta ViaCEP
-    public ViaCepResponseDTO consultarCep(String cep) {
+    public ViaCepResponseDto consultarCep(String cep) {
         String cepLimpo = cep.replaceAll("[^0-9]", "");
         return viaCepClient.buscarPorCep(cepLimpo);
     }
@@ -45,14 +45,14 @@ public class EnderecoService {
 
     // POST /enderecos
     @Transactional
-    public Endereco criar(EnderecoRequestDTO dto) {
+    public Endereco criar(EnderecoRequestDto dto) {
         Endereco endereco = EnderecoMapper.toEntity(dto);
         return enderecoRepository.save(endereco);
     }
 
     // PUT /enderecos/:id
     @Transactional
-    public Endereco atualizar(Long id, EnderecoRequestDTO dto) {
+    public Endereco atualizar(Long id, EnderecoRequestDto dto) {
         Endereco endereco = enderecoRepository.findById(id)
                 .orElseThrow(() -> new EnderecoNotFoundException(id));
 

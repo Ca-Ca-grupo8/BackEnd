@@ -2,13 +2,16 @@ package com.caeca.estoque.service.joia;
 
 import com.caeca.estoque.database.model.banho.Banho;
 import com.caeca.estoque.database.model.categoria.Categoria;
+import com.caeca.estoque.database.model.fornecedores.Fornecedor;
 import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.material.Material;
 import com.caeca.estoque.database.repository.joia.JoiaRepository;
+import com.caeca.estoque.database.repository.movimentacao.FornecedorJoiaProjecao;
 import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
-import com.caeca.estoque.dto.joia.JoiaAtualizacaoDTO;
-import com.caeca.estoque.dto.joia.JoiaEntradaDTO;
-import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
+import com.caeca.estoque.dto.joia.JoiaAtualizacaoDto;
+import com.caeca.estoque.dto.joia.JoiaEntradaDto;
+import com.caeca.estoque.dto.joia.JoiaSaidaDto;
+import com.caeca.estoque.dto.joia.JoiaStatus;
 import com.caeca.estoque.service.Material.MaterialService;
 import com.caeca.estoque.service.banho.BanhoService;
 import com.caeca.estoque.service.categoria.CategoriaService;
@@ -48,14 +51,64 @@ class JoiaServiceTest {
             joia.setId(1L);
             when(joiaRepository.listarTodosFiltrado(any(), any(), any(), any(), any(), any()))
                     .thenReturn(List.of(joia));
-            when(movimentacaoRepository.buscarFornecedoresDaJoia(anyLong())).thenReturn(List.of());
+            when(movimentacaoRepository.buscarFornecedoresDasJoias(anyList())).thenReturn(List.of());
 
-            List<JoiaSaidaDTO> resultado = joiaService.listarTodasAsJoias(null, null, null, null, null, null, null);
+            List<JoiaSaidaDto> resultado = joiaService.listarTodasAsJoias(null, null, null, null, null, null, null);
 
             assertNotNull(resultado);
             assertFalse(resultado.isEmpty());
             assertEquals(1, resultado.size());
             verify(joiaRepository, times(1)).listarTodosFiltrado(any(), any(), any(), any(), any(), any());
+        }
+
+        @Test
+        @DisplayName("Deve buscar fornecedores em lote único e preencher por joia")
+        void deveBuscarFornecedoresEmLoteUnico() {
+            Joia joia1 = new Joia();
+            joia1.setId(1L);
+            Joia joia2 = new Joia();
+            joia2.setId(2L);
+
+            Fornecedor fornecedor1 = new Fornecedor();
+            fornecedor1.setId(10L);
+            fornecedor1.setNome("Fornecedor A");
+            Fornecedor fornecedor2 = new Fornecedor();
+            fornecedor2.setId(20L);
+            fornecedor2.setNome("Fornecedor B");
+
+            when(joiaRepository.listarTodosFiltrado(any(), any(), any(), any(), any(), any()))
+                    .thenReturn(List.of(joia1, joia2));
+            when(movimentacaoRepository.buscarFornecedoresDasJoias(anyList()))
+                    .thenReturn(List.of(
+                            new FornecedorJoiaProjecao(1L, fornecedor1),
+                            new FornecedorJoiaProjecao(2L, fornecedor2)));
+
+            List<JoiaSaidaDto> resultado = joiaService.listarTodasAsJoias(null, null, null, null, null, null, null);
+
+            assertNotNull(resultado);
+            assertEquals(2, resultado.size());
+            assertEquals("Fornecedor A", resultado.get(0).getFornecedores().get(0).getNome());
+            assertEquals("Fornecedor B", resultado.get(1).getFornecedores().get(0).getNome());
+            verify(movimentacaoRepository, times(1)).buscarFornecedoresDasJoias(List.of(1L, 2L));
+        }
+
+        @Test
+        @DisplayName("Deve filtrar por status antes de buscar fornecedores em lote")
+        void deveFiltrarPorStatusAntesDoLote() {
+            Joia joiaAtiva = new Joia();
+            joiaAtiva.setId(1L);
+            joiaAtiva.setQuantidade(10);
+            joiaAtiva.setQuantidadeMinima(5);
+            joiaAtiva.setAtivo(true);
+
+            when(joiaRepository.listarTodosFiltrado(any(), any(), any(), any(), any(), any()))
+                    .thenReturn(List.of(joiaAtiva));
+            when(movimentacaoRepository.buscarFornecedoresDasJoias(anyList())).thenReturn(List.of());
+
+            List<JoiaSaidaDto> resultado = joiaService.listarTodasAsJoias(null, null, null, null, JoiaStatus.OK, null, null);
+
+            assertNotNull(resultado);
+            assertEquals(1, resultado.size());
         }
 
         @Test
@@ -79,7 +132,7 @@ class JoiaServiceTest {
             Joia joia = new Joia();
             when(joiaRepository.findById(anyLong())).thenReturn(Optional.of(joia));
 
-            JoiaSaidaDTO resultado = joiaService.listarJoiaPorId(1L);
+            JoiaSaidaDto resultado = joiaService.listarJoiaPorId(1L);
 
             assertNotNull(resultado);
         }
@@ -128,7 +181,7 @@ class JoiaServiceTest {
         @DisplayName("Deve criar joia com sucesso e retornar o DTO de saída")
         void criarJoia() {
             Joia joia = new Joia();
-            JoiaEntradaDTO dto = new JoiaEntradaDTO();
+            JoiaEntradaDto dto = new JoiaEntradaDto();
             dto.setCategoria(1L);
             dto.setBanho(1);
             dto.setMaterial(1);
@@ -138,7 +191,7 @@ class JoiaServiceTest {
             when(materialService.listarPorId(anyInt())).thenReturn(new Material());
             when(joiaRepository.save(any(Joia.class))).thenReturn(joia);
 
-            JoiaSaidaDTO resultado = joiaService.criarJoia(dto);
+            JoiaSaidaDto resultado = joiaService.criarJoia(dto);
 
             assertNotNull(resultado);
         }
@@ -155,8 +208,8 @@ class JoiaServiceTest {
             when(joiaRepository.findById(anyLong())).thenReturn(Optional.of(joia));
             when(joiaRepository.save(any(Joia.class))).thenReturn(joia);
 
-            JoiaSaidaDTO resultado = joiaService.atualizarJoiaPorId(1L,
-                    new JoiaAtualizacaoDTO("a", 2, 10, 1L, 1, 1, 10.0, true));
+            JoiaSaidaDto resultado = joiaService.atualizarJoiaPorId(1L,
+                    new JoiaAtualizacaoDto("a", 2, 10, 1L, 1, 1, 10.0, true));
 
             assertEquals(10, resultado.getQuantidade());
         }
@@ -167,7 +220,7 @@ class JoiaServiceTest {
             when(joiaRepository.findById(anyLong())).thenReturn(Optional.empty());
 
             assertThrows(RuntimeException.class,
-                    () -> joiaService.atualizarJoiaPorId(1L, new JoiaAtualizacaoDTO()));
+                    () -> joiaService.atualizarJoiaPorId(1L, new JoiaAtualizacaoDto()));
         }
 
         @Test
@@ -181,8 +234,8 @@ class JoiaServiceTest {
             when(joiaRepository.findById(anyLong())).thenReturn(Optional.of(joia));
             when(joiaRepository.save(any(Joia.class))).thenReturn(joia);
 
-            JoiaAtualizacaoDTO dto = new JoiaAtualizacaoDTO(" ", -1, -5, null, null, null, null, null);
-            JoiaSaidaDTO resultado = joiaService.atualizarJoiaPorId(1L, dto);
+            JoiaAtualizacaoDto dto = new JoiaAtualizacaoDto(" ", -1, -5, null, null, null, null, null);
+            JoiaSaidaDto resultado = joiaService.atualizarJoiaPorId(1L, dto);
 
             assertEquals("Original", joia.getNome());
             assertEquals(5, joia.getQuantidadeMinima());
@@ -199,12 +252,12 @@ class JoiaServiceTest {
             when(materialService.listarPorId(anyInt())).thenReturn(new Material());
             when(joiaRepository.save(any(Joia.class))).thenReturn(joia);
 
-            JoiaAtualizacaoDTO dto = new JoiaAtualizacaoDTO();
+            JoiaAtualizacaoDto dto = new JoiaAtualizacaoDto();
             dto.setCategoriaId(1L);
             dto.setBanhoId(1);
             dto.setMaterialId(1);
 
-            JoiaSaidaDTO resultado = joiaService.atualizarJoiaPorId(1L, dto);
+            JoiaSaidaDto resultado = joiaService.atualizarJoiaPorId(1L, dto);
 
             verify(categoriaService, times(1)).listarCategoriaPorId(1L);
             verify(banhoService, times(1)).buscarPorId(1);

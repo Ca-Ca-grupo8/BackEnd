@@ -1,10 +1,10 @@
 package com.caeca.estoque.dto.fornecedor;
 
-import com.caeca.estoque.dto.endereco.EnderecoResponseDTO;
+import com.caeca.estoque.dto.endereco.EnderecoResponseDto;
 
 import java.time.LocalDateTime;
 
-public class FornecedorResponseDTO {
+public class FornecedorResponseDto {
     private Long idFornecedor;
     private String nome;
     private String instagram;
@@ -12,10 +12,10 @@ public class FornecedorResponseDTO {
     private Boolean isAtivo;
     private LocalDateTime dataCadastro;
 
-    public FornecedorResponseDTO() {
+    public FornecedorResponseDto() {
     }
 
-    public FornecedorResponseDTO(Long idFornecedor, String nome, String instagram, String telefone, Boolean isAtivo, LocalDateTime dataCadastro) {
+    public FornecedorResponseDto(Long idFornecedor, String nome, String instagram, String telefone, Boolean isAtivo, LocalDateTime dataCadastro) {
         this.idFornecedor = idFornecedor;
         this.nome = nome;
         this.instagram = instagram;

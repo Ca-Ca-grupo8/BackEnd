@@ -41,7 +41,7 @@ public class JoiaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<JoiaSaidaDTO>> listarTodasAsJoias(
+    public ResponseEntity<List<JoiaSaidaDto>> listarTodasAsJoias(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) Long categoria,
             @RequestParam(required = false) Long material,
@@ -51,7 +51,7 @@ public class JoiaController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim
     ) {
 
-        List<JoiaSaidaDTO> joias = joiaService.listarTodasAsJoias(
+        List<JoiaSaidaDto> joias = joiaService.listarTodasAsJoias(
                 nome,
                 categoria,
                 material,
@@ -64,24 +64,24 @@ public class JoiaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<JoiaSaidaDTO> listarJoiaPorId(@PathVariable Long id) {
+    public ResponseEntity<JoiaSaidaDto> listarJoiaPorId(@PathVariable Long id) {
 
-        JoiaSaidaDTO joiaSaidaDTO = joiaService.listarJoiaPorId(id);
+        JoiaSaidaDto joiaSaidaDTO = joiaService.listarJoiaPorId(id);
 
         return ResponseEntity.status(200).body(joiaSaidaDTO);
     }
 
     @PostMapping
-    public ResponseEntity<JoiaSaidaDTO> criarJoia(@RequestBody JoiaEntradaDTO joia) throws NotFoundException {
-        JoiaSaidaDTO joiaSaidaDTO = joiaService.criarJoia(joia);
+    public ResponseEntity<JoiaSaidaDto> criarJoia(@RequestBody @Valid JoiaEntradaDto joia) throws NotFoundException {
+        JoiaSaidaDto joiaSaidaDTO = joiaService.criarJoia(joia);
 
         return ResponseEntity.status(201).body(joiaSaidaDTO);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<JoiaSaidaDTO> atualizarJoiaPorId(@PathVariable Long id, @RequestBody JoiaAtualizacaoDTO dto) {
+    public ResponseEntity<JoiaSaidaDto> atualizarJoiaPorId(@PathVariable Long id, @RequestBody @Valid JoiaAtualizacaoDto dto) {
 
-        JoiaSaidaDTO response = joiaService.atualizarJoiaPorId(id, dto);
+        JoiaSaidaDto response = joiaService.atualizarJoiaPorId(id, dto);
 
         return ResponseEntity.status(200).body(response);
     }

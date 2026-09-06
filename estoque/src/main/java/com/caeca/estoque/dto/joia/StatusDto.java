@@ -1,13 +1,13 @@
 package com.caeca.estoque.dto.joia;
 
-public class StatusDTO {
+public class StatusDto {
     private Boolean ativo;
 
-    public StatusDTO(Boolean ativo) {
+    public StatusDto(Boolean ativo) {
         this.ativo = ativo;
     }
 
-    public StatusDTO() {}
+    public StatusDto() {}
 
     public Boolean getAtivo() {
         return ativo;

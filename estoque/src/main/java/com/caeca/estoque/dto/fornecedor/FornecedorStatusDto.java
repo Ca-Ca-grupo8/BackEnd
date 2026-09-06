@@ -3,15 +3,15 @@ package com.caeca.estoque.dto.fornecedor;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public class FornecedorStatusDTO {
+public class FornecedorStatusDto {
 
     @NotNull
     private boolean isAtivo;
 
-    public FornecedorStatusDTO() {
+    public FornecedorStatusDto() {
     }
 
-    public FornecedorStatusDTO(boolean isAtivo) {
+    public FornecedorStatusDto(boolean isAtivo) {
         this.isAtivo = isAtivo;
     }
 

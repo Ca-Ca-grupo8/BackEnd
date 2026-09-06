@@ -26,7 +26,7 @@ public class FornecedorController {
 
 
     @GetMapping
-    public ResponseEntity<List<FornecedorResponseDTO>> listar(
+    public ResponseEntity<List<FornecedorResponseDto>> listar(
             @RequestParam(required = false) Boolean is_ativo,
             @RequestParam(required = false) String nome) {
         return ResponseEntity.ok(fornecedorService.listar(is_ativo, nome));
@@ -34,24 +34,24 @@ public class FornecedorController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<FornecedorResponseDTO> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<FornecedorResponseDto> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(fornecedorService.buscarPorId(id));
     }
 
 
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<FornecedorCreatedResponseDTO> criar(
-            @Valid @RequestBody FornecedorRequestDTO dto) {
+    public ResponseEntity<FornecedorCreatedResponseDto> criar(
+            @Valid @RequestBody FornecedorRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(fornecedorService.criar(dto));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<FornecedorResponseDTO> atualizar(
+    public ResponseEntity<FornecedorResponseDto> atualizar(
             @PathVariable Long id,
-            @Valid @RequestBody FornecedorRequestDTO dto) {
+            @Valid @RequestBody FornecedorRequestDto dto) {
         return ResponseEntity.ok(fornecedorService.atualizar(id, dto));
     }
 
@@ -60,7 +60,7 @@ public class FornecedorController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> atualizarStatus(
             @PathVariable Long id,
-            @Valid @RequestBody FornecedorStatusDTO dto) {
+            @Valid @RequestBody FornecedorStatusDto dto) {
         fornecedorService.atualizarStatus(id, dto);
         return ResponseEntity.noContent().build();
     }

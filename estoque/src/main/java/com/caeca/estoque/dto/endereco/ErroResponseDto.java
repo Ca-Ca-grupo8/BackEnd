@@ -6,19 +6,20 @@ import lombok.Builder;
 
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ErroResponseDTO {
+public class ErroResponseDto {
     private String erro;
     private String campo;
 
-    public ErroResponseDTO() {
+    public ErroResponseDto() {
     }
 
-    public ErroResponseDTO(String campo, String erro) {
+    public ErroResponseDto(String campo, String erro) {
         this.campo = campo;
         this.erro = erro;
     }
 
-    public ErroResponseDTO(String message) {
+    public ErroResponseDto(String message) {
+        this.erro = message;
     }
 
     public String getErro() {
