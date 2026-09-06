@@ -4,8 +4,11 @@ import com.caeca.estoque.database.model.fornecedores.Fornecedor;
 import com.caeca.estoque.database.repository.fornecedor.FornecedorRepository;
 import com.caeca.estoque.dto.fornecedor.*;
 import com.caeca.estoque.exception.FornecedorNotFoundException;
+import com.caeca.estoque.service.paginacao.PaginacaoService;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,9 +17,12 @@ import java.util.stream.Collectors;
 public class FornecedorService {
 
     private final FornecedorRepository fornecedorRepository;
+    private final PaginacaoService paginacaoService;
 
-    public FornecedorService(FornecedorRepository fornecedorRepository) {
+
+    public FornecedorService(FornecedorRepository fornecedorRepository, PaginacaoService paginacaoService) {
         this.fornecedorRepository = fornecedorRepository;
+        this.paginacaoService = paginacaoService;
     }
 
     @Transactional(readOnly = true)
@@ -88,6 +94,14 @@ public class FornecedorService {
                 f.getTelefone(),
                 f.getIsAtivo(),
                 f.getDataCadastro()
+        );
+    }
+
+    public Page<FornecedorResponseDto> listarTodas(Pageable pageable) {
+        return paginacaoService.buscarPaginado(
+                fornecedorRepository,
+                pageable,
+                FornecedorMapper::toResponseDTO
         );
     }
 }

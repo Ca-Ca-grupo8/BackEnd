@@ -6,6 +6,7 @@ import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.material.Material;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.dto.joia.*;
+import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResponseDto;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.joia.JoiaService;
 import com.caeca.estoque.service.Material.MaterialService;
@@ -14,6 +15,9 @@ import com.caeca.estoque.service.categoria.CategoriaService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -84,5 +88,18 @@ public class JoiaController {
         JoiaSaidaDto response = joiaService.atualizarJoiaPorId(id, dto);
 
         return ResponseEntity.status(200).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<JoiaSaidaDto>> listar(
+            @PageableDefault(size = 10, sort = "id") Pageable pageable
+    ) {
+        Page<JoiaSaidaDto> response = joiaService.listarTodas(pageable);
+
+        if (response.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(response);
     }
 }
