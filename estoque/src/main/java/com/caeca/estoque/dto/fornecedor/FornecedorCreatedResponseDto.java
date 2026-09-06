@@ -2,21 +2,21 @@ package com.caeca.estoque.dto.fornecedor;
 
 import java.time.LocalDateTime;
 
-public class FornecedorCreatedResponseDTO {
+public class FornecedorCreatedResponseDto {
 
     private Long idFornecedor;
     private String nome;
     private Boolean isAtivo;
     private LocalDateTime dataCadastro;
 
-    public FornecedorCreatedResponseDTO(Long idFornecedor, String nome, Boolean isAtivo, LocalDateTime dataCadastro) {
+    public FornecedorCreatedResponseDto(Long idFornecedor, String nome, Boolean isAtivo, LocalDateTime dataCadastro) {
         this.idFornecedor = idFornecedor;
         this.nome = nome;
         this.isAtivo = isAtivo;
         this.dataCadastro = dataCadastro;
     }
 
-    public FornecedorCreatedResponseDTO() {
+    public FornecedorCreatedResponseDto() {
     }
 
     public Long getIdFornecedor() {

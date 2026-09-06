@@ -8,6 +8,7 @@ import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResp
 import com.caeca.estoque.service.movimentacaoRevendedora.MovimentacaoRevendedoraService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,21 +36,21 @@ public class MovimentacaoRevendedoraController {
         return ResponseEntity.ok(MovimentacaoRevendedoraMapper.toResponseList(response));
     }
 
-    @GetMapping("/id")
+    @GetMapping("/{id}")
     public ResponseEntity<MovimentacaoRevendedoraResponseDto> buscarPorId(@PathVariable Long id){
         return ResponseEntity.ok(MovimentacaoRevendedoraMapper.toResponse(mrService.buscarPorId(id)));
     }
 
-    @PatchMapping("/id")
+    @PatchMapping("/{id}")
     public ResponseEntity<MovimentacaoRevendedoraResponseDto> alterarFinalizacao(
             @PathVariable Long id,
-            @RequestBody MovimentacaoRevendedoraPatchDto patch){
+            @RequestBody @Valid MovimentacaoRevendedoraPatchDto patch){
         return ResponseEntity.ok(MovimentacaoRevendedoraMapper.toResponse(mrService.atualizarFinalizacao(id, patch)));
     }
 
     @PostMapping()
     public ResponseEntity<MovimentacaoRevendedoraResponseDto> cadastrar(
-            @RequestBody MovimentacaoRevendedoraRequestDto requestDto){
+            @RequestBody @Valid MovimentacaoRevendedoraRequestDto requestDto){
         return ResponseEntity.created(null).body(
                 MovimentacaoRevendedoraMapper.toResponse(
                         mrService.criar(requestDto)

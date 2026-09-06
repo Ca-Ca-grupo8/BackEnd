@@ -10,7 +10,7 @@ import java.util.List;
 
 public class JoiaMapper {
 
-    public static Joia toEntity(JoiaEntradaDTO dto) {
+    public static Joia toEntity(JoiaEntradaDto dto) {
 
         if (dto == null) {
             return null;
@@ -25,13 +25,13 @@ public class JoiaMapper {
         return joia;
     }
 
-    public static JoiaSaidaDTO toResponse(Joia joia) {
+    public static JoiaSaidaDto toResponse(Joia joia) {
 
         if (joia == null) {
             return null;
         }
 
-        JoiaSaidaDTO joiaSaidaDTO = new JoiaSaidaDTO();
+        JoiaSaidaDto joiaSaidaDTO = new JoiaSaidaDto();
 
         joiaSaidaDTO.setId(joia.getId());
         joiaSaidaDTO.setNome(joia.getNome());
@@ -70,7 +70,7 @@ public class JoiaMapper {
         return joiaSaidaDTO;
     }
 
-    public static List<JoiaSaidaDTO> toResponseList(List<Joia> joias) {
+    public static List<JoiaSaidaDto> toResponseList(List<Joia> joias) {
         return joias
                 .stream()
                 .map(JoiaMapper::toResponse)

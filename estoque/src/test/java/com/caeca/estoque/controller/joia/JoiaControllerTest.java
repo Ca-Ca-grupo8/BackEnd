@@ -1,8 +1,8 @@
 package com.caeca.estoque.controller.joia;
 
-import com.caeca.estoque.dto.joia.JoiaAtualizacaoDTO;
-import com.caeca.estoque.dto.joia.JoiaEntradaDTO;
-import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
+import com.caeca.estoque.dto.joia.JoiaAtualizacaoDto;
+import com.caeca.estoque.dto.joia.JoiaEntradaDto;
+import com.caeca.estoque.dto.joia.JoiaSaidaDto;
 import com.caeca.estoque.service.Material.MaterialService;
 import com.caeca.estoque.service.banho.BanhoService;
 import com.caeca.estoque.service.categoria.CategoriaService;
@@ -45,7 +45,7 @@ class JoiaControllerTest {
         @Test
         @DisplayName("Deve retornar status 200 e lista de joias")
         void deveRetornarStatus200EListaDeJoias() throws Exception {
-            JoiaSaidaDTO joia = new JoiaSaidaDTO();
+            JoiaSaidaDto joia = new JoiaSaidaDto();
             when(joiaService.listarTodasAsJoias(null, null, null, null, null, null, null)).thenReturn(List.of(joia));
 
             mockMvc.perform(get("/joias")
@@ -64,7 +64,7 @@ class JoiaControllerTest {
         @Test
         @DisplayName("Deve retornar status 200 e os dados da joia encontrada")
         void deveRetornarStatus200EJoiaPorId() throws Exception {
-            JoiaSaidaDTO joia = new JoiaSaidaDTO();
+            JoiaSaidaDto joia = new JoiaSaidaDto();
             joia.setId(1L);
 
             when(joiaService.listarJoiaPorId(1L)).thenReturn(joia);
@@ -83,17 +83,23 @@ class JoiaControllerTest {
         @Test
         @DisplayName("Deve retornar status 201 e dados da joia criada")
         void deveRetornarStatus201ECriarJoia() throws Exception {
-            JoiaEntradaDTO entradaDTO = new JoiaEntradaDTO();
-            JoiaSaidaDTO saidaDTO = new JoiaSaidaDTO();
+            JoiaEntradaDto entradaDTO = new JoiaEntradaDto();
+            entradaDTO.setNome("Anel Coração");
+            entradaDTO.setQuantidade(2);
+            entradaDTO.setQuantidadeMinima(2);
+            entradaDTO.setCategoria(1L);
+            entradaDTO.setBanho(1);
+            entradaDTO.setMaterial(1);
+            JoiaSaidaDto saidaDTO = new JoiaSaidaDto();
 
-            when(joiaService.criarJoia(any(JoiaEntradaDTO.class))).thenReturn(saidaDTO);
+            when(joiaService.criarJoia(any(JoiaEntradaDto.class))).thenReturn(saidaDTO);
 
             mockMvc.perform(post("/joias")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(entradaDTO)))
                     .andExpect(status().isCreated());
 
-            verify(joiaService, times(1)).criarJoia(any(JoiaEntradaDTO.class));
+            verify(joiaService, times(1)).criarJoia(any(JoiaEntradaDto.class));
         }
     }
 
@@ -104,17 +110,17 @@ class JoiaControllerTest {
         @DisplayName("Deve retornar status 200 e dados atualizados da joia")
         void deveRetornarStatus200EAtualizarJoia() throws Exception {
             Long id = 1L;
-            JoiaAtualizacaoDTO atualizacaoDTO = new JoiaAtualizacaoDTO();
-            JoiaSaidaDTO saidaDTO = new JoiaSaidaDTO();
+            JoiaAtualizacaoDto atualizacaoDTO = new JoiaAtualizacaoDto();
+            JoiaSaidaDto saidaDTO = new JoiaSaidaDto();
 
-            when(joiaService.atualizarJoiaPorId(eq(id), any(JoiaAtualizacaoDTO.class))).thenReturn(saidaDTO);
+            when(joiaService.atualizarJoiaPorId(eq(id), any(JoiaAtualizacaoDto.class))).thenReturn(saidaDTO);
 
             mockMvc.perform(patch("/joias/{id}", id)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(atualizacaoDTO)))
                     .andExpect(status().isOk());
 
-            verify(joiaService, times(1)).atualizarJoiaPorId(eq(id), any(JoiaAtualizacaoDTO.class));
+            verify(joiaService, times(1)).atualizarJoiaPorId(eq(id), any(JoiaAtualizacaoDto.class));
         }
     }
 }

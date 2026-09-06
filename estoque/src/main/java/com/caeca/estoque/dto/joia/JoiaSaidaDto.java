@@ -4,14 +4,14 @@ import com.caeca.estoque.database.model.arquivo.Arquivo;
 import com.caeca.estoque.database.model.categoria.Categoria;
 import com.caeca.estoque.dto.arquivo.ArquivoResponseDto;
 import com.caeca.estoque.dto.banho.BanhoResponseDto;
-import com.caeca.estoque.dto.categoria.CategoriaSaidaDTO;
-import com.caeca.estoque.dto.fornecedor.FornecedorResponseDTO;
+import com.caeca.estoque.dto.categoria.CategoriaSaidaDto;
+import com.caeca.estoque.dto.fornecedor.FornecedorResponseDto;
 import com.caeca.estoque.dto.material.MaterialResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class JoiaSaidaDTO {
+public class JoiaSaidaDto {
 
     private Long id;
 
@@ -23,7 +23,7 @@ public class JoiaSaidaDTO {
 
     private Integer quantidadeMinima;
 
-    private CategoriaSaidaDTO categoria;
+    private CategoriaSaidaDto categoria;
 
     private BanhoResponseDto banho;
 
@@ -39,13 +39,13 @@ public class JoiaSaidaDTO {
 
     private ArquivoResponseDto arquivo;
 
-    private List<FornecedorResponseDTO> fornecedores;
+    private List<FornecedorResponseDto> fornecedores;
 
-    public CategoriaSaidaDTO getCategoria() {
+    public CategoriaSaidaDto getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(CategoriaSaidaDTO categoria) {
+    public void setCategoria(CategoriaSaidaDto categoria) {
         this.categoria = categoria;
     }
 
@@ -65,7 +65,7 @@ public class JoiaSaidaDTO {
         this.material = material;
     }
 
-    public JoiaSaidaDTO(Long id, String nome, Double preco, Integer quantidade, Integer quantidadeMinima, Boolean isAtivo, LocalDateTime dataCadastro, ArquivoResponseDto arquivo) {
+    public JoiaSaidaDto(Long id, String nome, Double preco, Integer quantidade, Integer quantidadeMinima, Boolean isAtivo, LocalDateTime dataCadastro, ArquivoResponseDto arquivo) {
         this.id = id;
         this.nome = nome;
         this.preco = preco;
@@ -76,7 +76,7 @@ public class JoiaSaidaDTO {
         this.arquivo = arquivo;
     }
 
-    public JoiaSaidaDTO() {}
+    public JoiaSaidaDto() {}
 
     public Long getId() {
         return id;
@@ -158,11 +158,11 @@ public class JoiaSaidaDTO {
         this.arquivo = arquivo;
     }
 
-    public List<FornecedorResponseDTO> getFornecedores() {
+    public List<FornecedorResponseDto> getFornecedores() {
         return fornecedores;
     }
 
-    public void setFornecedores(List<FornecedorResponseDTO> fornecedores) {
+    public void setFornecedores(List<FornecedorResponseDto> fornecedores) {
         this.fornecedores = fornecedores;
     }
 }

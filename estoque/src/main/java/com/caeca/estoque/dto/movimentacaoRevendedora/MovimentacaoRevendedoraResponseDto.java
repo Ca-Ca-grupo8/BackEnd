@@ -1,6 +1,6 @@
 package com.caeca.estoque.dto.movimentacaoRevendedora;
 
-import com.caeca.estoque.dto.joia.JoiaSaidaDTO;
+import com.caeca.estoque.dto.joia.JoiaSaidaDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -45,14 +45,14 @@ public class MovimentacaoRevendedoraResponseDto {
 
     public static class MovimentacaoItemDto {
         private Long idMovimentacao;
-        private JoiaSaidaDTO joia;
+        private JoiaSaidaDto joia;
         private Integer quantidade;
         private Double precoSaida;
 
         public MovimentacaoItemDto() {
         }
 
-        public MovimentacaoItemDto(Long idMovimentacao, JoiaSaidaDTO joia, Integer decimal, Double precoSaida) {
+        public MovimentacaoItemDto(Long idMovimentacao, JoiaSaidaDto joia, Integer decimal, Double precoSaida) {
             this.idMovimentacao = idMovimentacao;
             this.joia = joia;
             this.quantidade = decimal;
@@ -67,11 +67,11 @@ public class MovimentacaoRevendedoraResponseDto {
             this.idMovimentacao = idMovimentacao;
         }
 
-        public JoiaSaidaDTO getJoia() {
+        public JoiaSaidaDto getJoia() {
             return joia;
         }
 
-        public void setJoia(JoiaSaidaDTO joia) {
+        public void setJoia(JoiaSaidaDto joia) {
             this.joia = joia;
         }
 

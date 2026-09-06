@@ -43,7 +43,7 @@ public class MovimentacaoController {
             return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.ok(MovimentacaoMapper.toReponseList(response));
+        return ResponseEntity.ok(MovimentacaoMapper.toResponseList(response));
     }
 
     @GetMapping("/{id}")
