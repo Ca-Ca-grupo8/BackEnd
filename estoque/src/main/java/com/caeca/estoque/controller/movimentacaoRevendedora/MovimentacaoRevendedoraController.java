@@ -1,6 +1,7 @@
 package com.caeca.estoque.controller.movimentacaoRevendedora;
 
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
+import com.caeca.estoque.dto.movimentacao.MovimentacaoResponseDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraMapper;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraPatchDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraRequestDto;
@@ -9,6 +10,9 @@ import com.caeca.estoque.service.movimentacaoRevendedora.MovimentacaoRevendedora
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,5 +59,18 @@ public class MovimentacaoRevendedoraController {
                 MovimentacaoRevendedoraMapper.toResponse(
                         mrService.criar(requestDto)
                 ));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<MovimentacaoRevendedoraResponseDto>> listar(
+            @PageableDefault(size = 10, sort = "idMovimentacaoRevendedora") Pageable pageable
+    ) {
+        Page<MovimentacaoRevendedoraResponseDto> response = mrService.listarTodas(pageable);
+
+        if (response.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(response);
     }
 }

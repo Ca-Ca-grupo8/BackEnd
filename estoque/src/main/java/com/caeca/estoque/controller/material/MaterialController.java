@@ -9,9 +9,12 @@ import com.caeca.estoque.service.Material.MaterialService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -50,5 +53,17 @@ public class MaterialController {
 
     }
 
+    @GetMapping
+    public ResponseEntity<Page<MaterialResponseDto>> listar(
+            @PageableDefault(size = 10, sort = "idMaterial") Pageable pageable
+    ) {
+        Page<MaterialResponseDto> response = materialService.listarTodas(pageable);
+
+        if (response.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(response);
+    }
 
 }

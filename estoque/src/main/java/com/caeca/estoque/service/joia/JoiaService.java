@@ -11,13 +11,17 @@ import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository
 import com.caeca.estoque.dto.fornecedor.FornecedorMapper;
 import com.caeca.estoque.dto.fornecedor.FornecedorResponseDto;
 import com.caeca.estoque.dto.joia.*;
+import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.service.Material.MaterialService;
 import com.caeca.estoque.service.banho.BanhoService;
 import com.caeca.estoque.service.categoria.CategoriaService;
+import com.caeca.estoque.service.paginacao.PaginacaoService;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,13 +38,16 @@ public class JoiaService {
     private final CategoriaService categoriaService;
     private final MaterialService materialService;
     private final MovimentacaoRepository movimentacaoRepository;
+    private final PaginacaoService paginacaoService;
 
-    public JoiaService(JoiaRepository joiaRepository, BanhoService banhoService, CategoriaService categoriaService, MaterialService materialService, MovimentacaoRepository movimentacaoRepository) {
+
+    public JoiaService(JoiaRepository joiaRepository, BanhoService banhoService, CategoriaService categoriaService, MaterialService materialService, MovimentacaoRepository movimentacaoRepository, PaginacaoService paginacaoService) {
         this.joiaRepository = joiaRepository;
         this.banhoService = banhoService;
         this.categoriaService = categoriaService;
         this.materialService = materialService;
         this.movimentacaoRepository = movimentacaoRepository;
+        this.paginacaoService = paginacaoService;
     }
 
     public List<JoiaSaidaDto> listarTodasAsJoias(
@@ -220,5 +227,13 @@ public class JoiaService {
         Joia joia = obterEntityJoiaPorId(id);
         joia.setQuantidade(joia.getQuantidade() - quantidade);
         joiaRepository.save(joia);
+    }
+
+    public Page<JoiaSaidaDto> listarTodas(Pageable pageable) {
+        return paginacaoService.buscarPaginado(
+                joiaRepository,
+                pageable,
+                JoiaMapper::toResponse
+        );
     }
 }
