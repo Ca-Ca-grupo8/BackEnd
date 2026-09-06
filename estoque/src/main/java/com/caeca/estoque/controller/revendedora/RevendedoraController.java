@@ -11,10 +11,13 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -67,5 +70,18 @@ class RevendedoraController {
             @PathVariable Long id
     ){
         return ResponseEntity.ok(RevendedoraMapper.toResponse(revendedoraService.atualizarParcialmente(id, dto)));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<RevendedoraResponseDto>> listar(
+            @PageableDefault(size = 10, sort = "id") Pageable pageable
+    ) {
+        Page<RevendedoraResponseDto> response = revendedoraService.listarTodas(pageable);
+
+        if (response.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(response);
     }
 }

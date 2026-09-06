@@ -5,10 +5,13 @@ import com.caeca.estoque.service.fornecedor.FornecedorService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -63,5 +66,18 @@ public class FornecedorController {
             @Valid @RequestBody FornecedorStatusDto dto) {
         fornecedorService.atualizarStatus(id, dto);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<FornecedorResponseDto>> listar(
+            @PageableDefault(size = 10, sort = "idFornecedor") Pageable pageable
+    ) {
+        Page<FornecedorResponseDto> response = fornecedorService.listarTodas(pageable);
+
+        if (response.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(response);
     }
 }

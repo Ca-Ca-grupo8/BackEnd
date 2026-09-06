@@ -10,9 +10,12 @@ import com.caeca.estoque.dto.revendedora.RevendedoraResponseDto;
 import com.caeca.estoque.exception.ConflictException;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.endereco.EnderecoService;
+import com.caeca.estoque.service.paginacao.PaginacaoService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,10 +25,13 @@ public class RevendedoraService {
 
     private final RevendedoraRepository revendedoraRepository;
     private final EnderecoService enderecoService;
+    private final PaginacaoService paginacaoService;
 
-    public RevendedoraService(RevendedoraRepository revendedoraRepository, EnderecoService enderecoService) {
+
+    public RevendedoraService(RevendedoraRepository revendedoraRepository, EnderecoService enderecoService, PaginacaoService paginacaoService) {
         this.revendedoraRepository = revendedoraRepository;
         this.enderecoService = enderecoService;
+        this.paginacaoService = paginacaoService;
     }
 
     public List<Revendedora> listar() {
@@ -120,5 +126,13 @@ public class RevendedoraService {
         if (existe) {
             throw new ConflictException("Este endereço já está em uso por outra revendedora");
         }
+    }
+
+    public Page<RevendedoraResponseDto> listarTodas(Pageable pageable) {
+        return paginacaoService.buscarPaginado(
+                revendedoraRepository,
+                pageable,
+                RevendedoraMapper::toResponse
+        );
     }
 }

@@ -10,6 +10,7 @@ import com.caeca.estoque.exception.BadRequestException;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.joia.JoiaService;
 import com.caeca.estoque.service.motivoMovimentacao.MotivoMovimentacaoService;
+import com.caeca.estoque.service.paginacao.PaginacaoService;
 import com.caeca.estoque.service.usuario.UsuarioService;
 import com.caeca.estoque.strategy.movimentacao.MovimentacaoStrategy;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,7 @@ class MovimentacaoServiceTest {
     @Mock private JoiaService joiaService;
     @Mock private UsuarioService usuarioService;
     @Mock private MovimentacaoStrategy movimentacaoStrategy;
+    @Mock private PaginacaoService paginacaoService;
 
     private MovimentacaoService movimentacaoService;
 
@@ -46,7 +48,8 @@ class MovimentacaoServiceTest {
                 movimentacaoRepository,
                 tipoService,
                 joiaService,
-                usuarioService
+                usuarioService,
+                paginacaoService
         );
     }
 

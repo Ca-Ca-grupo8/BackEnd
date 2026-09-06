@@ -10,10 +10,14 @@ import com.caeca.estoque.service.movimentacao.MovimentacaoService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Pageable;
+
 
 import java.time.LocalDate;
 import java.util.List;
@@ -57,5 +61,18 @@ public class MovimentacaoController {
             @RequestPart(value = "arquivo", required = false)MultipartFile arquivo){
         return ResponseEntity.created(null)
                 .body(MovimentacaoMapper.toResponse(movimentacaoService.cadastrar(request, arquivo)));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<MovimentacaoResponseDto>> listar(
+            @PageableDefault(size = 10, sort = "idMovimentacao") Pageable pageable
+    ) {
+        Page<MovimentacaoResponseDto> response = movimentacaoService.listarTodas(pageable);
+
+        if (response.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(response);
     }
 }
