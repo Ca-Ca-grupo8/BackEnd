@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Size;
 public class TipoMovimentacaoRequestDto {
 
     @NotBlank(message = "O tipo de movimentação é obrigatório")
-    @Size(max = 45, message = "O tipo de movimentação deve ser 'SAIDA', 'ENTRADA' ou 'REENTRADA'")
+    @Size(max = 15, message = "O tipo de movimentação deve ser 'SAIDA', 'ENTRADA' ou 'REENTRADA'")
     @NotNull
 
     private TipoMovimentacaoEnum nome;

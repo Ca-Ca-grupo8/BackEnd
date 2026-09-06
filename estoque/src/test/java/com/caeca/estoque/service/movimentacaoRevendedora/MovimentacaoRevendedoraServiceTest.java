@@ -7,6 +7,7 @@ import com.caeca.estoque.database.repository.revendedora.RevendedoraRepository;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraPatchDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraRequestDto;
 import com.caeca.estoque.exception.NotFoundException;
+import com.caeca.estoque.service.paginacao.PaginacaoService;
 import com.caeca.estoque.service.revendedora.RevendedoraService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -33,6 +34,9 @@ class MovimentacaoRevendedoraServiceTest {
 
     @Mock
     private RevendedoraRepository revendedoraRepository;
+
+    @Mock
+    private PaginacaoService paginacaoService;
 
     @InjectMocks
     private MovimentacaoRevendedoraService movimentacaoRevendedoraService;

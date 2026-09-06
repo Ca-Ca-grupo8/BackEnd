@@ -19,4 +19,6 @@ public class TipoMovimentacaoService {
     public List<TipoMovimentacao> listarTodos() {
         return repository.findAll();
     }
+
+
 }
