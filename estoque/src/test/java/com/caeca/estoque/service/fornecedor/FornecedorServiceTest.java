@@ -14,6 +14,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +25,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -54,47 +59,48 @@ class FornecedorServiceTest {
     @Test
     @DisplayName("sem filtros retorna todos os fornecedores")
     void listarSemFiltrosRetornaTodos() {
-        when(fornecedorRepository.findAll()).thenReturn(List.of(fornecedor));
+        when(fornecedorRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(fornecedor)));
 
-        List<FornecedorResponseDto> resultado = fornecedorService.listar(null, null);
+        Page<FornecedorResponseDto> resultado = fornecedorService.listar(null, null, PageRequest.of(0, 10));
 
-        assertEquals(1, resultado.size());
-        assertEquals("Joias Brasil", resultado.get(0).getNome());
-        verify(fornecedorRepository).findAll();
+        assertEquals(1, resultado.getContent().size());
+        assertEquals("Joias Brasil", resultado.getContent().get(0).getNome());
+        verify(fornecedorRepository).findAll(any(Pageable.class));
     }
 
     @Test
     @DisplayName("filtro por isAtivo chama metodo correto")
     void listarComIsAtivoChamaFindByIsAtivo() {
-        when(fornecedorRepository.findByIsAtivo(true)).thenReturn(List.of(fornecedor));
+        when(fornecedorRepository.findByIsAtivo(eq(true), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(fornecedor)));
 
-        List<FornecedorResponseDto> resultado = fornecedorService.listar(true, null);
+        Page<FornecedorResponseDto> resultado = fornecedorService.listar(true, null, PageRequest.of(0, 10));
 
-        assertEquals(1, resultado.size());
-        verify(fornecedorRepository).findByIsAtivo(true);
+        assertEquals(1, resultado.getContent().size());
+        verify(fornecedorRepository).findByIsAtivo(eq(true), any(Pageable.class));
     }
 
     @Test
     @DisplayName("filtro por nome chama metodo correto")
     void listarComNomeChamaFindByNome() {
-        when(fornecedorRepository.findByNomeContainingIgnoreCase("joias")).thenReturn(List.of(fornecedor));
+        when(fornecedorRepository.findByNomeContainingIgnoreCase(eq("joias"), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(fornecedor)));
 
-        List<FornecedorResponseDto> resultado = fornecedorService.listar(null, "joias");
+        Page<FornecedorResponseDto> resultado = fornecedorService.listar(null, "joias", PageRequest.of(0, 10));
 
-        assertEquals(1, resultado.size());
-        verify(fornecedorRepository).findByNomeContainingIgnoreCase("joias");
+        assertEquals(1, resultado.getContent().size());
+        verify(fornecedorRepository).findByNomeContainingIgnoreCase(eq("joias"), any(Pageable.class));
     }
 
     @Test
     @DisplayName("filtro por isAtivo e nome chama metodo correto")
     void listarComIsAtivoENomeChamaFindByIsAtivoAndNome() {
-        when(fornecedorRepository.findByIsAtivoAndNomeContainingIgnoreCase(true, "joias"))
-                .thenReturn(List.of(fornecedor));
+        when(fornecedorRepository.findByIsAtivoAndNomeContainingIgnoreCase(eq(true), eq("joias"), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(fornecedor)));
 
-        List<FornecedorResponseDto> resultado = fornecedorService.listar(true, "joias");
+        Page<FornecedorResponseDto> resultado = fornecedorService.listar(true, "joias", PageRequest.of(0, 10));
 
-        assertEquals(1, resultado.size());
-        verify(fornecedorRepository).findByIsAtivoAndNomeContainingIgnoreCase(true, "joias");
+        assertEquals(1, resultado.getContent().size());
+        verify(fornecedorRepository).findByIsAtivoAndNomeContainingIgnoreCase(eq(true), eq("joias"), any(Pageable.class));
     }
 
     @Test

@@ -8,12 +8,17 @@ import com.caeca.estoque.database.model.revendedora.Revendedora;
 import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
 import com.caeca.estoque.database.model.usuario.Usuario;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
+import com.caeca.estoque.dto.movimentacao.MovimentacaoResponseDto;
+import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.service.movimentacao.MovimentacaoService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -53,11 +58,14 @@ class MovimentacaoControllerTest {
                 joiaMock, tipoMock, usuarioMock, null, movRevendedoraMock
         );
 
-        when(movimentacaoService.listar(null, null, null, null)).thenReturn(List.of(movimentacao));
+        MovimentacaoResponseDto response = MovimentacaoMapper.toResponse(movimentacao);
+
+        when(movimentacaoService.listar(eq(null), eq(null), eq(null), eq(null), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(response)));
 
         mockMvc.perform(get("/movimentacoes"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1));
+                .andExpect(jsonPath("$.content.length()").value(1));
     }
 
     @Test

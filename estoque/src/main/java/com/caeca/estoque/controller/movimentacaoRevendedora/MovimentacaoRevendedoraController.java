@@ -1,7 +1,5 @@
 package com.caeca.estoque.controller.movimentacaoRevendedora;
 
-import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
-import com.caeca.estoque.dto.movimentacao.MovimentacaoResponseDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraMapper;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraPatchDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraRequestDto;
@@ -16,8 +14,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/vendas")
 @SecurityRequirement(name = "Bearer")
@@ -30,14 +26,12 @@ public class MovimentacaoRevendedoraController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MovimentacaoRevendedoraResponseDto>> listar(){
-        List<MovimentacaoRevendedora> response = mrService.listar();
+    public ResponseEntity<Page<MovimentacaoRevendedoraResponseDto>> listar(
+            @PageableDefault(size = 10, sort = "idMovimentacaoRevendedora") Pageable pageable
+    ) {
+        Page<MovimentacaoRevendedoraResponseDto> response = mrService.listarTodas(pageable);
 
-        if(response.isEmpty()){
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(MovimentacaoRevendedoraMapper.toResponseList(response));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -59,18 +53,5 @@ public class MovimentacaoRevendedoraController {
                 MovimentacaoRevendedoraMapper.toResponse(
                         mrService.criar(requestDto)
                 ));
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<MovimentacaoRevendedoraResponseDto>> listar(
-            @PageableDefault(size = 10, sort = "idMovimentacaoRevendedora") Pageable pageable
-    ) {
-        Page<MovimentacaoRevendedoraResponseDto> response = mrService.listarTodas(pageable);
-
-        if (response.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(response);
     }
 }

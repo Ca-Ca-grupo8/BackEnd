@@ -1,16 +1,18 @@
 package com.caeca.estoque.service.movimentacao;
 
+import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
 import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
+import com.caeca.estoque.database.model.usuario.Usuario;
 import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
+import com.caeca.estoque.dto.movimentacao.MovimentacaoResponseDto;
 import com.caeca.estoque.exception.BadRequestException;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.joia.JoiaService;
 import com.caeca.estoque.service.motivoMovimentacao.MotivoMovimentacaoService;
-import com.caeca.estoque.service.paginacao.PaginacaoService;
 import com.caeca.estoque.service.usuario.UsuarioService;
 import com.caeca.estoque.strategy.movimentacao.MovimentacaoStrategy;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +22,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -37,7 +43,6 @@ class MovimentacaoServiceTest {
     @Mock private JoiaService joiaService;
     @Mock private UsuarioService usuarioService;
     @Mock private MovimentacaoStrategy movimentacaoStrategy;
-    @Mock private PaginacaoService paginacaoService;
 
     private MovimentacaoService movimentacaoService;
 
@@ -48,8 +53,7 @@ class MovimentacaoServiceTest {
                 movimentacaoRepository,
                 tipoService,
                 joiaService,
-                usuarioService,
-                paginacaoService
+                usuarioService
         );
     }
 
@@ -57,29 +61,39 @@ class MovimentacaoServiceTest {
     @DisplayName("listar")
     class listar {
 
-        @Test
-        @DisplayName("Deve retornar lista de movimentações com sucesso quando existirem dados")
-        void deveRetornarListaDeMovimentacoesComSucesso() {
-            when(movimentacaoRepository.buscarComFiltros(null, null, null, null)).thenReturn(List.of(new Movimentacao()));
-
-            List<Movimentacao> resultado = movimentacaoService.listar(null, null, null, null);
-
-            assertNotNull(resultado);
-            assertFalse(resultado.isEmpty());
-            assertEquals(1, resultado.size());
-            verify(movimentacaoRepository, times(1)).buscarComFiltros(null, null, null, null);
+        private Movimentacao criandoMovimentacao() {
+            Movimentacao movimentacao = new Movimentacao();
+            movimentacao.setJoia(mock(Joia.class));
+            movimentacao.setMotivoMovimentacao(mock(MotivoMovimentacao.class));
+            movimentacao.setUsuario(mock(Usuario.class));
+            return movimentacao;
         }
 
         @Test
-        @DisplayName("Deve retornar lista vazia quando não existirem movimentações")
-        void deveRetornarListaVaziaQuandoNaoExistiremMovimentacoes() {
-            when(movimentacaoRepository.buscarComFiltros(null, null, null, null)).thenReturn(List.of());
+        @DisplayName("Deve retornar página de movimentações com sucesso quando existirem dados")
+        void deveRetornarPaginaDeMovimentacoesComSucesso() {
+            when(movimentacaoRepository.buscarComFiltros(eq(null), eq(null), eq(null), eq(null), any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(criandoMovimentacao())));
 
-            List<Movimentacao> resultado = movimentacaoService.listar(null, null, null, null);
+            Page<MovimentacaoResponseDto> resultado = movimentacaoService.listar(null, null, null, null, PageRequest.of(0, 10));
 
             assertNotNull(resultado);
-            assertTrue(resultado.isEmpty());
-            verify(movimentacaoRepository, times(1)).buscarComFiltros(null, null, null, null);
+            assertFalse(resultado.getContent().isEmpty());
+            assertEquals(1, resultado.getContent().size());
+            verify(movimentacaoRepository, times(1)).buscarComFiltros(eq(null), eq(null), eq(null), eq(null), any(Pageable.class));
+        }
+
+        @Test
+        @DisplayName("Deve retornar página vazia quando não existirem movimentações")
+        void deveRetornarPaginaVaziaQuandoNaoExistiremMovimentacoes() {
+            when(movimentacaoRepository.buscarComFiltros(eq(null), eq(null), eq(null), eq(null), any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of()));
+
+            Page<MovimentacaoResponseDto> resultado = movimentacaoService.listar(null, null, null, null, PageRequest.of(0, 10));
+
+            assertNotNull(resultado);
+            assertTrue(resultado.getContent().isEmpty());
+            verify(movimentacaoRepository, times(1)).buscarComFiltros(eq(null), eq(null), eq(null), eq(null), any(Pageable.class));
         }
     }
 

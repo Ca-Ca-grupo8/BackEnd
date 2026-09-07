@@ -19,8 +19,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/revendedoras")
 @SecurityRequirement(name = "Bearer")
@@ -33,13 +31,12 @@ class RevendedoraController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RevendedoraResponseDto>> listar(){
-        List<Revendedora> response = revendedoraService.listar();
-        if(response.isEmpty()){
-            return ResponseEntity.noContent().build();
-        }
+    public ResponseEntity<Page<RevendedoraResponseDto>> listar(
+            @PageableDefault(size = 10, sort = "id") Pageable pageable
+    ) {
+        Page<RevendedoraResponseDto> response = revendedoraService.listarTodas(pageable);
 
-        return ResponseEntity.ok(RevendedoraMapper.toResponseList(response));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -70,18 +67,5 @@ class RevendedoraController {
             @PathVariable Long id
     ){
         return ResponseEntity.ok(RevendedoraMapper.toResponse(revendedoraService.atualizarParcialmente(id, dto)));
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<RevendedoraResponseDto>> listar(
-            @PageableDefault(size = 10, sort = "id") Pageable pageable
-    ) {
-        Page<RevendedoraResponseDto> response = revendedoraService.listarTodas(pageable);
-
-        if (response.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(response);
     }
 }

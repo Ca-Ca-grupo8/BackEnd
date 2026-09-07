@@ -13,7 +13,6 @@ import com.caeca.estoque.exception.BadRequestException;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.joia.JoiaService;
 import com.caeca.estoque.service.motivoMovimentacao.MotivoMovimentacaoService;
-import com.caeca.estoque.service.paginacao.PaginacaoService;
 import com.caeca.estoque.service.usuario.UsuarioService;
 import com.caeca.estoque.strategy.movimentacao.MovimentacaoContext;
 import com.caeca.estoque.strategy.movimentacao.MovimentacaoStrategy;
@@ -37,22 +36,21 @@ public class MovimentacaoService {
     private final MotivoMovimentacaoService motivoMovimentacaoService;
     private final JoiaService joiaService;
     private final UsuarioService usuarioService;
-    private final PaginacaoService paginacaoService;
 
-    public MovimentacaoService(List<MovimentacaoStrategy> movimentacaoStrategies, MovimentacaoRepository movimentacaoRepository, MotivoMovimentacaoService motivoMovimentacaoService, JoiaService joiaService, UsuarioService usuarioService, PaginacaoService paginacaoService) {
+    public MovimentacaoService(List<MovimentacaoStrategy> movimentacaoStrategies, MovimentacaoRepository movimentacaoRepository, MotivoMovimentacaoService motivoMovimentacaoService, JoiaService joiaService, UsuarioService usuarioService) {
         this.movimentacaoStrategies = movimentacaoStrategies;
         this.movimentacaoRepository = movimentacaoRepository;
         this.motivoMovimentacaoService = motivoMovimentacaoService;
         this.joiaService = joiaService;
         this.usuarioService = usuarioService;
-        this.paginacaoService = paginacaoService;
     }
 
-    public List<Movimentacao> listar(String nome, TipoMovimentacaoEnum tipo, LocalDate dataInicio, LocalDate dataFim) {
+    public Page<MovimentacaoResponseDto> listar(String nome, TipoMovimentacaoEnum tipo, LocalDate dataInicio, LocalDate dataFim, Pageable pageable) {
         LocalDateTime inicioComHora = (dataInicio != null) ? dataInicio.atStartOfDay() : null;
         LocalDateTime fimComHora = (dataFim != null) ? dataFim.atTime(LocalTime.MAX) : null;
 
-        return movimentacaoRepository.buscarComFiltros(nome, tipo, inicioComHora, fimComHora);
+        return movimentacaoRepository.buscarComFiltros(nome, tipo, inicioComHora, fimComHora, pageable)
+                .map(MovimentacaoMapper::toResponse);
     }
 
     public Movimentacao buscarPorId(Long id) {
@@ -93,12 +91,5 @@ public class MovimentacaoService {
             movimentacaoRepository.flush();
 
             return movimentacao;
-    }
-    public Page<MovimentacaoResponseDto> listarTodas(Pageable pageable) {
-        return paginacaoService.buscarPaginado(
-                movimentacaoRepository,
-                pageable,
-                MovimentacaoMapper::toResponse
-        );
     }
 }

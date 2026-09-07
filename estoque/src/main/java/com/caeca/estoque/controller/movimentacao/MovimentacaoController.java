@@ -1,7 +1,5 @@
 package com.caeca.estoque.controller.movimentacao;
 
-import com.caeca.estoque.database.model.movimentacao.Movimentacao;
-import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
@@ -20,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/movimentacoes")
@@ -35,19 +32,16 @@ public class MovimentacaoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MovimentacaoResponseDto>> listar(
+    public ResponseEntity<Page<MovimentacaoResponseDto>> listar(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) TipoMovimentacaoEnum tipo,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim
-    ){
-        List<Movimentacao> response = movimentacaoService.listar(nome, tipo, dataInicio, dataFim);
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
+            @PageableDefault(size = 10, sort = "data", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable
+    ) {
+        Page<MovimentacaoResponseDto> response = movimentacaoService.listar(nome, tipo, dataInicio, dataFim, pageable);
 
-        if(response.isEmpty()){
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(MovimentacaoMapper.toResponseList(response));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -61,18 +55,5 @@ public class MovimentacaoController {
             @RequestPart(value = "arquivo", required = false)MultipartFile arquivo){
         return ResponseEntity.created(null)
                 .body(MovimentacaoMapper.toResponse(movimentacaoService.cadastrar(request, arquivo)));
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<MovimentacaoResponseDto>> listar(
-            @PageableDefault(size = 10, sort = "idMovimentacao") Pageable pageable
-    ) {
-        Page<MovimentacaoResponseDto> response = movimentacaoService.listarTodas(pageable);
-
-        if (response.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(response);
     }
 }

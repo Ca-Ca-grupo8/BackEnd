@@ -7,6 +7,7 @@ import com.caeca.estoque.dto.dashboard.GraficoMotivoDto;
 import com.caeca.estoque.dto.dashboard.TopCincoDto;
 import com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDto;
 import org.springframework.cglib.core.Local;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -119,13 +120,13 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
           AND (:tipo IS NULL OR m.motivoMovimentacao.tipoMovimentacao.nome = :tipo)
           AND (cast(:dataInicio as date) IS NULL OR m.data >= :dataInicio)
           AND (cast(:dataFim as date) IS NULL OR m.data <= :dataFim)
-        ORDER BY m.data DESC
     """)
-    List<Movimentacao> buscarComFiltros(
+    Page<Movimentacao> buscarComFiltros(
             @Param("nome") String nome,
             @Param("tipo") TipoMovimentacaoEnum tipo,
             @Param("dataInicio") LocalDateTime dataInicio,
-            @Param("dataFim") LocalDateTime dataFim
+            @Param("dataFim") LocalDateTime dataFim,
+            Pageable pageable
     );
 
     Movimentacao findFirstByJoiaIdOrderByDataDesc(long id);

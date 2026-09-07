@@ -9,7 +9,6 @@ import com.caeca.estoque.dto.endereco.EnderecoRequestDto;
 import com.caeca.estoque.dto.endereco.EnderecoResponseDto;
 import com.caeca.estoque.dto.endereco.ViaCepResponseDto;
 import com.caeca.estoque.exception.EnderecoNotFoundException;
-import com.caeca.estoque.service.paginacao.PaginacaoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,6 @@ public class EnderecoService {
 
     private final EnderecoRepository enderecoRepository;
     private final ViaCepClient viaCepClient;
-    private final PaginacaoService paginacaoService;
 
     // GET /enderecos/cep/:cep — consulta ViaCEP
     public ViaCepResponseDto consultarCep(String cep) {
@@ -81,10 +79,7 @@ public class EnderecoService {
     }
 
     public Page<EnderecoResponseDto> listarTodas(Pageable pageable) {
-        return paginacaoService.buscarPaginado(
-                enderecoRepository,
-                pageable,
-                EnderecoMapper::toResponse
-        );
+        return enderecoRepository.findAll(pageable)
+                .map(EnderecoMapper::toResponse);
     }
 }
