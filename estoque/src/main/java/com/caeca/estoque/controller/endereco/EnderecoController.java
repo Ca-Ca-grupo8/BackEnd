@@ -17,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/enderecos")
 @RequiredArgsConstructor
@@ -29,11 +27,12 @@ public class EnderecoController {
     private final EnderecoService enderecoService;
 
     @GetMapping
-    public ResponseEntity<List<EnderecoResponseDto>> listar(){
-        return ResponseEntity.ok(enderecoService.listarTodos()
-                .stream()
-                .map(EnderecoMapper::toResponse)
-                .toList());
+    public ResponseEntity<Page<EnderecoResponseDto>> listar(
+            @PageableDefault(size = 10, sort = "id") Pageable pageable
+    ) {
+        Page<EnderecoResponseDto> response = enderecoService.listarTodas(pageable);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/cep/{cep}")
@@ -68,18 +67,6 @@ public class EnderecoController {
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         enderecoService.deletar(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<EnderecoResponseDto>> listar(
-            @PageableDefault(size = 10, sort = "id") Pageable pageable
-    ) {
-        Page<EnderecoResponseDto> response = enderecoService.listarTodas(pageable);
-
-        if (response.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(response);
     }
 
 }

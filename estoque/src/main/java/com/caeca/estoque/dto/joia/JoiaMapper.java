@@ -38,7 +38,7 @@ public class JoiaMapper {
         joiaSaidaDTO.setPreco(joia.getPreco());
         joiaSaidaDTO.setQuantidadeMinima(joia.getQuantidadeMinima());
         joiaSaidaDTO.setAtivo(joia.getAtivo());
-        joiaSaidaDTO.setStatus(calcularStatus(joia));
+        joiaSaidaDTO.setStatus(JoiaStatus.calcularStatus(joia));
         joiaSaidaDTO.setDataCadastro(joia.getDataCadastro());
         joiaSaidaDTO.setDataAtualizacao(joia.getDataAtualizacao());
         joiaSaidaDTO.setQuantidade(joia.getQuantidade());
@@ -75,26 +75,6 @@ public class JoiaMapper {
                 .stream()
                 .map(JoiaMapper::toResponse)
                 .toList();
-    }
-
-    private static JoiaStatus calcularStatus(Joia joia) {
-        if (joia.getAtivo() == null || !joia.getAtivo()) {
-            return JoiaStatus.INATIVO;
-        }
-
-        if (joia.getQuantidade() == 0) {
-            return JoiaStatus.CRITICO;
-        }
-
-        if (joia.getQuantidade() == null || joia.getQuantidadeMinima() == null) {
-            return JoiaStatus.OK;
-        }
-
-        if (joia.getQuantidade() <= joia.getQuantidadeMinima()) {
-            return JoiaStatus.ALERTA;
-        }
-
-        return JoiaStatus.OK;
     }
 
 }

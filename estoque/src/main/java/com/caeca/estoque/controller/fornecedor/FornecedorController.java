@@ -13,8 +13,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/fornecedores")
 @SecurityRequirement(name = "Bearer")
@@ -29,12 +27,15 @@ public class FornecedorController {
 
 
     @GetMapping
-    public ResponseEntity<List<FornecedorResponseDto>> listar(
+    public ResponseEntity<Page<FornecedorResponseDto>> listar(
             @RequestParam(required = false) Boolean is_ativo,
-            @RequestParam(required = false) String nome) {
-        return ResponseEntity.ok(fornecedorService.listar(is_ativo, nome));
-    }
+            @RequestParam(required = false) String nome,
+            @PageableDefault(size = 10, sort = "idFornecedor") Pageable pageable
+    ) {
+        Page<FornecedorResponseDto> response = fornecedorService.listar(is_ativo, nome, pageable);
 
+        return ResponseEntity.ok(response);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<FornecedorResponseDto> buscarPorId(@PathVariable Long id) {
@@ -66,18 +67,5 @@ public class FornecedorController {
             @Valid @RequestBody FornecedorStatusDto dto) {
         fornecedorService.atualizarStatus(id, dto);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<FornecedorResponseDto>> listar(
-            @PageableDefault(size = 10, sort = "idFornecedor") Pageable pageable
-    ) {
-        Page<FornecedorResponseDto> response = fornecedorService.listarTodas(pageable);
-
-        if (response.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(response);
     }
 }

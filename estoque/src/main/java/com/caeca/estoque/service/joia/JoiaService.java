@@ -15,7 +15,6 @@ import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.service.Material.MaterialService;
 import com.caeca.estoque.service.banho.BanhoService;
 import com.caeca.estoque.service.categoria.CategoriaService;
-import com.caeca.estoque.service.paginacao.PaginacaoService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatusCode;
@@ -38,50 +37,40 @@ public class JoiaService {
     private final CategoriaService categoriaService;
     private final MaterialService materialService;
     private final MovimentacaoRepository movimentacaoRepository;
-    private final PaginacaoService paginacaoService;
 
 
-    public JoiaService(JoiaRepository joiaRepository, BanhoService banhoService, CategoriaService categoriaService, MaterialService materialService, MovimentacaoRepository movimentacaoRepository, PaginacaoService paginacaoService) {
+    public JoiaService(JoiaRepository joiaRepository, BanhoService banhoService, CategoriaService categoriaService, MaterialService materialService, MovimentacaoRepository movimentacaoRepository) {
         this.joiaRepository = joiaRepository;
         this.banhoService = banhoService;
         this.categoriaService = categoriaService;
         this.materialService = materialService;
         this.movimentacaoRepository = movimentacaoRepository;
-        this.paginacaoService = paginacaoService;
     }
 
-    public List<JoiaSaidaDto> listarTodasAsJoias(
+    public Page<JoiaSaidaDto> listarTodas(
             String nome,
             Long categoria,
             Long material,
             Long banho,
             JoiaStatus joiaStatus,
             LocalDate dataInicio,
-            LocalDate dataFim) {
+            LocalDate dataFim,
+            Pageable pageable) {
 
-        List<Joia> joias = joiaRepository.listarTodosFiltrado(
+        Page<Joia> joias = joiaRepository.listarTodosFiltrado(
                 nome,
                 categoria,
                 material,
                 banho,
+                joiaStatus,
                 dataInicio,
-                dataFim
+                dataFim,
+                pageable
         );
 
-        if (joias.isEmpty()) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Nenhuma jóia foi encontrada!");
-        }
+        Page<JoiaSaidaDto> response = joias.map(JoiaMapper::toResponse);
 
-        List<JoiaSaidaDto> response = JoiaMapper.toResponseList(joias);
-
-        if (joiaStatus != null) {
-            response = response
-                    .stream()
-                    .filter(joia -> joia.getStatus() == joiaStatus)
-                    .toList();
-        }
-
-        preencherFornecedoresEmLote(response);
+        preencherFornecedoresEmLote(response.getContent());
 
         return response;
     }
@@ -227,13 +216,5 @@ public class JoiaService {
         Joia joia = obterEntityJoiaPorId(id);
         joia.setQuantidade(joia.getQuantidade() - quantidade);
         joiaRepository.save(joia);
-    }
-
-    public Page<JoiaSaidaDto> listarTodas(Pageable pageable) {
-        return paginacaoService.buscarPaginado(
-                joiaRepository,
-                pageable,
-                JoiaMapper::toResponse
-        );
     }
 }

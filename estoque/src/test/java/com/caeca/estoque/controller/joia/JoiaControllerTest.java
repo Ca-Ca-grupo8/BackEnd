@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,21 +43,37 @@ class JoiaControllerTest {
     @MockitoBean private MaterialService materialService;
 
     @Nested
-    @DisplayName("listarTodasAsJoias")
-    class ListarTodasAsJoias {
+    @DisplayName("listar")
+    class Listar {
         @Test
-        @DisplayName("Deve retornar status 200 e lista de joias")
-        void deveRetornarStatus200EListaDeJoias() throws Exception {
+        @DisplayName("Deve retornar status 200 e página de joias")
+        void deveRetornarStatus200EPaginaDeJoias() throws Exception {
             JoiaSaidaDto joia = new JoiaSaidaDto();
-            when(joiaService.listarTodasAsJoias(null, null, null, null, null, null, null)).thenReturn(List.of(joia));
+            Page<JoiaSaidaDto> page = new PageImpl<>(List.of(joia));
+            when(joiaService.listarTodas(any(), any(), any(), any(), any(), any(), any(), any(Pageable.class))).thenReturn(page);
 
             mockMvc.perform(get("/joias")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(1));
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content.length()").value(1));
 
-            verify(joiaService, times(1)).listarTodasAsJoias(null, null, null, null, null, null, null);
+            verify(joiaService, times(1)).listarTodas(any(), any(), any(), any(), any(), any(), any(), any(Pageable.class));
+        }
+
+        @Test
+        @DisplayName("Deve retornar status 200 com página vazia quando não houver resultados")
+        void deveRetornarStatus200ComPaginaVazia() throws Exception {
+            Page<JoiaSaidaDto> page = new PageImpl<>(List.of());
+            when(joiaService.listarTodas(any(), any(), any(), any(), any(), any(), any(), any(Pageable.class))).thenReturn(page);
+
+            mockMvc.perform(get("/joias")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content.length()").value(0));
+
+            verify(joiaService, times(1)).listarTodas(any(), any(), any(), any(), any(), any(), any(), any(Pageable.class));
         }
     }
 
