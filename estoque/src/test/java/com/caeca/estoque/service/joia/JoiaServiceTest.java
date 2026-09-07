@@ -22,6 +22,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -42,23 +46,23 @@ class JoiaServiceTest {
     @InjectMocks private JoiaService joiaService;
 
     @Nested
-    @DisplayName("listarTodasAsJoias")
-    class listarTodasAsJoias {
+    @DisplayName("listarTodas")
+    class listarTodas {
         @Test
-        @DisplayName("Deve retornar lista de joias com sucesso quando existirem dados")
-        void deveLancarExcecaoQuandoListaCheia() {
+        @DisplayName("Deve retornar página de joias com sucesso quando existirem dados")
+        void deveRetornarPaginaDeJoiasComSucesso() {
             Joia joia = new Joia();
             joia.setId(1L);
-            when(joiaRepository.listarTodosFiltrado(any(), any(), any(), any(), any(), any()))
-                    .thenReturn(List.of(joia));
+            when(joiaRepository.listarTodosFiltrado(any(), any(), any(), any(), any(), any(), any(), any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(joia)));
             when(movimentacaoRepository.buscarFornecedoresDasJoias(anyList())).thenReturn(List.of());
 
-            List<JoiaSaidaDto> resultado = joiaService.listarTodasAsJoias(null, null, null, null, null, null, null);
+            Page<JoiaSaidaDto> resultado = joiaService.listarTodas(null, null, null, null, null, null, null, PageRequest.of(0, 10));
 
             assertNotNull(resultado);
-            assertFalse(resultado.isEmpty());
-            assertEquals(1, resultado.size());
-            verify(joiaRepository, times(1)).listarTodosFiltrado(any(), any(), any(), any(), any(), any());
+            assertFalse(resultado.getContent().isEmpty());
+            assertEquals(1, resultado.getContent().size());
+            verify(joiaRepository, times(1)).listarTodosFiltrado(any(), any(), any(), any(), any(), any(), any(), any(Pageable.class));
         }
 
         @Test
@@ -76,50 +80,52 @@ class JoiaServiceTest {
             fornecedor2.setId(20L);
             fornecedor2.setNome("Fornecedor B");
 
-            when(joiaRepository.listarTodosFiltrado(any(), any(), any(), any(), any(), any()))
-                    .thenReturn(List.of(joia1, joia2));
+            when(joiaRepository.listarTodosFiltrado(any(), any(), any(), any(), any(), any(), any(), any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(joia1, joia2)));
             when(movimentacaoRepository.buscarFornecedoresDasJoias(anyList()))
                     .thenReturn(List.of(
                             new FornecedorJoiaProjecao(1L, fornecedor1),
                             new FornecedorJoiaProjecao(2L, fornecedor2)));
 
-            List<JoiaSaidaDto> resultado = joiaService.listarTodasAsJoias(null, null, null, null, null, null, null);
+            Page<JoiaSaidaDto> resultado = joiaService.listarTodas(null, null, null, null, null, null, null, PageRequest.of(0, 10));
 
             assertNotNull(resultado);
-            assertEquals(2, resultado.size());
-            assertEquals("Fornecedor A", resultado.get(0).getFornecedores().get(0).getNome());
-            assertEquals("Fornecedor B", resultado.get(1).getFornecedores().get(0).getNome());
+            assertEquals(2, resultado.getContent().size());
+            assertEquals("Fornecedor A", resultado.getContent().get(0).getFornecedores().get(0).getNome());
+            assertEquals("Fornecedor B", resultado.getContent().get(1).getFornecedores().get(0).getNome());
             verify(movimentacaoRepository, times(1)).buscarFornecedoresDasJoias(List.of(1L, 2L));
         }
 
         @Test
-        @DisplayName("Deve filtrar por status antes de buscar fornecedores em lote")
-        void deveFiltrarPorStatusAntesDoLote() {
+        @DisplayName("Deve repassar o filtro de status para a consulta paginada")
+        void deveRepassarFiltroDeStatusParaConsulta() {
             Joia joiaAtiva = new Joia();
             joiaAtiva.setId(1L);
             joiaAtiva.setQuantidade(10);
             joiaAtiva.setQuantidadeMinima(5);
             joiaAtiva.setAtivo(true);
 
-            when(joiaRepository.listarTodosFiltrado(any(), any(), any(), any(), any(), any()))
-                    .thenReturn(List.of(joiaAtiva));
+            when(joiaRepository.listarTodosFiltrado(any(), any(), any(), any(), any(), any(), any(), any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(joiaAtiva)));
             when(movimentacaoRepository.buscarFornecedoresDasJoias(anyList())).thenReturn(List.of());
 
-            List<JoiaSaidaDto> resultado = joiaService.listarTodasAsJoias(null, null, null, null, JoiaStatus.OK, null, null);
+            Page<JoiaSaidaDto> resultado = joiaService.listarTodas(null, null, null, null, JoiaStatus.OK, null, null, PageRequest.of(0, 10));
 
             assertNotNull(resultado);
-            assertEquals(1, resultado.size());
+            assertEquals(1, resultado.getContent().size());
+            verify(joiaRepository, times(1)).listarTodosFiltrado(any(), any(), any(), any(), eq(JoiaStatus.OK), any(), any(), any(Pageable.class));
         }
 
         @Test
-        @DisplayName("Deve lançar ResponseStatusException 404 quando a lista estiver vazia")
-        void deveLancarExcecaoQuandoListaVazia() {
-            when(joiaRepository.listarTodosFiltrado(any(), any(), any(), any(), any(), any()))
-                    .thenReturn(List.of());
+        @DisplayName("Deve retornar página vazia quando não existirem joias")
+        void deveRetornarPaginaVaziaQuandoNaoExistiremJoias() {
+            when(joiaRepository.listarTodosFiltrado(any(), any(), any(), any(), any(), any(), any(), any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of()));
 
-            assertThrows(ResponseStatusException.class, () -> {
-                joiaService.listarTodasAsJoias(null, null, null, null, null, null, null);
-            });
+            Page<JoiaSaidaDto> resultado = joiaService.listarTodas(null, null, null, null, null, null, null, PageRequest.of(0, 10));
+
+            assertNotNull(resultado);
+            assertTrue(resultado.getContent().isEmpty());
         }
     }
 

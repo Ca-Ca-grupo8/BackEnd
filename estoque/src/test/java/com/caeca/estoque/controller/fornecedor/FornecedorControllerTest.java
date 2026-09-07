@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -64,45 +67,48 @@ class FornecedorControllerTest {
     class Listar {
 
         @Test
-        @DisplayName("Deve retornar status 200 e lista de fornecedores")
-        void deveRetornar200EListaDeFornecedores() throws Exception {
-            when(fornecedorService.listar(null, null)).thenReturn(List.of(responseDTO));
+        @DisplayName("Deve retornar status 200 e página de fornecedores")
+        void deveRetornar200EPaginaDeFornecedores() throws Exception {
+            Page<FornecedorResponseDto> page = new PageImpl<>(List.of(responseDTO));
+            when(fornecedorService.listar(eq(null), eq(null), any(Pageable.class))).thenReturn(page);
 
             mockMvc.perform(get("/fornecedores")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(1));
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content.length()").value(1));
 
-            verify(fornecedorService, times(1)).listar(null, null);
+            verify(fornecedorService, times(1)).listar(eq(null), eq(null), any(Pageable.class));
         }
 
         @Test
         @DisplayName("Deve retornar status 200 filtrando por isAtivo")
         void deveRetornar200ComFiltroIsAtivo() throws Exception {
-            when(fornecedorService.listar(true, null)).thenReturn(List.of(responseDTO));
+            Page<FornecedorResponseDto> page = new PageImpl<>(List.of(responseDTO));
+            when(fornecedorService.listar(eq(true), eq(null), any(Pageable.class))).thenReturn(page);
 
             mockMvc.perform(get("/fornecedores")
                             .param("is_ativo", "true")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.length()").value(1));
+                    .andExpect(jsonPath("$.content.length()").value(1));
 
-            verify(fornecedorService, times(1)).listar(true, null);
+            verify(fornecedorService, times(1)).listar(eq(true), eq(null), any(Pageable.class));
         }
 
         @Test
         @DisplayName("Deve retornar status 200 filtrando por nome")
         void deveRetornar200ComFiltroNome() throws Exception {
-            when(fornecedorService.listar(null, "joias")).thenReturn(List.of(responseDTO));
+            Page<FornecedorResponseDto> page = new PageImpl<>(List.of(responseDTO));
+            when(fornecedorService.listar(eq(null), eq("joias"), any(Pageable.class))).thenReturn(page);
 
             mockMvc.perform(get("/fornecedores")
                             .param("nome", "joias")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.length()").value(1));
+                    .andExpect(jsonPath("$.content.length()").value(1));
 
-            verify(fornecedorService, times(1)).listar(null, "joias");
+            verify(fornecedorService, times(1)).listar(eq(null), eq("joias"), any(Pageable.class));
         }
     }
 

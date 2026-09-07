@@ -1,12 +1,6 @@
 package com.caeca.estoque.controller.joia;
 
-import com.caeca.estoque.database.model.banho.Banho;
-import com.caeca.estoque.database.model.categoria.Categoria;
-import com.caeca.estoque.database.model.joia.Joia;
-import com.caeca.estoque.database.model.material.Material;
-import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.dto.joia.*;
-import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResponseDto;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.joia.JoiaService;
 import com.caeca.estoque.service.Material.MaterialService;
@@ -23,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/joias")
@@ -45,26 +38,27 @@ public class JoiaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<JoiaSaidaDto>> listarTodasAsJoias(
+    public ResponseEntity<Page<JoiaSaidaDto>> listar(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) Long categoria,
             @RequestParam(required = false) Long material,
             @RequestParam(required = false) Long banho,
             @RequestParam(required = false) JoiaStatus joiaStatus,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
+            @PageableDefault(size = 10, sort = "nome") Pageable pageable
     ) {
-
-        List<JoiaSaidaDto> joias = joiaService.listarTodasAsJoias(
+        Page<JoiaSaidaDto> response = joiaService.listarTodas(
                 nome,
                 categoria,
                 material,
                 banho,
                 joiaStatus,
                 dataInicio,
-                dataFim);
+                dataFim,
+                pageable);
 
-        return ResponseEntity.status(200).body(joias);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -88,18 +82,5 @@ public class JoiaController {
         JoiaSaidaDto response = joiaService.atualizarJoiaPorId(id, dto);
 
         return ResponseEntity.status(200).body(response);
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<JoiaSaidaDto>> listar(
-            @PageableDefault(size = 10, sort = "id") Pageable pageable
-    ) {
-        Page<JoiaSaidaDto> response = joiaService.listarTodas(pageable);
-
-        if (response.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(response);
     }
 }

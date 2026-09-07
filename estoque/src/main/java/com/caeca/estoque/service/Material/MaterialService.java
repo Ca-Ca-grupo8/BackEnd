@@ -4,15 +4,9 @@ import com.caeca.estoque.database.model.material.Material;
 import com.caeca.estoque.database.repository.material.MaterialRepository;
 import com.caeca.estoque.dto.material.MaterialMapper;
 import com.caeca.estoque.dto.material.MaterialRequestDto;
-import com.caeca.estoque.dto.material.MaterialResponseDto;
 import com.caeca.estoque.exception.ConflictException;
 import com.caeca.estoque.exception.NotFoundException;
-import com.caeca.estoque.service.paginacao.PaginacaoService;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -20,12 +14,10 @@ import java.util.List;
 public class MaterialService {
 
     private final MaterialRepository materialRepository;
-    private final PaginacaoService paginacaoService;
 
 
-    public MaterialService(MaterialRepository materialRepository, PaginacaoService paginacaoService) {
+    public MaterialService(MaterialRepository materialRepository) {
         this.materialRepository = materialRepository;
-        this.paginacaoService = paginacaoService;
     }
 
     public List<Material> listar() {
@@ -44,14 +36,6 @@ public class MaterialService {
             );
         }
         return materialRepository.save(MaterialMapper.toEntity(request));
-    }
-
-    public Page<MaterialResponseDto> listarTodas(Pageable pageable) {
-        return paginacaoService.buscarPaginado(
-                materialRepository,
-                pageable,
-                MaterialMapper::toResponse
-        );
     }
 
 }
