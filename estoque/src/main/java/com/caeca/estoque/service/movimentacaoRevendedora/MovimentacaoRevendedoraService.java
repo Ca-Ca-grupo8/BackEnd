@@ -10,7 +10,6 @@ import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraPatc
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraRequestDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResponseDto;
 import com.caeca.estoque.exception.NotFoundException;
-import com.caeca.estoque.service.paginacao.PaginacaoService;
 import com.caeca.estoque.service.revendedora.RevendedoraService;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -24,14 +23,12 @@ public class MovimentacaoRevendedoraService {
     private final MovimentacaoRevendedoraRepository mrRepository;
     private final RevendedoraService revendedoraService;
     private final RevendedoraRepository revendedoraRepository;
-    private final PaginacaoService paginacaoService;
 
 
-    public MovimentacaoRevendedoraService(MovimentacaoRevendedoraRepository mrRepository, RevendedoraService revendedoraService, RevendedoraRepository revendedoraRepository, PaginacaoService paginacaoService) {
+    public MovimentacaoRevendedoraService(MovimentacaoRevendedoraRepository mrRepository, RevendedoraService revendedoraService, RevendedoraRepository revendedoraRepository) {
         this.mrRepository = mrRepository;
         this.revendedoraService = revendedoraService;
         this.revendedoraRepository = revendedoraRepository;
-        this.paginacaoService = paginacaoService;
     }
 
     public List<MovimentacaoRevendedora> listar() {
@@ -77,10 +74,7 @@ public class MovimentacaoRevendedoraService {
     }
 
     public Page<MovimentacaoRevendedoraResponseDto> listarTodas(Pageable pageable) {
-        return paginacaoService.buscarPaginado(
-                mrRepository,
-                pageable,
-                MovimentacaoRevendedoraMapper::toResponse
-        );
+        return mrRepository.findAll(pageable)
+                .map(MovimentacaoRevendedoraMapper::toResponse);
     }
 }

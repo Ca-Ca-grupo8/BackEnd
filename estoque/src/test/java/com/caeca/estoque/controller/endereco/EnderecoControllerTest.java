@@ -1,7 +1,9 @@
 package com.caeca.estoque.controller.endereco;
 
 import com.caeca.estoque.database.model.endereco.Endereco;
+import com.caeca.estoque.dto.endereco.EnderecoMapper;
 import com.caeca.estoque.dto.endereco.EnderecoRequestDto;
+import com.caeca.estoque.dto.endereco.EnderecoResponseDto;
 import com.caeca.estoque.exception.EnderecoNotFoundException;
 import com.caeca.estoque.handler.GlobalExceptionHandler;
 import com.caeca.estoque.service.endereco.EnderecoService;
@@ -13,6 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -69,30 +74,32 @@ class EnderecoControllerTest {
     class Listar {
 
         @Test
-        @DisplayName("Deve retornar status 200 e lista de enderecos")
-        void deveRetornar200EListaDeEnderecos() throws Exception {
-            when(enderecoService.listarTodos()).thenReturn(List.of(endereco));
+        @DisplayName("Deve retornar status 200 e página de enderecos")
+        void deveRetornar200EPaginaDeEnderecos() throws Exception {
+            Page<EnderecoResponseDto> page = new PageImpl<>(List.of(EnderecoMapper.toResponse(endereco)));
+            when(enderecoService.listarTodas(any(Pageable.class))).thenReturn(page);
 
             mockMvc.perform(get("/enderecos")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(1));
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content.length()").value(1));
 
-            verify(enderecoService, times(1)).listarTodos();
+            verify(enderecoService, times(1)).listarTodas(any(Pageable.class));
         }
 
         @Test
-        @DisplayName("Deve retornar status 200 e lista vazia")
-        void deveRetornar200EListaVazia() throws Exception {
-            when(enderecoService.listarTodos()).thenReturn(List.of());
+        @DisplayName("Deve retornar status 200 com página vazia quando não houver registros")
+        void deveRetornar200ComPaginaVazia() throws Exception {
+            when(enderecoService.listarTodas(any(Pageable.class))).thenReturn(new PageImpl<>(List.of()));
 
             mockMvc.perform(get("/enderecos")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.length()").value(0));
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content.length()").value(0));
 
-            verify(enderecoService, times(1)).listarTodos();
+            verify(enderecoService, times(1)).listarTodas(any(Pageable.class));
         }
     }
 

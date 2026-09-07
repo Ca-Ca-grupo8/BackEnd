@@ -4,42 +4,38 @@ import com.caeca.estoque.database.model.fornecedores.Fornecedor;
 import com.caeca.estoque.database.repository.fornecedor.FornecedorRepository;
 import com.caeca.estoque.dto.fornecedor.*;
 import com.caeca.estoque.exception.FornecedorNotFoundException;
-import com.caeca.estoque.service.paginacao.PaginacaoService;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class FornecedorService {
 
     private final FornecedorRepository fornecedorRepository;
-    private final PaginacaoService paginacaoService;
 
 
-    public FornecedorService(FornecedorRepository fornecedorRepository, PaginacaoService paginacaoService) {
+    public FornecedorService(FornecedorRepository fornecedorRepository) {
         this.fornecedorRepository = fornecedorRepository;
-        this.paginacaoService = paginacaoService;
     }
 
     @Transactional(readOnly = true)
-    public List<FornecedorResponseDto> listar(Boolean isAtivo, String nome) {
-        List<Fornecedor> resultado;
+    public Page<FornecedorResponseDto> listar(Boolean isAtivo, String nome, Pageable pageable) {
+        Page<Fornecedor> resultado;
 
         if (isAtivo != null && nome != null) {
-            resultado = fornecedorRepository.findByIsAtivoAndNomeContainingIgnoreCase(isAtivo, nome);
+            resultado = fornecedorRepository.findByIsAtivoAndNomeContainingIgnoreCase(isAtivo, nome, pageable);
         } else if (isAtivo != null) {
-            resultado = fornecedorRepository.findByIsAtivo(isAtivo);
+            resultado = fornecedorRepository.findByIsAtivo(isAtivo, pageable);
         } else if (nome != null) {
-            resultado = fornecedorRepository.findByNomeContainingIgnoreCase(nome);
+            resultado = fornecedorRepository.findByNomeContainingIgnoreCase(nome, pageable);
         } else {
-            resultado = fornecedorRepository.findAll();
+            resultado = fornecedorRepository.findAll(pageable);
         }
 
-        return resultado.stream().map(this::toResponseDTO).collect(Collectors.toList());
+        return resultado.map(this::toResponseDTO);
     }
 
     @Transactional(readOnly = true)
@@ -94,14 +90,6 @@ public class FornecedorService {
                 f.getTelefone(),
                 f.getIsAtivo(),
                 f.getDataCadastro()
-        );
-    }
-
-    public Page<FornecedorResponseDto> listarTodas(Pageable pageable) {
-        return paginacaoService.buscarPaginado(
-                fornecedorRepository,
-                pageable,
-                FornecedorMapper::toResponseDTO
         );
     }
 }

@@ -10,7 +10,6 @@ import com.caeca.estoque.dto.revendedora.RevendedoraResponseDto;
 import com.caeca.estoque.exception.ConflictException;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.endereco.EnderecoService;
-import com.caeca.estoque.service.paginacao.PaginacaoService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -25,13 +24,11 @@ public class RevendedoraService {
 
     private final RevendedoraRepository revendedoraRepository;
     private final EnderecoService enderecoService;
-    private final PaginacaoService paginacaoService;
 
 
-    public RevendedoraService(RevendedoraRepository revendedoraRepository, EnderecoService enderecoService, PaginacaoService paginacaoService) {
+    public RevendedoraService(RevendedoraRepository revendedoraRepository, EnderecoService enderecoService) {
         this.revendedoraRepository = revendedoraRepository;
         this.enderecoService = enderecoService;
-        this.paginacaoService = paginacaoService;
     }
 
     public List<Revendedora> listar() {
@@ -129,10 +126,7 @@ public class RevendedoraService {
     }
 
     public Page<RevendedoraResponseDto> listarTodas(Pageable pageable) {
-        return paginacaoService.buscarPaginado(
-                revendedoraRepository,
-                pageable,
-                RevendedoraMapper::toResponse
-        );
+        return revendedoraRepository.findAll(pageable)
+                .map(RevendedoraMapper::toResponse);
     }
 }
