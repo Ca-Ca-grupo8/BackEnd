@@ -15,6 +15,8 @@ public class MovimentacaoRevendedora {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idMovimentacaoRevendedora;
 
+    private String nome;
+
     private boolean isFinalizada = false;
 
     @JsonBackReference
@@ -31,15 +33,9 @@ public class MovimentacaoRevendedora {
     public MovimentacaoRevendedora() {
     }
 
-    public MovimentacaoRevendedora(Long idMovimentacaoRevendedora, boolean isFinalizada, Revendedora revendedora, LocalDateTime data) {
+    public MovimentacaoRevendedora(Long idMovimentacaoRevendedora, String nome, boolean isFinalizada, Revendedora revendedora, List<Movimentacao> movimentacoes, LocalDateTime data) {
         this.idMovimentacaoRevendedora = idMovimentacaoRevendedora;
-        this.isFinalizada = isFinalizada;
-        this.revendedora = revendedora;
-        this.data = data;
-    }
-
-        public MovimentacaoRevendedora(Long idMovimentacaoRevendedora, boolean isFinalizada, Revendedora revendedora, List<Movimentacao> movimentacoes, LocalDateTime data) {
-        this.idMovimentacaoRevendedora = idMovimentacaoRevendedora;
+        this.nome = nome;
         this.isFinalizada = isFinalizada;
         this.revendedora = revendedora;
         this.movimentacoes = movimentacoes;
@@ -84,5 +80,17 @@ public class MovimentacaoRevendedora {
 
     public void setData(LocalDateTime data) {
         this.data = data;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public boolean isFinalizada() {
+        return isFinalizada;
     }
 }

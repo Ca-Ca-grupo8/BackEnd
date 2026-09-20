@@ -9,6 +9,7 @@ public class MovimentacaoRevendedoraMapper {
 
         MovimentacaoRevendedoraResponseDto dto = new MovimentacaoRevendedoraResponseDto();
         dto.setIdMovimentacaoRevendedora(entity.getIdMovimentacaoRevendedora());
+        dto.setNome(entity.getNome());
         dto.setRevendedora(new MovimentacaoRevendedoraResponseDto.RevendedoraMovimentacaoDto(
                 entity.getRevendedora().getId(),
                 entity.getRevendedora().getNome()
