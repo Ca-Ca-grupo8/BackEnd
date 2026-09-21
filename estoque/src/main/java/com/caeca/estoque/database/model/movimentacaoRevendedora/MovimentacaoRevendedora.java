@@ -26,6 +26,8 @@ public class MovimentacaoRevendedora {
     @OneToMany(mappedBy = "movimentacaoRevendedora", fetch = FetchType.LAZY)
     private List<Movimentacao> movimentacoes;
 
+    private LocalDateTime dataLimite;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime data;
@@ -88,6 +90,14 @@ public class MovimentacaoRevendedora {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public LocalDateTime getDataLimite() {
+        return dataLimite;
+    }
+
+    public void setDataLimite(LocalDateTime dataLimite) {
+        this.dataLimite = dataLimite;
     }
 
     public boolean isFinalizada() {

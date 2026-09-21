@@ -13,6 +13,7 @@ public class MovimentacaoRevendedoraResponseDto {
     private RevendedoraMovimentacaoDto revendedora;
     private List<MovimentacaoItemDto> movimentacoes;
     private Double totalVenda;
+    private LocalDateTime dataLimite;
     private LocalDateTime data;
 
     public static class RevendedoraMovimentacaoDto{
@@ -144,6 +145,14 @@ public class MovimentacaoRevendedoraResponseDto {
 
     public void setData(LocalDateTime data) {
         this.data = data;
+    }
+
+    public LocalDateTime getDataLimite() {
+        return dataLimite;
+    }
+
+    public void setDataLimite(LocalDateTime dataLimite) {
+        this.dataLimite = dataLimite;
     }
 
     public boolean getIsFinalizada() {
