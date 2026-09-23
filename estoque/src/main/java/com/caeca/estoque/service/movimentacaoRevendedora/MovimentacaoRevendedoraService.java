@@ -15,7 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class MovimentacaoRevendedoraService {
@@ -45,6 +47,11 @@ public class MovimentacaoRevendedoraService {
                 .orElseGet(() -> {
                     MovimentacaoRevendedora movimentacaoRevendedora = MovimentacaoRevendedoraMapper.toEntity(requestDto);
                     movimentacaoRevendedora.setRevendedora(revendedoraService.buscarPorId(requestDto.getIdRevendedora()));
+                    int rand = ThreadLocalRandom.current().nextInt(1000, 10000);
+                    movimentacaoRevendedora.setNome((movimentacaoRevendedora.getRevendedora().getNome()
+                            + "-" + LocalDate.now().getMonth()
+                            + "-" + LocalDate.now().getYear()
+                            + "-" + rand).toLowerCase().strip());
                     return mrRepository.save(movimentacaoRevendedora);
                 });
     }

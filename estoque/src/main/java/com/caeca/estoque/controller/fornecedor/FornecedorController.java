@@ -30,7 +30,7 @@ public class FornecedorController {
     public ResponseEntity<Page<FornecedorResponseDto>> listar(
             @RequestParam(required = false) Boolean is_ativo,
             @RequestParam(required = false) String nome,
-            @PageableDefault(size = 10, sort = "idFornecedor") Pageable pageable
+            @PageableDefault(size = 10, sort = "id") Pageable pageable
     ) {
         Page<FornecedorResponseDto> response = fornecedorService.listar(is_ativo, nome, pageable);
 
