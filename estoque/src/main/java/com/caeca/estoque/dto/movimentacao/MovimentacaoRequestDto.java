@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+import java.time.LocalDateTime;
+
 public class MovimentacaoRequestDto {
     @Schema(example = "2", description = "Quantidade de jóias envolvidas na movimentação")
     @NotNull
@@ -29,6 +31,8 @@ public class MovimentacaoRequestDto {
     private Double precoBanho;
 
     private Double multiplicador;
+
+    private LocalDateTime dataLimite;
 
     public MovimentacaoRequestDto() {
     }
@@ -115,5 +119,13 @@ public class MovimentacaoRequestDto {
 
     public void setMultiplicador(Double multiplicador) {
         this.multiplicador = multiplicador;
+    }
+
+    public LocalDateTime getDataLimite() {
+        return dataLimite;
+    }
+
+    public void setDataLimite(LocalDateTime dataLimite) {
+        this.dataLimite = dataLimite;
     }
 }

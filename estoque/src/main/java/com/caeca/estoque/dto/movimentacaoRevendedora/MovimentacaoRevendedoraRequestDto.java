@@ -21,6 +21,9 @@ public class MovimentacaoRevendedoraRequestDto {
         this.dataLimite = dataLimite;
     }
 
+    public MovimentacaoRevendedoraRequestDto() {
+    }
+
     public Long getIdRevendedora() {
         return idRevendedora;
     }

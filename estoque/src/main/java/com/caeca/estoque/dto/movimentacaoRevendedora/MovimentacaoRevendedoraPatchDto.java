@@ -7,6 +7,9 @@ public class MovimentacaoRevendedoraPatchDto {
         this.isFinalizada = isFinalizada;
     }
 
+    public MovimentacaoRevendedoraPatchDto() {
+    }
+
     public boolean isFinalizada() {
         return isFinalizada;
     }

@@ -42,8 +42,13 @@ public class SaidaStrategy implements MovimentacaoStrategy {
         movimentacao.setUsuario(dto.usuario());
 
         if(dto.dadosOriginais().getIdRevendedora() != null){
-            movimentacao.setMovimentacaoRevendedora(mrService.buscarOuCriarVendaPorRevendedora(
-                    new MovimentacaoRevendedoraRequestDto(dto.dadosOriginais().getIdRevendedora())));
+            MovimentacaoRevendedoraRequestDto movimentacaoRevendedoraRequestDto = new MovimentacaoRevendedoraRequestDto();
+            movimentacaoRevendedoraRequestDto.setIdRevendedora(dto.dadosOriginais().getIdRevendedora());
+            movimentacaoRevendedoraRequestDto.setDataLimite(dto.dadosOriginais().getDataLimite());
+
+            movimentacao.setMovimentacaoRevendedora(
+                    mrService.buscarOuCriarVendaPorRevendedora(movimentacaoRevendedoraRequestDto)
+            );
         }
 
         return movimentacao;
