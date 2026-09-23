@@ -9,6 +9,7 @@ public class MovimentacaoRevendedoraMapper {
 
         MovimentacaoRevendedoraResponseDto dto = new MovimentacaoRevendedoraResponseDto();
         dto.setIdMovimentacaoRevendedora(entity.getIdMovimentacaoRevendedora());
+        dto.setNome(entity.getNome());
         dto.setRevendedora(new MovimentacaoRevendedoraResponseDto.RevendedoraMovimentacaoDto(
                 entity.getRevendedora().getId(),
                 entity.getRevendedora().getNome()
@@ -35,6 +36,7 @@ public class MovimentacaoRevendedoraMapper {
                 .sum();
 
         dto.setTotalVenda(total);
+        dto.setDataLimite(entity.getDataLimite());
         dto.setData(entity.getData());
         dto.setFinalizada(entity.getIsFinalizada());
 
@@ -46,6 +48,8 @@ public class MovimentacaoRevendedoraMapper {
     }
 
     public static MovimentacaoRevendedora toEntity(MovimentacaoRevendedoraRequestDto request) {
-        return new MovimentacaoRevendedora();
+        MovimentacaoRevendedora entity = new MovimentacaoRevendedora();
+        entity.setDataLimite(request.getDataLimite());
+        return entity;
     }
 }

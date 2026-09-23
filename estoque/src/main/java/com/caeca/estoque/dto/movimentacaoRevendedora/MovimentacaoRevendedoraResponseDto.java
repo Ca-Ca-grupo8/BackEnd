@@ -8,10 +8,12 @@ import java.util.List;
 
 public class MovimentacaoRevendedoraResponseDto {
     private Long idMovimentacaoRevendedora;
+    private String nome;
     private boolean isFinalizada;
     private RevendedoraMovimentacaoDto revendedora;
     private List<MovimentacaoItemDto> movimentacoes;
     private Double totalVenda;
+    private LocalDateTime dataLimite;
     private LocalDateTime data;
 
     public static class RevendedoraMovimentacaoDto{
@@ -95,8 +97,9 @@ public class MovimentacaoRevendedoraResponseDto {
     public MovimentacaoRevendedoraResponseDto() {
     }
 
-    public MovimentacaoRevendedoraResponseDto(Long idMovimentacaoRevendedora, boolean isFinalizada, RevendedoraMovimentacaoDto revendedora, List<MovimentacaoItemDto> movimentacoes, Double totalVenda, LocalDateTime data) {
+    public MovimentacaoRevendedoraResponseDto(Long idMovimentacaoRevendedora, String nome, boolean isFinalizada, RevendedoraMovimentacaoDto revendedora, List<MovimentacaoItemDto> movimentacoes, Double totalVenda, LocalDateTime data) {
         this.idMovimentacaoRevendedora = idMovimentacaoRevendedora;
+        this.nome = nome;
         this.isFinalizada = isFinalizada;
         this.revendedora = revendedora;
         this.movimentacoes = movimentacoes;
@@ -144,11 +147,31 @@ public class MovimentacaoRevendedoraResponseDto {
         this.data = data;
     }
 
+    public LocalDateTime getDataLimite() {
+        return dataLimite;
+    }
+
+    public void setDataLimite(LocalDateTime dataLimite) {
+        this.dataLimite = dataLimite;
+    }
+
     public boolean getIsFinalizada() {
         return isFinalizada;
     }
 
     public void setFinalizada(boolean finalizada) {
         isFinalizada = finalizada;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public boolean isFinalizada() {
+        return isFinalizada;
     }
 }
