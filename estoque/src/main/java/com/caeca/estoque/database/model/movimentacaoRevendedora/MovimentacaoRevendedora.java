@@ -2,6 +2,7 @@ package com.caeca.estoque.database.model.movimentacaoRevendedora;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.revendedora.Revendedora;
+import com.caeca.estoque.database.model.statusMaleta.StatusMaleta;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,7 +18,9 @@ public class MovimentacaoRevendedora {
 
     private String nome;
 
-    private boolean isFinalizada = false;
+    @ManyToOne
+    @JoinColumn(name = "status_maleta_id")
+    private StatusMaleta status;
 
     @JsonBackReference
     @ManyToOne
@@ -35,10 +38,10 @@ public class MovimentacaoRevendedora {
     public MovimentacaoRevendedora() {
     }
 
-    public MovimentacaoRevendedora(Long idMovimentacaoRevendedora, String nome, boolean isFinalizada, Revendedora revendedora, List<Movimentacao> movimentacoes, LocalDateTime data) {
+    public MovimentacaoRevendedora(Long idMovimentacaoRevendedora, String nome, StatusMaleta status, Revendedora revendedora, List<Movimentacao> movimentacoes, LocalDateTime data) {
         this.idMovimentacaoRevendedora = idMovimentacaoRevendedora;
         this.nome = nome;
-        this.isFinalizada = isFinalizada;
+        this.status = status;
         this.revendedora = revendedora;
         this.movimentacoes = movimentacoes;
         this.data = data;
@@ -52,12 +55,12 @@ public class MovimentacaoRevendedora {
         this.idMovimentacaoRevendedora = idMovimentacaoRevendedora;
     }
 
-    public boolean getIsFinalizada() {
-        return isFinalizada;
+    public StatusMaleta getStatus() {
+        return status;
     }
 
-    public void setFinalizada(boolean finalizada) {
-        isFinalizada = finalizada;
+    public void setStatus(StatusMaleta status) {
+        this.status = status;
     }
 
     public Revendedora getRevendedora() {
@@ -98,9 +101,5 @@ public class MovimentacaoRevendedora {
 
     public void setDataLimite(LocalDateTime dataLimite) {
         this.dataLimite = dataLimite;
-    }
-
-    public boolean isFinalizada() {
-        return isFinalizada;
     }
 }

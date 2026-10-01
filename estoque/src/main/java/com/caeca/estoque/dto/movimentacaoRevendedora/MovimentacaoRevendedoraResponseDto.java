@@ -1,6 +1,7 @@
 package com.caeca.estoque.dto.movimentacaoRevendedora;
 
 import com.caeca.estoque.dto.joia.JoiaSaidaDto;
+import com.caeca.estoque.dto.statusMaleta.StatusMaletaResponseDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -9,7 +10,7 @@ import java.util.List;
 public class MovimentacaoRevendedoraResponseDto {
     private Long idMovimentacaoRevendedora;
     private String nome;
-    private boolean isFinalizada;
+    private StatusMaletaResponseDto status;
     private RevendedoraMovimentacaoDto revendedora;
     private List<MovimentacaoItemDto> movimentacoes;
     private Double totalVenda;
@@ -97,10 +98,10 @@ public class MovimentacaoRevendedoraResponseDto {
     public MovimentacaoRevendedoraResponseDto() {
     }
 
-    public MovimentacaoRevendedoraResponseDto(Long idMovimentacaoRevendedora, String nome, boolean isFinalizada, RevendedoraMovimentacaoDto revendedora, List<MovimentacaoItemDto> movimentacoes, Double totalVenda, LocalDateTime data) {
+    public MovimentacaoRevendedoraResponseDto(Long idMovimentacaoRevendedora, String nome, StatusMaletaResponseDto status, RevendedoraMovimentacaoDto revendedora, List<MovimentacaoItemDto> movimentacoes, Double totalVenda, LocalDateTime data) {
         this.idMovimentacaoRevendedora = idMovimentacaoRevendedora;
         this.nome = nome;
-        this.isFinalizada = isFinalizada;
+        this.status = status;
         this.revendedora = revendedora;
         this.movimentacoes = movimentacoes;
         this.totalVenda = totalVenda;
@@ -155,12 +156,12 @@ public class MovimentacaoRevendedoraResponseDto {
         this.dataLimite = dataLimite;
     }
 
-    public boolean getIsFinalizada() {
-        return isFinalizada;
+    public StatusMaletaResponseDto getStatus() {
+        return status;
     }
 
-    public void setFinalizada(boolean finalizada) {
-        isFinalizada = finalizada;
+    public void setStatus(StatusMaletaResponseDto status) {
+        this.status = status;
     }
 
     public String getNome() {
@@ -169,9 +170,5 @@ public class MovimentacaoRevendedoraResponseDto {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public boolean isFinalizada() {
-        return isFinalizada;
     }
 }

@@ -3,7 +3,7 @@ package com.caeca.estoque.consumer;
 import com.caeca.estoque.client.BrevoClient;
 import com.caeca.estoque.dto.brevo.BrevoEmailRequest;
 import com.caeca.estoque.dto.brevo.NotificacaoEventoDto;
-import lombok.Value;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;

@@ -1,9 +1,9 @@
 package com.caeca.estoque.controller.movimentacaoRevendedora;
 
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraMapper;
-import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraPatchDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraRequestDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResponseDto;
+import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraStatusPatchDto;
 import com.caeca.estoque.service.movimentacaoRevendedora.MovimentacaoRevendedoraService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,10 +40,10 @@ public class MovimentacaoRevendedoraController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<MovimentacaoRevendedoraResponseDto> alterarFinalizacao(
+    public ResponseEntity<MovimentacaoRevendedoraResponseDto> atualizarStatus(
             @PathVariable Long id,
-            @RequestBody @Valid MovimentacaoRevendedoraPatchDto patch){
-        return ResponseEntity.ok(MovimentacaoRevendedoraMapper.toResponse(mrService.atualizarFinalizacao(id, patch)));
+            @RequestBody @Valid MovimentacaoRevendedoraStatusPatchDto patch){
+        return ResponseEntity.ok(MovimentacaoRevendedoraMapper.toResponse(mrService.atualizarStatus(id, patch)));
     }
 
     @PostMapping()

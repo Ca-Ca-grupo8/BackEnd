@@ -6,6 +6,7 @@ import com.caeca.estoque.database.repository.revendedora.RevendedoraRepository;
 import com.caeca.estoque.dto.revendedora.RevendedoraPatchDto;
 import com.caeca.estoque.dto.revendedora.RevendedoraRequestDto;
 import com.caeca.estoque.service.endereco.EnderecoService;
+import com.caeca.estoque.service.NotificacaoBrevo.NotificacaoBrevoService;
 import com.caeca.estoque.exception.ConflictException;
 import com.caeca.estoque.exception.NotFoundException;
 import org.junit.jupiter.api.Assertions;
@@ -28,6 +29,9 @@ class RevendedoraServiceTest {
 
     @Mock
     private EnderecoService enderecoService;
+
+    @Mock
+    private NotificacaoBrevoService notificacaoBrevoService;
 
     @InjectMocks
     private RevendedoraService revendedoraService;

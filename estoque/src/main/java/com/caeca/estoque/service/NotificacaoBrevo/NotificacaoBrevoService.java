@@ -20,6 +20,6 @@ public class NotificacaoBrevoService {
     }
 
     public void notificacaoBoasVindas(String email, String nome){
-        enviar(email, nome, 1L, Map.of());
+        enviar(email, nome, 2L, Map.of("nomeRevendedora", nome));
     }
 }

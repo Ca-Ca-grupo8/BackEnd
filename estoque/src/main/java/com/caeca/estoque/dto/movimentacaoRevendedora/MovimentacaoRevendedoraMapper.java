@@ -2,6 +2,7 @@ package com.caeca.estoque.dto.movimentacaoRevendedora;
 
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
 import com.caeca.estoque.dto.joia.JoiaMapper;
+import com.caeca.estoque.dto.statusMaleta.StatusMaletaMapper;
 import java.util.List;
 
 public class MovimentacaoRevendedoraMapper {
@@ -38,7 +39,7 @@ public class MovimentacaoRevendedoraMapper {
         dto.setTotalVenda(total);
         dto.setDataLimite(entity.getDataLimite());
         dto.setData(entity.getData());
-        dto.setFinalizada(entity.getIsFinalizada());
+        dto.setStatus(StatusMaletaMapper.toResponse(entity.getStatus()));
 
         return dto;
     }
