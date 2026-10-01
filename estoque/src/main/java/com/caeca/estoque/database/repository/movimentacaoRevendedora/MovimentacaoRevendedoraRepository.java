@@ -1,13 +1,14 @@
 package com.caeca.estoque.database.repository.movimentacaoRevendedora;
 
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
+import com.caeca.estoque.database.model.statusMaleta.StatusMaletaEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface MovimentacaoRevendedoraRepository extends JpaRepository<MovimentacaoRevendedora, Long> {
-    Optional<MovimentacaoRevendedora> findByRevendedoraIdAndIsFinalizadaFalse(long idRevendedora);
+    Optional<MovimentacaoRevendedora> findByRevendedoraIdAndStatusNome(long idRevendedora, StatusMaletaEnum status);
 
     List<MovimentacaoRevendedora> findByRevendedoraId(long idRevendedora);
 }

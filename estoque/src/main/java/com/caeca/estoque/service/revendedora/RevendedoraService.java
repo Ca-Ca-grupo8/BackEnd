@@ -9,6 +9,7 @@ import com.caeca.estoque.dto.revendedora.RevendedoraRequestDto;
 import com.caeca.estoque.dto.revendedora.RevendedoraResponseDto;
 import com.caeca.estoque.exception.ConflictException;
 import com.caeca.estoque.exception.NotFoundException;
+import com.caeca.estoque.service.NotificacaoBrevo.NotificacaoBrevoService;
 import com.caeca.estoque.service.endereco.EnderecoService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -24,11 +25,13 @@ public class RevendedoraService {
 
     private final RevendedoraRepository revendedoraRepository;
     private final EnderecoService enderecoService;
+    private final NotificacaoBrevoService notificacaoBrevoService;
 
 
-    public RevendedoraService(RevendedoraRepository revendedoraRepository, EnderecoService enderecoService) {
+    public RevendedoraService(RevendedoraRepository revendedoraRepository, EnderecoService enderecoService, NotificacaoBrevoService notificacaoBrevoService) {
         this.revendedoraRepository = revendedoraRepository;
         this.enderecoService = enderecoService;
+        this.notificacaoBrevoService = notificacaoBrevoService;
     }
 
     public List<Revendedora> listar() {
@@ -45,7 +48,11 @@ public class RevendedoraService {
 
         Endereco endereco = enderecoService.buscarPorId(request.getEnderecoId());
 
-        return revendedoraRepository.save(RevendedoraMapper.toEntity(request, endereco));
+        Revendedora response =revendedoraRepository.save(RevendedoraMapper.toEntity(request, endereco));
+
+        notificacaoBrevoService.notificacaoBoasVindas(request.getEmail(), request.getNome());
+
+        return response;
     }
 
     public Revendedora atualizarPorCompleto(RevendedoraRequestDto request, Long id){
