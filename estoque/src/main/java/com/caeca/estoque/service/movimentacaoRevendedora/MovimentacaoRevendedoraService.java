@@ -26,15 +26,15 @@ public class MovimentacaoRevendedoraService {
 
     private final MovimentacaoRevendedoraRepository mrRepository;
     private final RevendedoraService revendedoraService;
-    private final RevendedoraRepository revendedoraRepository;
     private final StatusMaletaService statusMaletaService;
+    private final MaletaNotificacaoService maletaNotificacaoService;
 
 
-    public MovimentacaoRevendedoraService(MovimentacaoRevendedoraRepository mrRepository, RevendedoraService revendedoraService, RevendedoraRepository revendedoraRepository, StatusMaletaService statusMaletaService) {
+    public MovimentacaoRevendedoraService(MovimentacaoRevendedoraRepository mrRepository, RevendedoraService revendedoraService, StatusMaletaService statusMaletaService, MaletaNotificacaoService maletaNotificacaoService) {
         this.mrRepository = mrRepository;
         this.revendedoraService = revendedoraService;
-        this.revendedoraRepository = revendedoraRepository;
         this.statusMaletaService = statusMaletaService;
+        this.maletaNotificacaoService = maletaNotificacaoService;
     }
 
     public List<MovimentacaoRevendedora> listar() {
@@ -76,6 +76,8 @@ public class MovimentacaoRevendedoraService {
 
         mrRepository.save(response);
 
+        notificarMudancaDeStatus(response);
+
         return response;
     }
 
@@ -89,5 +91,18 @@ public class MovimentacaoRevendedoraService {
     public Page<MovimentacaoRevendedoraResponseDto> listarTodas(Pageable pageable) {
         return mrRepository.findAll(pageable)
                 .map(MovimentacaoRevendedoraMapper::toResponse);
+    }
+
+    private void notificarMudancaDeStatus(MovimentacaoRevendedora maleta) {
+        StatusMaletaEnum status = maleta.getStatus().getNome();
+
+        if (status == StatusMaletaEnum.EM_CONSIGNACAO) {
+            maletaNotificacaoService.notificarLoteEmConsignacao(maleta);
+            return;
+        }
+
+        if (status == StatusMaletaEnum.FINALIZADA) {
+            maletaNotificacaoService.notificarFechamentoLote(maleta);
+        }
     }
 }

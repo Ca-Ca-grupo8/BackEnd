@@ -16,20 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-/**
- * Garante que os 5 status do {@link StatusMaletaEnum} existam na base e que toda
- * maleta com status nulo receba o status equivalente ao da coluna legada
- * {@code is_finalizada} (1 = FINALIZADA, 0 = ABERTO).
- *
- * <p>A coluna legada foi abandonada pela entidade, mas {@code ddl-auto=update} nunca
- * dropa coluna. Como ela ficou {@code NOT NULL} sem default, qualquer INSERT de maleta
- * nova falha, então ela é removida ao final.
- *
- * <p>Java migration em vez de SQL porque o schema varia entre ambientes: base nova não
- * tem a coluna {@code is_finalizada}, base antiga tem, e base intermediária não tem nem
- * tabela de vendas. A verificação é feita por metadados, o que mantém o comportamento
- * idêntico em MySQL e em H2.
- */
 public class V1__garantir_status_maleta_e_backfill extends BaseJavaMigration {
 
     private static final Logger LOG = Logger.getLogger(V1__garantir_status_maleta_e_backfill.class.getName());

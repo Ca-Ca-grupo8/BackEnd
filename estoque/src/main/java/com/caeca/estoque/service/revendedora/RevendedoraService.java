@@ -1,6 +1,7 @@
 package com.caeca.estoque.service.revendedora;
 
 import com.caeca.estoque.database.model.endereco.Endereco;
+import com.caeca.estoque.database.model.notificacaoEnvio.TipoReferencia;
 import com.caeca.estoque.database.model.revendedora.Revendedora;
 import com.caeca.estoque.database.repository.revendedora.RevendedoraRepository;
 import com.caeca.estoque.dto.revendedora.RevendedoraMapper;
@@ -11,6 +12,7 @@ import com.caeca.estoque.exception.ConflictException;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.NotificacaoBrevo.NotificacaoBrevoService;
 import com.caeca.estoque.service.endereco.EnderecoService;
+import com.caeca.estoque.service.notificacaoEnvio.NotificacaoEnvioService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +28,14 @@ public class RevendedoraService {
     private final RevendedoraRepository revendedoraRepository;
     private final EnderecoService enderecoService;
     private final NotificacaoBrevoService notificacaoBrevoService;
+    private final NotificacaoEnvioService notificacaoEnvioService;
 
 
-    public RevendedoraService(RevendedoraRepository revendedoraRepository, EnderecoService enderecoService, NotificacaoBrevoService notificacaoBrevoService) {
+    public RevendedoraService(RevendedoraRepository revendedoraRepository, EnderecoService enderecoService, NotificacaoBrevoService notificacaoBrevoService, NotificacaoEnvioService notificacaoEnvioService) {
         this.revendedoraRepository = revendedoraRepository;
         this.enderecoService = enderecoService;
         this.notificacaoBrevoService = notificacaoBrevoService;
+        this.notificacaoEnvioService = notificacaoEnvioService;
     }
 
     public List<Revendedora> listar() {
@@ -50,7 +54,13 @@ public class RevendedoraService {
 
         Revendedora response =revendedoraRepository.save(RevendedoraMapper.toEntity(request, endereco));
 
-        notificacaoBrevoService.notificacaoBoasVindas(request.getEmail(), request.getNome());
+        if(notificacaoEnvioService.registrarEnvio(
+                TipoReferencia.REVENDEDORA,
+                response.getId(),
+                NotificacaoBrevoService.TEMPLATE_BOAS_VINDAS,
+                false)){
+            notificacaoBrevoService.notificacaoBoasVindas(request.getEmail(), request.getNome());
+        }
 
         return response;
     }
