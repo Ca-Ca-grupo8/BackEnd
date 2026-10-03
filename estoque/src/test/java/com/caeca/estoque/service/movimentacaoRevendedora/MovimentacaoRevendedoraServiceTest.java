@@ -40,6 +40,9 @@ class MovimentacaoRevendedoraServiceTest {
     @Mock
     private StatusMaletaService statusMaletaService;
 
+    @Mock
+    private MaletaNotificacaoService maletaNotificacaoService;
+
     @InjectMocks
     private MovimentacaoRevendedoraService movimentacaoRevendedoraService;
 
@@ -247,6 +250,66 @@ class MovimentacaoRevendedoraServiceTest {
                             new MovimentacaoRevendedoraStatusPatchDto(2L)));
 
             verify(mrRepository, never()).save(any(MovimentacaoRevendedora.class));
+        }
+
+        @Test
+        @DisplayName("Deve notificar saida para consignacao quando o status novo for Em Consignacao")
+        void deveNotificarLoteEmConsignacao() {
+            MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
+            movimentacao.setIdMovimentacaoRevendedora(7L);
+            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.ABERTO));
+
+            StatusMaleta emConsignacao = new StatusMaleta(2L, StatusMaletaEnum.EM_CONSIGNACAO);
+
+            when(mrRepository.findById(1L)).thenReturn(Optional.of(movimentacao));
+            when(statusMaletaService.buscarPorId(2L)).thenReturn(emConsignacao);
+            when(mrRepository.save(any(MovimentacaoRevendedora.class))).thenReturn(movimentacao);
+
+            movimentacaoRevendedoraService.atualizarStatus(1L,
+                    new MovimentacaoRevendedoraStatusPatchDto(2L));
+
+            verify(maletaNotificacaoService, times(1)).notificarLoteEmConsignacao(movimentacao);
+            verify(maletaNotificacaoService, never()).notificarFechamentoLote(any());
+        }
+
+        @Test
+        @DisplayName("Deve notificar fechamento do lote quando o status novo for Finalizada")
+        void deveNotificarFechamentoLote() {
+            MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
+            movimentacao.setIdMovimentacaoRevendedora(8L);
+            movimentacao.setStatus(new StatusMaleta(2L, StatusMaletaEnum.EM_CONSIGNACAO));
+
+            StatusMaleta finalizada = new StatusMaleta(3L, StatusMaletaEnum.FINALIZADA);
+
+            when(mrRepository.findById(1L)).thenReturn(Optional.of(movimentacao));
+            when(statusMaletaService.buscarPorId(3L)).thenReturn(finalizada);
+            when(mrRepository.save(any(MovimentacaoRevendedora.class))).thenReturn(movimentacao);
+
+            movimentacaoRevendedoraService.atualizarStatus(1L,
+                    new MovimentacaoRevendedoraStatusPatchDto(3L));
+
+            verify(maletaNotificacaoService, times(1)).notificarFechamentoLote(movimentacao);
+            verify(maletaNotificacaoService, never()).notificarLoteEmConsignacao(any());
+        }
+
+        @Test
+        @DisplayName("Deve nao notificar quando o status novo nao tiver regra de evento")
+        void deveNaoNotificarQuandoStatusNaoTiverRegra() {
+            MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
+            movimentacao.setIdMovimentacaoRevendedora(9L);
+            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.ABERTO));
+
+            StatusMaleta emAcerto = new StatusMaleta(4L, StatusMaletaEnum.EM_ACERTO);
+
+            when(mrRepository.findById(1L)).thenReturn(Optional.of(movimentacao));
+            when(statusMaletaService.buscarPorId(4L)).thenReturn(emAcerto);
+            when(mrRepository.save(any(MovimentacaoRevendedora.class))).thenReturn(movimentacao);
+
+            movimentacaoRevendedoraService.atualizarStatus(1L,
+                    new MovimentacaoRevendedoraStatusPatchDto(4L));
+
+            verify(maletaNotificacaoService, never()).notificarLoteEmConsignacao(any());
+            verify(maletaNotificacaoService, never()).notificarFechamentoLote(any());
         }
     }
 

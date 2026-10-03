@@ -9,9 +9,22 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+/**
+ * Consome os eventos de notificação e dispara o envio no Brevo.
+ *
+ * <p>O envio é fire-and-forget: a notificação é um efeito colateral do fluxo de
+ * negócio e nunca pode derrubar o request que a originou. Por isso a chamada ao
+ * Feign fica dentro de um try/catch que registra a falha no log em vez de propagar
+ * a exceção.
+ */
 @Component
 public class CrmNotificadorConsumer {
+
+    private static final Logger LOG = Logger.getLogger(CrmNotificadorConsumer.class.getName());
+
     private final BrevoClient brevoClient;
 
     @Value("${brevo.api.key}")
@@ -32,6 +45,16 @@ public class CrmNotificadorConsumer {
                 evento.parametros()
         );
 
-        brevoClient.enviarEmailTransacional(apiKey, requestBrevo);
+        try {
+            brevoClient.enviarEmailTransacional(apiKey, requestBrevo);
+
+            LOG.info("Notificacao enviada ao Brevo. template=" + evento.templateId()
+                    + " revendedora=" + evento.nomeRevendedora()
+                    + " status=enviado");
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "Falha ao enviar notificacao ao Brevo. template=" + evento.templateId()
+                    + " revendedora=" + evento.nomeRevendedora()
+                    + " status=falha", e);
+        }
     }
 }
