@@ -8,14 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-/**
- * Publica os eventos de notificação consumidos pelo {@code CrmNotificadorConsumer},
- * que por sua vez chama o Brevo.
- *
- * <p>Cada método corresponde a uma regra de negócio de evento da maleta e monta
- * o template com os parâmetros que aquele template espera. O envio é assíncrono:
- * publicar o evento não espera resposta do Brevo.
- */
 @Service
 public class NotificacaoBrevoService {
 
@@ -24,6 +16,11 @@ public class NotificacaoBrevoService {
     public static final long TEMPLATE_ALERTA_VENCIMENTO = 4L;
     public static final long TEMPLATE_COBRANCA_ATRASO = 5L;
     public static final long TEMPLATE_FECHAMENTO_LOTE = 6L;
+    public static final long TEMPLATE_ANIVERSARIO = 7L;
+    public static final long TEMPLATE_META_ATINGIDA = 8L;
+    public static final long TEMPLATE_ESTOQUE_BAIXO = 9L;
+    public static final long TEMPLATE_PECA_PARADA = 10L;
+    public static final long TEMPLATE_REVENDEDORA_INATIVA = 11L;
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
@@ -69,12 +66,32 @@ public class NotificacaoBrevoService {
         applicationEventPublisher.publishEvent(evento);
     }
 
-    private void    enviarParaMaleta(MovimentacaoRevendedora maleta, long templateId, Map<String, String> params) {
+    private void enviarParaMaleta(MovimentacaoRevendedora maleta, long templateId, Map<String, String> params) {
         enviar(
                 MaletaNotificacaoMapper.emailRevendedora(maleta),
                 MaletaNotificacaoMapper.nomeRevendedora(maleta),
                 templateId,
                 params
         );
+    }
+
+    public void notificacaoAniversario(String email, String nome) {
+        enviar(email, nome, TEMPLATE_ANIVERSARIO, Map.of("nomeRevendedora", nome));
+    }
+
+    public void notificacaoMetaAtingida(MovimentacaoRevendedora maleta, Map<String, String> params) {
+        enviarParaMaleta(maleta, TEMPLATE_META_ATINGIDA, params);
+    }
+
+    public void notificacaoEstoqueBaixo(String email, String nome, Map<String, String> params) {
+        enviar(email, nome, TEMPLATE_ESTOQUE_BAIXO, params);
+    }
+
+    public void notificacaoPecaParada(String email, String nome, Map<String, String> params) {
+        enviar(email, nome, TEMPLATE_PECA_PARADA, params);
+    }
+
+    public void notificacaoRevendedoraInativa(String email, String nome, Map<String, String> params) {
+        enviar(email, nome, TEMPLATE_REVENDEDORA_INATIVA, params);
     }
 }

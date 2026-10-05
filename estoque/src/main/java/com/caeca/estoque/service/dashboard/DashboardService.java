@@ -43,11 +43,11 @@ public class DashboardService {
             varianca = 100.0;
         }
 
-        return new ValorSaidaDto(
-                atual,
-                anterior,
-                varianca
-        );
+        ValorSaidaDto dto = new ValorSaidaDto();
+        dto.setValorAtual(atual);
+        dto.setValorAntigo(anterior);
+        dto.setVarianca(varianca);
+        return dto;
     }
 
     public List<TopCincoDto> buscarTopCincoMaisVendidos(FiltroDashboardDto filtro) {

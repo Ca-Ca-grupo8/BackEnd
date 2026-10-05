@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
@@ -27,14 +28,20 @@ public class RevendedoraRequestDto {
     @NotNull
     private Long enderecoId;
 
+    @Schema(example = "1990-09-15", description = "Data de nascimento da revendedora")
+    @NotNull
+    @PastOrPresent
+    private LocalDate dataNascimento;
+
     public RevendedoraRequestDto() {
     }
 
-    public RevendedoraRequestDto(String nome, String email, String telefone, Long enderecoId) {
+    public RevendedoraRequestDto(String nome, String email, String telefone, Long enderecoId, LocalDate dataNascimento) {
         this.nome = nome;
         this.email = email;
         this.telefone = telefone;
         this.enderecoId = enderecoId;
+        this.dataNascimento = dataNascimento;
     }
 
     public String getNome() {
@@ -67,5 +74,13 @@ public class RevendedoraRequestDto {
 
     public void setEnderecoId(Long enderecoId) {
         this.enderecoId = enderecoId;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
     }
 }

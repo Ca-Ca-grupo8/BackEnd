@@ -43,6 +43,9 @@ class MovimentacaoRevendedoraServiceTest {
     @Mock
     private MaletaNotificacaoService maletaNotificacaoService;
 
+    @Mock
+    private MaletaMetaService maletaMetaService;
+
     @InjectMocks
     private MovimentacaoRevendedoraService movimentacaoRevendedoraService;
 

@@ -14,11 +14,12 @@ public class RevendedoraResponseDto {
     private EnderecoResponseDto endereco;
     private LocalDate dataCadastro;
     private LocalDate dataAtualizacao;
+    private LocalDate dataNascimento;
 
     public RevendedoraResponseDto() {
     }
 
-    public RevendedoraResponseDto(Long id, String nome, String email, String telefone, boolean ativo, EnderecoResponseDto endereco, LocalDate dataCadastro, LocalDate dataAtualizacao) {
+    public RevendedoraResponseDto(Long id, String nome, String email, String telefone, boolean ativo, EnderecoResponseDto endereco, LocalDate dataCadastro, LocalDate dataAtualizacao, LocalDate dataNascimento) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -27,6 +28,7 @@ public class RevendedoraResponseDto {
         this.endereco = endereco;
         this.dataCadastro = dataCadastro;
         this.dataAtualizacao = dataAtualizacao;
+        this.dataNascimento = dataNascimento;
     }
 
     public Long getId() {
@@ -91,5 +93,13 @@ public class RevendedoraResponseDto {
 
     public void setDataAtualizacao(LocalDate dataAtualizacao) {
         this.dataAtualizacao = dataAtualizacao;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
     }
 }

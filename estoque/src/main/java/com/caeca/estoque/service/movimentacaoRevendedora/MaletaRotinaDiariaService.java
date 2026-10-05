@@ -1,8 +1,10 @@
 package com.caeca.estoque.service.movimentacaoRevendedora;
 
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
+import com.caeca.estoque.database.model.notificacaoEnvio.TipoReferencia;
 import com.caeca.estoque.database.model.statusMaleta.StatusMaletaEnum;
 import com.caeca.estoque.database.repository.movimentacaoRevendedora.MovimentacaoRevendedoraRepository;
+import com.caeca.estoque.service.rotina.RotinaDiaria;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +15,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @Service
-public class MaletaRotinaDiariaService {
+public class MaletaRotinaDiariaService implements RotinaDiaria {
 
     private static final Logger LOG = Logger.getLogger(MaletaRotinaDiariaService.class.getName());
 
@@ -30,6 +32,11 @@ public class MaletaRotinaDiariaService {
                                      MaletaNotificacaoService maletaNotificacaoService) {
         this.mrRepository = mrRepository;
         this.maletaNotificacaoService = maletaNotificacaoService;
+    }
+
+    @Override
+    public TipoReferencia nome() {
+        return TipoReferencia.MALETA;
     }
 
     public void executar(LocalDate hoje) {
