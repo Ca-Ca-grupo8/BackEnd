@@ -100,6 +100,9 @@ public class RevendedoraService {
             validarEnderecoDuplicado(dto.getEnderecoId(), id);
             entity.setEndereco(enderecoService.buscarPorId(dto.getEnderecoId()));
         }
+        if (dto.getDataNascimento() != null) {
+            entity.setDataNascimento(dto.getDataNascimento());
+        }
 
         return revendedoraRepository.save(entity);
     }

@@ -1,7 +1,10 @@
 package com.caeca.estoque.dto.revendedora;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
+
+import java.time.LocalDate;
 
 public class RevendedoraPatchDto {
     @Size(max = 150)
@@ -15,15 +18,19 @@ public class RevendedoraPatchDto {
     private Boolean ativo;
     private Long enderecoId;
 
+    @PastOrPresent
+    private LocalDate dataNascimento;
+
     public RevendedoraPatchDto() {
     }
 
-    public RevendedoraPatchDto(String nome, String email, String telefone, Boolean ativo, Long enderecoId) {
+    public RevendedoraPatchDto(String nome, String email, String telefone, Boolean ativo, Long enderecoId, LocalDate dataNascimento) {
         this.nome = nome;
         this.email = email;
         this.telefone = telefone;
         this.ativo = ativo;
         this.enderecoId = enderecoId;
+        this.dataNascimento = dataNascimento;
     }
 
     public String getNome() {
@@ -64,5 +71,13 @@ public class RevendedoraPatchDto {
 
     public void setEnderecoId(Long enderecoId) {
         this.enderecoId = enderecoId;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
     }
 }

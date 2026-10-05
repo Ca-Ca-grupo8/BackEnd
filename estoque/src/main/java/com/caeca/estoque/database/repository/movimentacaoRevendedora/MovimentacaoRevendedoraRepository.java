@@ -13,15 +13,11 @@ public interface MovimentacaoRevendedoraRepository extends JpaRepository<Movimen
 
     List<MovimentacaoRevendedora> findByRevendedoraId(long idRevendedora);
 
-    /**
-     * Maletas com vencimento na janela informada, usada pela rotina diária para
-     * checar os limites de alerta.
-     */
     List<MovimentacaoRevendedora> findByDataLimiteBetween(LocalDateTime inicio, LocalDateTime fim);
 
-    /**
-     * Maletas com vencimento anterior ao instante informado, usada pela rotina
-     * diária para detectar atrasos.
-     */
     List<MovimentacaoRevendedora> findByDataLimiteBefore(LocalDateTime limite);
+
+    MovimentacaoRevendedora findFirstByRevendedoraIdOrderByIdMovimentacaoRevendedoraDesc(Long id);
+
+    Optional<MovimentacaoRevendedora> findByRevendedoraIdAndStatusNomeNot(Long idRevendedora, StatusMaletaEnum statusMaletaEnum);
 }

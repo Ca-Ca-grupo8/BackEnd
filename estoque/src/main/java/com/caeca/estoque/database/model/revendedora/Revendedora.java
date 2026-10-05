@@ -49,10 +49,13 @@ public class Revendedora {
     @OneToMany(mappedBy = "revendedora")
     private List<MovimentacaoRevendedora> vendas;
 
+    @Column(name = "data_nascimento")
+    private LocalDate dataNascimento;
+
     public Revendedora() {
     }
 
-    public Revendedora(Long id, String nome, String email, String telefone, boolean ativo, Endereco endereco, LocalDate dataCadastro, LocalDate dataAtualizacao, List<MovimentacaoRevendedora> vendas) {
+    public Revendedora(Long id, String nome, String email, String telefone, boolean ativo, Endereco endereco, LocalDate dataCadastro, LocalDate dataAtualizacao, List<MovimentacaoRevendedora> vendas, LocalDate dataNascimento) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -62,6 +65,7 @@ public class Revendedora {
         this.dataCadastro = dataCadastro;
         this.dataAtualizacao = dataAtualizacao;
         this.vendas = vendas;
+        this.dataNascimento = dataNascimento;
     }
 
     public Long getId() {
@@ -134,5 +138,13 @@ public class Revendedora {
 
     public void setVendas(List<MovimentacaoRevendedora> vendas) {
         this.vendas = vendas;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
     }
 }

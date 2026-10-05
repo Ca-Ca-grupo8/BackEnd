@@ -13,11 +13,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +34,9 @@ class RevendedoraServiceTest {
 
     @Mock
     private NotificacaoBrevoService notificacaoBrevoService;
+
+    @Mock
+    private com.caeca.estoque.service.notificacaoEnvio.NotificacaoEnvioService notificacaoEnvioService;
 
     @InjectMocks
     private RevendedoraService revendedoraService;
@@ -343,5 +348,92 @@ class RevendedoraServiceTest {
                 ConflictException.class,
                 () -> revendedoraService.atualizarParcialmente(1L, dto)
         );
+    }
+
+    @Test
+    @DisplayName("Deve cadastrar revendedora com data de nascimento")
+    void deveCadastrarRevendedoraComDataDeNascimento() {
+
+        RevendedoraRequestDto dto = new RevendedoraRequestDto();
+        dto.setNome("Ana");
+        dto.setEmail("ana@email.com");
+        dto.setTelefone("11999999999");
+        dto.setEnderecoId(1L);
+        dto.setDataNascimento(LocalDate.of(1990, 9, 15));
+
+        Endereco endereco = new Endereco();
+        endereco.setId(1L);
+
+        Mockito.when(revendedoraRepository.existsByEmail(dto.getEmail()))
+                .thenReturn(false);
+
+        Mockito.when(revendedoraRepository.existsByTelefone(dto.getTelefone()))
+                .thenReturn(false);
+
+        Mockito.when(revendedoraRepository.existsByEnderecoId(dto.getEnderecoId()))
+                .thenReturn(false);
+
+        Mockito.when(enderecoService.buscarPorId(1L))
+                .thenReturn(endereco);
+
+        Mockito.when(revendedoraRepository.save(Mockito.any(Revendedora.class)))
+                .thenAnswer(invocacao -> {
+                    Revendedora salva = invocacao.getArgument(0);
+                    salva.setId(1L);
+                    return salva;
+                });
+
+        revendedoraService.cadastrar(dto);
+
+        ArgumentCaptor<Revendedora> captor = ArgumentCaptor.forClass(Revendedora.class);
+        Mockito.verify(revendedoraRepository).save(captor.capture());
+
+        Assertions.assertEquals(LocalDate.of(1990, 9, 15), captor.getValue().getDataNascimento());
+    }
+
+    @Test
+    @DisplayName("Deve atualizar data de nascimento no patch")
+    void deveAtualizarDataDeNascimentoNoPatch() {
+
+        Revendedora atual = new Revendedora();
+        atual.setId(1L);
+        atual.setDataNascimento(LocalDate.of(1990, 9, 15));
+
+        RevendedoraPatchDto dto = new RevendedoraPatchDto();
+        dto.setDataNascimento(LocalDate.of(1991, 10, 20));
+
+        Mockito.when(revendedoraRepository.findById(1L))
+                .thenReturn(Optional.of(atual));
+
+        Mockito.when(revendedoraRepository.save(atual))
+                .thenReturn(atual);
+
+        Revendedora resultado =
+                revendedoraService.atualizarParcialmente(1L, dto);
+
+        Assertions.assertEquals(LocalDate.of(1991, 10, 20), resultado.getDataNascimento());
+    }
+
+    @Test
+    @DisplayName("Deve manter data de nascimento quando o patch não informar o campo")
+    void deveManterDataDeNascimentoQuandoOPatchNaoInformarOCampo() {
+
+        Revendedora atual = new Revendedora();
+        atual.setId(1L);
+        atual.setDataNascimento(LocalDate.of(1990, 9, 15));
+
+        RevendedoraPatchDto dto = new RevendedoraPatchDto();
+        dto.setNome("Novo Nome");
+
+        Mockito.when(revendedoraRepository.findById(1L))
+                .thenReturn(Optional.of(atual));
+
+        Mockito.when(revendedoraRepository.save(atual))
+                .thenReturn(atual);
+
+        Revendedora resultado =
+                revendedoraService.atualizarParcialmente(1L, dto);
+
+        Assertions.assertEquals(LocalDate.of(1990, 9, 15), resultado.getDataNascimento());
     }
 }

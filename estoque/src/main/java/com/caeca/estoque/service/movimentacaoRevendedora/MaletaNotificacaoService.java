@@ -48,6 +48,12 @@ public class MaletaNotificacaoService {
         }
     }
 
+    public void notificarMetaAtingida(MovimentacaoRevendedora maleta, java.util.Map<String, String> params) {
+        if (registrarEnvio(maleta, NotificacaoBrevoService.TEMPLATE_META_ATINGIDA, true)) {
+            notificacaoBrevoService.notificacaoMetaAtingida(maleta, params);
+        }
+    }
+
     private boolean registrarEnvio(MovimentacaoRevendedora maleta, long templateId, boolean permiteReenvio) {
         Long maletaId = maleta.getIdMovimentacaoRevendedora();
         return notificacaoEnvioService.registrarEnvio(

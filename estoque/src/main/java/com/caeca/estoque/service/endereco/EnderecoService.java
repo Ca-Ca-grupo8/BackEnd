@@ -19,11 +19,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class EnderecoService {
 
     private final EnderecoRepository enderecoRepository;
     private final ViaCepClient viaCepClient;
+
+    public EnderecoService(EnderecoRepository enderecoRepository, ViaCepClient viaCepClient) {
+        this.enderecoRepository = enderecoRepository;
+        this.viaCepClient = viaCepClient;
+    }
 
     // GET /enderecos/cep/:cep — consulta ViaCEP
     public ViaCepResponseDto consultarCep(String cep) {

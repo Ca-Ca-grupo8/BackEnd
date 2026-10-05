@@ -3,9 +3,6 @@ package com.caeca.estoque.service.movimentacaoRevendedora;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
 import com.caeca.estoque.database.model.statusMaleta.StatusMaletaEnum;
 import com.caeca.estoque.database.repository.movimentacaoRevendedora.MovimentacaoRevendedoraRepository;
-import com.caeca.estoque.database.repository.revendedora.RevendedoraRepository;
-import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
-import com.caeca.estoque.dto.movimentacao.MovimentacaoResponseDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraMapper;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraRequestDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResponseDto;
@@ -28,13 +25,15 @@ public class MovimentacaoRevendedoraService {
     private final RevendedoraService revendedoraService;
     private final StatusMaletaService statusMaletaService;
     private final MaletaNotificacaoService maletaNotificacaoService;
+    private final MaletaMetaService maletaMetaService;
 
 
-    public MovimentacaoRevendedoraService(MovimentacaoRevendedoraRepository mrRepository, RevendedoraService revendedoraService, StatusMaletaService statusMaletaService, MaletaNotificacaoService maletaNotificacaoService) {
+    public MovimentacaoRevendedoraService(MovimentacaoRevendedoraRepository mrRepository, RevendedoraService revendedoraService, StatusMaletaService statusMaletaService, MaletaNotificacaoService maletaNotificacaoService, MaletaMetaService maletaMetaService) {
         this.mrRepository = mrRepository;
         this.revendedoraService = revendedoraService;
         this.statusMaletaService = statusMaletaService;
         this.maletaNotificacaoService = maletaNotificacaoService;
+        this.maletaMetaService = maletaMetaService;
     }
 
     public List<MovimentacaoRevendedora> listar() {
@@ -66,6 +65,11 @@ public class MovimentacaoRevendedoraService {
                 .orElseThrow(() -> new NotFoundException("Venda com o id da revendora " + idRevendedora + " não encontrada."));
     }
 
+    public MovimentacaoRevendedora buscarVendaNaoFechadaPorRevendedora(Long idRevendedora) {
+        return mrRepository.findByRevendedoraIdAndStatusNomeNot(idRevendedora, StatusMaletaEnum.FINALIZADA)
+                .orElseThrow(() -> new NotFoundException("Venda com o id da revendora " + idRevendedora + " não encontrada."));
+    }
+
     public List<MovimentacaoRevendedora> listarPorIdRevendedora(Long idRevendedora){
         return mrRepository.findByRevendedoraId(idRevendedora);
     }
@@ -94,7 +98,7 @@ public class MovimentacaoRevendedoraService {
     }
 
     private void notificarMudancaDeStatus(MovimentacaoRevendedora maleta) {
-        StatusMaletaEnum status = maleta.getStatus().getNome();
+        StatusMaletaEnum status = maleta.getStatus() != null ? maleta.getStatus().getNome() : null;
 
         if (status == StatusMaletaEnum.EM_CONSIGNACAO) {
             maletaNotificacaoService.notificarLoteEmConsignacao(maleta);
@@ -102,6 +106,10 @@ public class MovimentacaoRevendedoraService {
         }
 
         if (status == StatusMaletaEnum.FINALIZADA) {
+            if (maletaMetaService.bateuMeta(maleta)) {
+                maletaNotificacaoService.notificarMetaAtingida(maleta, maletaMetaService.montarParametrosMeta(maleta));
+                return;
+            }
             maletaNotificacaoService.notificarFechamentoLote(maleta);
         }
     }

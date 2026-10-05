@@ -21,6 +21,14 @@ public class StatusMaleta {
     public StatusMaleta() {
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public StatusMaletaEnum getNome() {
+        return nome;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
