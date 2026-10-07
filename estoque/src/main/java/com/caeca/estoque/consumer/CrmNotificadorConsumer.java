@@ -1,8 +1,11 @@
 package com.caeca.estoque.consumer;
 
 import com.caeca.estoque.client.BrevoClient;
+import com.caeca.estoque.config.rabbitMq.RabbitMQConfig;
 import com.caeca.estoque.dto.brevo.BrevoEmailRequest;
 import com.caeca.estoque.dto.brevo.NotificacaoEventoDto;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -20,6 +23,7 @@ import java.util.logging.Logger;
  * Feign fica dentro de um try/catch que registra a falha no log em vez de propagar
  * a exceção.
  */
+@Slf4j
 @Component
 public class CrmNotificadorConsumer {
 
@@ -34,9 +38,10 @@ public class CrmNotificadorConsumer {
         this.brevoClient = brevoClient;
     }
 
-    @Async
-    @EventListener
+    @RabbitListener(queues = RabbitMQConfig.QUEUE_NOTIFICACAO_BREVO)
     public void processarNotificacao(NotificacaoEventoDto evento) {
+
+        log.warn("chegou no consumer");
 
         var destinatario = new BrevoEmailRequest.Destinatario(evento.emailDestino(), evento.nomeRevendedora());
         var requestBrevo = new BrevoEmailRequest(
