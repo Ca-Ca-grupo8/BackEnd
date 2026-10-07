@@ -105,12 +105,9 @@ public class MovimentacaoRevendedoraService {
             return;
         }
 
-        if (status == StatusMaletaEnum.FINALIZADA) {
-            if (maletaMetaService.bateuMeta(maleta)) {
-                maletaNotificacaoService.notificarMetaAtingida(maleta, maletaMetaService.montarParametrosMeta(maleta));
-                return;
-            }
-            maletaNotificacaoService.notificarFechamentoLote(maleta);
+        if(status == StatusMaletaEnum.FINALIZADA) {
+            maletaNotificacaoService.notificarFechamentoLote(maleta, maletaMetaService.montarParametrosMeta(maleta),
+                    maletaMetaService.bateuMeta(maleta));
         }
     }
 }

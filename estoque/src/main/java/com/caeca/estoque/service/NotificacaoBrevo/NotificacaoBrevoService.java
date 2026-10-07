@@ -56,13 +56,6 @@ public class NotificacaoBrevoService {
         ));
     }
 
-    public void notificacaoFechamentoLote(MovimentacaoRevendedora maleta) {
-        enviarParaMaleta(maleta, TEMPLATE_FECHAMENTO_LOTE, Map.of(
-                "nomeRevendedora", MaletaNotificacaoMapper.nomeRevendedora(maleta),
-                "mes", MaletaNotificacaoMapper.mesReferencia(maleta)
-        ));
-    }
-
     private void enviarParaMaleta(MovimentacaoRevendedora maleta, long templateId, Map<String, String> params) {
         notificacaoProducer.enviarMensagem(
                 MaletaNotificacaoMapper.emailRevendedora(maleta),
@@ -76,8 +69,8 @@ public class NotificacaoBrevoService {
         notificacaoProducer.enviarMensagem(email, nome, TEMPLATE_ANIVERSARIO, Map.of("nomeRevendedora", nome));
     }
 
-    public void notificacaoMetaAtingida(MovimentacaoRevendedora maleta, Map<String, String> params) {
-        enviarParaMaleta(maleta, TEMPLATE_META_ATINGIDA, params);
+    public void notificacaoMetaAtingida(MovimentacaoRevendedora maleta, Map<String, String> params, boolean metaAtingida) {
+        enviarParaMaleta(maleta, metaAtingida ? TEMPLATE_META_ATINGIDA : TEMPLATE_FECHAMENTO_LOTE, params);
     }
 
     public void notificacaoEstoqueBaixo(String email, String nome, Map<String, String> params) {
