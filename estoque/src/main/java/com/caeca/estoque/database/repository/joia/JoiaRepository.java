@@ -1,13 +1,17 @@
 package com.caeca.estoque.database.repository.joia;
 
 import com.caeca.estoque.database.model.joia.Joia;
+import com.caeca.estoque.dto.joia.JoiaParadaDto;
 import com.caeca.estoque.dto.joia.JoiaStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public interface JoiaRepository extends JpaRepository<Joia, Long> {
     @Query("""
@@ -46,4 +50,23 @@ public interface JoiaRepository extends JpaRepository<Joia, Long> {
             LocalDate dataFim,
             Pageable pageable
     );
+
+    @Query("""
+    SELECT new com.caeca.estoque.dto.joia.JoiaParadaDto(
+        j,
+        COALESCE(j.quantidade, 0),
+        CAST(COALESCE(j.preco, 0.0) * COALESCE(j.quantidade, 0) AS double),
+        COALESCE(MAX(m.data), j.dataCadastro)
+    )
+    FROM Joia j
+    LEFT JOIN Movimentacao m ON m.joia = j AND m.motivoMovimentacao.tipoMovimentacao.nome = 'SAIDA'
+    WHERE j.dataCadastro IS NOT NULL
+    GROUP BY j, j.id, j.quantidade, j.preco, j.dataCadastro
+    HAVING (
+        MAX(m.data) IS NOT NULL AND MAX(m.data) < :dataLimite
+    ) OR (
+        MAX(m.data) IS NULL AND j.dataCadastro < :dataLimite
+    )
+""")
+    List<JoiaParadaDto> findJoiasParadas(@Param("dataLimite") LocalDateTime dataLimite);
 }

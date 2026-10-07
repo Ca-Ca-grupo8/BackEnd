@@ -34,7 +34,6 @@ public class ViaCepClient {
         } catch (CepNotFoundException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Erro ao consultar ViaCEP para o CEP {}: {}", cepLimpo, e.getMessage());
             throw new RuntimeException("Erro ao consultar o serviço de CEP. Tente novamente.");
         }
     }

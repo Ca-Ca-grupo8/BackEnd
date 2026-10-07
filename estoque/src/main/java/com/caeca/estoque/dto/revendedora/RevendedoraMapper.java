@@ -17,7 +17,8 @@ public class RevendedoraMapper {
                 entity.isAtivo(),
                 EnderecoMapper.toResponse(entity.getEndereco()),
                 entity.getDataCadastro(),
-                entity.getDataAtualizacao()
+                entity.getDataAtualizacao(),
+                entity.getDataNascimento()
         );
     }
 
@@ -33,6 +34,7 @@ public class RevendedoraMapper {
         revendedora.setAtivo(true);
         revendedora.setTelefone(request.getTelefone());
         revendedora.setEndereco(endereco);
+        revendedora.setDataNascimento(request.getDataNascimento());
 
         return revendedora;
     }

@@ -2,7 +2,6 @@ package com.caeca.estoque.handler;
 
 import com.caeca.estoque.dto.endereco.ErroResponseDto;
 import com.caeca.estoque.exception.*;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
@@ -72,7 +70,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErroResponseDto> handleGeneric(RuntimeException ex) {
-        log.error("Erro inesperado no servidor.", ex);
+        System.err.println("Erro inesperado no servidor.");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErroResponseDto("Erro inesperado no servidor."));
     }

@@ -6,6 +6,7 @@ import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.dto.dashboard.GraficoMotivoDto;
 import com.caeca.estoque.dto.dashboard.TopCincoDto;
 import com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDto;
+import com.caeca.estoque.dto.joia.JoiaParadaDto;
 import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
