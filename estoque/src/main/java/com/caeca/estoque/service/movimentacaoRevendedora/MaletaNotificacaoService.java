@@ -1,16 +1,10 @@
 package com.caeca.estoque.service.movimentacaoRevendedora;
 
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
-import com.caeca.estoque.database.model.notificacaoEnvio.NotificacaoEnvio;
 import com.caeca.estoque.database.model.notificacaoEnvio.TipoReferencia;
-import com.caeca.estoque.database.repository.notificacaoEnvio.NotificacaoEnvioRepository;
 import com.caeca.estoque.service.NotificacaoBrevo.NotificacaoBrevoService;
 import com.caeca.estoque.service.notificacaoEnvio.NotificacaoEnvioService;
 import org.springframework.stereotype.Service;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 
 @Service
 public class MaletaNotificacaoService {
@@ -30,12 +24,6 @@ public class MaletaNotificacaoService {
         }
     }
 
-    public void notificarFechamentoLote(MovimentacaoRevendedora maleta) {
-        if (registrarEnvio(maleta, NotificacaoBrevoService.TEMPLATE_FECHAMENTO_LOTE, false)) {
-            notificacaoBrevoService.notificacaoFechamentoLote(maleta);
-        }
-    }
-
     public void notificarAlertaVencimento(MovimentacaoRevendedora maleta, long diasRestantes) {
         if (registrarEnvio(maleta, NotificacaoBrevoService.TEMPLATE_ALERTA_VENCIMENTO, false)) {
             notificacaoBrevoService.notificacaoAlertaVencimento(maleta, diasRestantes);
@@ -48,9 +36,9 @@ public class MaletaNotificacaoService {
         }
     }
 
-    public void notificarMetaAtingida(MovimentacaoRevendedora maleta, java.util.Map<String, String> params) {
+    public void notificarFechamentoLote(MovimentacaoRevendedora maleta, java.util.Map<String, String> params, boolean metaAtingida) {
         if (registrarEnvio(maleta, NotificacaoBrevoService.TEMPLATE_META_ATINGIDA, true)) {
-            notificacaoBrevoService.notificacaoMetaAtingida(maleta, params);
+            notificacaoBrevoService.notificacaoMetaAtingida(maleta, params, metaAtingida);
         }
     }
 
