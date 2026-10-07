@@ -11,7 +11,6 @@ import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository
 import com.caeca.estoque.dto.fornecedor.FornecedorMapper;
 import com.caeca.estoque.dto.fornecedor.FornecedorResponseDto;
 import com.caeca.estoque.dto.joia.*;
-import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.service.Material.MaterialService;
 import com.caeca.estoque.service.banho.BanhoService;
 import com.caeca.estoque.service.categoria.CategoriaService;
@@ -37,14 +36,16 @@ public class JoiaService {
     private final CategoriaService categoriaService;
     private final MaterialService materialService;
     private final MovimentacaoRepository movimentacaoRepository;
+    private final EstoqueNotificacaoService estoqueNotificacaoService;
 
 
-    public JoiaService(JoiaRepository joiaRepository, BanhoService banhoService, CategoriaService categoriaService, MaterialService materialService, MovimentacaoRepository movimentacaoRepository) {
+    public JoiaService(JoiaRepository joiaRepository, BanhoService banhoService, CategoriaService categoriaService, MaterialService materialService, MovimentacaoRepository movimentacaoRepository, EstoqueNotificacaoService estoqueNotificacaoService) {
         this.joiaRepository = joiaRepository;
         this.banhoService = banhoService;
         this.categoriaService = categoriaService;
         this.materialService = materialService;
         this.movimentacaoRepository = movimentacaoRepository;
+        this.estoqueNotificacaoService = estoqueNotificacaoService;
     }
 
     public Page<JoiaSaidaDto> listarTodas(
@@ -216,5 +217,17 @@ public class JoiaService {
         Joia joia = obterEntityJoiaPorId(id);
         joia.setQuantidade(joia.getQuantidade() - quantidade);
         joiaRepository.save(joia);
+        verificarEstoqueBaixo(joia);
+    }
+
+    private void verificarEstoqueBaixo(Joia joia) {
+        if (joia.getQuantidade() != null && joia.getQuantidadeMinima() != null
+                && joia.getQuantidade() <= joia.getQuantidadeMinima()) {
+            try {
+                estoqueNotificacaoService.notificarEstoqueBaixo(joia);
+            } catch (Exception e) {
+                // Evitar quebrar fluxo
+            }
+        }
     }
 }

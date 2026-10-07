@@ -11,7 +11,7 @@ import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoReve
 import org.springframework.stereotype.Component;
 
 @Component
-public class ReentradaStrategy implements MovimentacaoStrategy{
+public class    ReentradaStrategy implements MovimentacaoStrategy{
     private final JoiaService joiaService;
     private final MovimentacaoRevendedoraService mrService;
 
@@ -33,7 +33,7 @@ public class ReentradaStrategy implements MovimentacaoStrategy{
         movimentacao.setUsuario(dto.usuario());
 
         if(dto.dadosOriginais().getIdRevendedora() != null){
-            MovimentacaoRevendedora movimentacaoRevendedora = mrService.buscarVendaAbertaPorRevendedora(
+            MovimentacaoRevendedora movimentacaoRevendedora = mrService.buscarVendaNaoFechadaPorRevendedora(
                     dto.dadosOriginais().getIdRevendedora());
             movimentacao.setMovimentacaoRevendedora(movimentacaoRevendedora);
         }

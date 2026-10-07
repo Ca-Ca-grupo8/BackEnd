@@ -19,12 +19,15 @@ import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/enderecos")
-@RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer")
 @Tag(name = "Endereço", description = "Gerenciamento de endereços (CRUD)")
 public class EnderecoController {
 
     private final EnderecoService enderecoService;
+
+    public EnderecoController(EnderecoService enderecoService) {
+        this.enderecoService = enderecoService;
+    }
 
     @GetMapping
     public ResponseEntity<Page<EnderecoResponseDto>> listar(

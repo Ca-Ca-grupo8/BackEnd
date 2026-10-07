@@ -82,7 +82,7 @@ class ReentradaStrategyTest {
             assertEquals(tipo, resultado.getMotivoMovimentacao());
             assertEquals(usuario, resultado.getUsuario());
             assertNull(resultado.getMovimentacaoRevendedora());
-            verify(mrService, never()).buscarVendaAbertaPorRevendedora(any());
+            verify(mrService, never()).buscarVendaNaoFechadaPorRevendedora(any());
         }
 
         @Test
@@ -102,13 +102,13 @@ class ReentradaStrategyTest {
             MovimentacaoContextDto dto = new MovimentacaoContextDto(tipo, usuario, dados, arquivo);
 
             when(joiaService.obterEntityJoiaPorId(1L)).thenReturn(joia);
-            when(mrService.buscarVendaAbertaPorRevendedora(5L)).thenReturn(movimentacaoRevendedora);
+            when(mrService.buscarVendaNaoFechadaPorRevendedora(5L)).thenReturn(movimentacaoRevendedora);
 
             Movimentacao resultado = reentradaStrategy.realizarMovimentacao(dto);
 
             assertNotNull(resultado);
             assertEquals(movimentacaoRevendedora, resultado.getMovimentacaoRevendedora());
-            verify(mrService, times(1)).buscarVendaAbertaPorRevendedora(5L);
+            verify(mrService, times(1)).buscarVendaNaoFechadaPorRevendedora(5L);
         }
     }
 

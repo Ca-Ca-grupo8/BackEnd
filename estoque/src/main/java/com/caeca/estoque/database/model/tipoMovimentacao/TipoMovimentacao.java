@@ -20,8 +20,16 @@ public class TipoMovimentacao {
     public TipoMovimentacao() {
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public TipoMovimentacaoEnum getNome() {
+        return nome;
     }
 
     public void setNome(TipoMovimentacaoEnum nome) {
