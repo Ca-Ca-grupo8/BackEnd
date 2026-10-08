@@ -60,6 +60,8 @@ public class CrmNotificadorConsumer {
             LOG.log(Level.SEVERE, "Falha ao enviar notificacao ao Brevo. template=" + evento.templateId()
                     + " revendedora=" + evento.nomeRevendedora()
                     + " status=falha", e);
+
+            throw e;
         }
     }
 }
