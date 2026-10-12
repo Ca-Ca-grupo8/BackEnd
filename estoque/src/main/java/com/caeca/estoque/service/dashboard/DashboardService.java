@@ -1,7 +1,9 @@
 package com.caeca.estoque.service.dashboard;
 
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.database.repository.joia.JoiaRepository;
 import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
+import com.caeca.estoque.database.repository.tipoMovimentacao.MovimentacaoDashboardRepository;
 import com.caeca.estoque.dto.dashboard.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -16,12 +18,53 @@ import java.util.Map;
 
 @Service
 public class DashboardService {
+    private final MovimentacaoDashboardRepository dashboardRepository;
     private final MovimentacaoRepository movimentacaoRepository;
     private final JoiaRepository joiaRepository;
 
-    public DashboardService(MovimentacaoRepository movimentacaoRepository, JoiaRepository joiaRepository) {
+    public DashboardService(MovimentacaoDashboardRepository dashboardRepository, MovimentacaoRepository movimentacaoRepository, JoiaRepository joiaRepository) {
+        this.dashboardRepository = dashboardRepository;
         this.movimentacaoRepository = movimentacaoRepository;
         this.joiaRepository = joiaRepository;
+    }
+
+    public Map<String, Object> buscarKpisEgraficoGeral(FiltroDashboardDto filtro) {
+        PeriodoFiltro periodo = resolverPeriodo(filtro);
+
+        LocalDateTime inicioAnterior = periodo.inicio().minusMonths(1);
+        LocalDateTime fimAnterior = periodo.fim().minusMonths(1);
+
+        List<TipoMovimentacaoEnum> tipoEntrada = List.of(TipoMovimentacaoEnum.ENTRADA, TipoMovimentacaoEnum.REENTRADA);
+        List<TipoMovimentacaoEnum> tipoSaida = List.of(TipoMovimentacaoEnum.SAIDA);
+
+        long entradasAtuais = dashboardRepository.somarQuantidadePorTipo(tipoEntrada, periodo.inicio(), periodo.fim());
+        long saidasAtuais = dashboardRepository.somarQuantidadePorTipo(tipoSaida, periodo.inicio(), periodo.fim());
+
+        long entradasPassadas = dashboardRepository.somarQuantidadePorTipo(tipoEntrada, inicioAnterior, fimAnterior);
+        long saidasPassadas = dashboardRepository.somarQuantidadePorTipo(tipoSaida, inicioAnterior, fimAnterior);
+
+        long totalEstoque = joiaRepository.somarTotalEstoque();
+
+        // 5. Dados do Gráfico de Barras (Formatados em Map)
+        List<Object[]> dadosGraficoRaw = dashboardRepository.buscarDadosParaGrafico(periodo.inicio(), periodo.fim());
+        List<Map<String, Object>> graficoFormatted = dadosGraficoRaw.stream()
+                .map(linha -> Map.of(
+                        "dataAgrupada", linha[0],
+                        "totalEntradas", linha[1],
+                        "totalSaidas", linha[2]
+                ))
+                .toList();
+
+        Map<String, Object> kpis = Map.of(
+                "totalEntradas", entradasAtuais,
+                "totalSaidas", saidasAtuais,
+                "totalEmEstoque", totalEstoque
+        );
+
+        return Map.of(
+                "kpis", kpis,
+                "grafico", graficoFormatted
+        );
     }
 
     public ValorSaidaDto calcularValorSaida(FiltroDashboardDto filtro){
