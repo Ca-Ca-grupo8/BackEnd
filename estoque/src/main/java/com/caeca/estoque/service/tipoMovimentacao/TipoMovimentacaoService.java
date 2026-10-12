@@ -20,5 +20,4 @@ public class TipoMovimentacaoService {
         return repository.findAll();
     }
 
-
 }
