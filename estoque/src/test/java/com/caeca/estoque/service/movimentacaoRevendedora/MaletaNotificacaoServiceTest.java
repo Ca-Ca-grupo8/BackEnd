@@ -12,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -78,27 +80,41 @@ class MaletaNotificacaoServiceTest {
     class notificarFechamentoLote {
 
         @Test
-        @DisplayName("Deve enviar o template 6 quando o envio ainda nao foi registrado")
+        @DisplayName("Deve enviar o template de fechamento com os parametros quando o envio ainda nao foi registrado")
         void deveEnviarQuandoNaoRegistradoAnteriormente() {
             MovimentacaoRevendedora maleta = maleta(2L);
+            Map<String, String> params = Map.of("mes", "janeiro de 2025");
             when(notificacaoEnvioService.registrarEnvio(TipoReferencia.MALETA, 2L,
-                    NotificacaoBrevoService.TEMPLATE_FECHAMENTO_LOTE, false)).thenReturn(true);
+                    NotificacaoBrevoService.TEMPLATE_META_ATINGIDA, true)).thenReturn(true);
 
-            maletaNotificacaoService.notificarFechamentoLote(maleta);
+            maletaNotificacaoService.notificarFechamentoLote(maleta, params, false);
 
-            verify(notificacaoBrevoService, times(1)).notificacaoFechamentoLote(maleta);
+            verify(notificacaoBrevoService, times(1)).notificacaoMetaAtingida(maleta, params, false);
         }
 
         @Test
-        @DisplayName("Deve nao enviar o template 6 quando o envio ja foi registrado")
+        @DisplayName("Deve enviar o template de meta atingida quando a meta foi batida")
+        void deveEnviarTemplateMetaAtingida() {
+            MovimentacaoRevendedora maleta = maleta(2L);
+            Map<String, String> params = Map.of("total", "1000");
+            when(notificacaoEnvioService.registrarEnvio(TipoReferencia.MALETA, 2L,
+                    NotificacaoBrevoService.TEMPLATE_META_ATINGIDA, true)).thenReturn(true);
+
+            maletaNotificacaoService.notificarFechamentoLote(maleta, params, true);
+
+            verify(notificacaoBrevoService, times(1)).notificacaoMetaAtingida(maleta, params, true);
+        }
+
+        @Test
+        @DisplayName("Deve nao enviar quando o envio ja foi registrado")
         void deveNaoEnviarQuandoJaRegistrado() {
             MovimentacaoRevendedora maleta = maleta(2L);
             when(notificacaoEnvioService.registrarEnvio(TipoReferencia.MALETA, 2L,
-                    NotificacaoBrevoService.TEMPLATE_FECHAMENTO_LOTE, false)).thenReturn(false);
+                    NotificacaoBrevoService.TEMPLATE_META_ATINGIDA, true)).thenReturn(false);
 
-            maletaNotificacaoService.notificarFechamentoLote(maleta);
+            maletaNotificacaoService.notificarFechamentoLote(maleta, Map.of(), false);
 
-            verify(notificacaoBrevoService, never()).notificacaoFechamentoLote(any());
+            verify(notificacaoBrevoService, never()).notificacaoMetaAtingida(any(), anyMap(), anyBoolean());
         }
     }
 
@@ -158,35 +174,6 @@ class MaletaNotificacaoServiceTest {
             maletaNotificacaoService.notificarCobrancaAtraso(maleta);
 
             verify(notificacaoBrevoService, times(1)).notificacaoCobrancaAtraso(maleta);
-        }
-    }
-
-    @Nested
-    @DisplayName("notificarMetaAtingida")
-    class notificarMetaAtingida {
-
-        @Test
-        @DisplayName("Deve enviar o template de meta com os parametros quando o reenvio e permitido")
-        void deveEnviarComParametros() {
-            MovimentacaoRevendedora maleta = maleta(6L);
-            when(notificacaoEnvioService.registrarEnvio(any(), anyLong(), anyLong(), anyBoolean())).thenReturn(true);
-
-            maletaNotificacaoService.notificarMetaAtingida(maleta, java.util.Map.of("valor", "1000"));
-
-            verify(notificacaoEnvioService, times(1)).registrarEnvio(TipoReferencia.MALETA, 6L,
-                    NotificacaoBrevoService.TEMPLATE_META_ATINGIDA, true);
-            verify(notificacaoBrevoService, times(1)).notificacaoMetaAtingida(any(), anyMap());
-        }
-
-        @Test
-        @DisplayName("Deve nao enviar o template de meta quando ja foi registrado")
-        void deveNaoEnviarQuandoJaRegistrado() {
-            MovimentacaoRevendedora maleta = maleta(6L);
-            when(notificacaoEnvioService.registrarEnvio(any(), anyLong(), anyLong(), anyBoolean())).thenReturn(false);
-
-            maletaNotificacaoService.notificarMetaAtingida(maleta, java.util.Map.of("valor", "1000"));
-
-            verify(notificacaoBrevoService, never()).notificacaoMetaAtingida(any(), anyMap());
         }
     }
 

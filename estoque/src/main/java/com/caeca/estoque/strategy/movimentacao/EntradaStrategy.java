@@ -7,7 +7,9 @@ import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.database.repository.fornecedor.FornecedorRepository;
+import com.caeca.estoque.database.repository.joia.JoiaRepository;
 import com.caeca.estoque.dto.joia.JoiaAtualizacaoDto;
+import com.caeca.estoque.dto.joia.JoiaEntradaDto;
 import com.caeca.estoque.dto.joia.JoiaSaidaDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
@@ -42,8 +44,17 @@ public class EntradaStrategy implements MovimentacaoStrategy {
         MovimentacaoRequestDto dados = dto.dadosOriginais();
 
         if(dados.getIdJoia() == null) {
-            JoiaSaidaDto joiaSaidaDTO = joiaService.criarJoia(dados.getDadosNovaJoia());
+            JoiaEntradaDto joiaEntradaDto = dados.getDadosNovaJoia();
+            Integer quantidadeOriginal = null;
+            if (joiaEntradaDto != null) {
+                quantidadeOriginal = joiaEntradaDto.getQuantidade();
+                joiaEntradaDto.setQuantidade(0);
+            }
+            JoiaSaidaDto joiaSaidaDTO = joiaService.criarJoia(joiaEntradaDto);
             joia = joiaService.obterEntityJoiaPorId(joiaSaidaDTO.getId());
+            if (quantidadeOriginal != null && joiaEntradaDto != null) {
+                joiaEntradaDto.setQuantidade(quantidadeOriginal);
+            }
         } else {
             joia = joiaService.obterEntityJoiaPorId(dados.getIdJoia());
         }

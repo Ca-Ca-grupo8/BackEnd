@@ -3,6 +3,7 @@ package com.caeca.estoque.dto.movimentacaoRevendedora;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
 import com.caeca.estoque.dto.joia.JoiaMapper;
 import com.caeca.estoque.dto.statusMaleta.StatusMaletaMapper;
+import com.caeca.estoque.service.movimentacaoRevendedora.MaletaCalculos;
 import java.util.List;
 
 public class MovimentacaoRevendedoraMapper {
@@ -16,27 +17,18 @@ public class MovimentacaoRevendedoraMapper {
                 entity.getRevendedora().getNome()
                 )
         );
-        dto.setMovimentacoes(entity.getMovimentacoes()
+        dto.setMovimentacoes(MaletaCalculos.lista(entity.getMovimentacoes())
                 .stream()
                 .map(movimentacao -> new MovimentacaoRevendedoraResponseDto.MovimentacaoItemDto(
                         movimentacao.getIdMovimentacao(),
                         JoiaMapper.toResponse(movimentacao.getJoia()),
                         movimentacao.getQuantidade(),
-                        movimentacao.getPrecoSaida()
+                        movimentacao.getPrecoSaida(),
+                        MaletaCalculos.tipoDe(movimentacao)
                 ))
                 .toList());
 
-        Double total = dto.getMovimentacoes()
-                .stream()
-                .mapToDouble(item -> {
-                    Double preco = item.getPrecoSaida() != null ? item.getPrecoSaida() : 0.0;
-                    Integer qtd = item.getQuantidade() != null ? item.getQuantidade() : 0;
-
-                    return preco * qtd;
-                })
-                .sum();
-
-        dto.setTotalVenda(total);
+        dto.setTotalVenda(MaletaCalculos.valorTotalVendas(entity.getMovimentacoes()));
         dto.setDataLimite(entity.getDataLimite());
         dto.setData(entity.getData());
         dto.setStatus(StatusMaletaMapper.toResponse(entity.getStatus()));

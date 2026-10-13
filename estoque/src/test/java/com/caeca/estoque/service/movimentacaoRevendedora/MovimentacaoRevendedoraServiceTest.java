@@ -272,7 +272,7 @@ class MovimentacaoRevendedoraServiceTest {
                     new MovimentacaoRevendedoraStatusPatchDto(2L));
 
             verify(maletaNotificacaoService, times(1)).notificarLoteEmConsignacao(movimentacao);
-            verify(maletaNotificacaoService, never()).notificarFechamentoLote(any());
+            verify(maletaNotificacaoService, never()).notificarFechamentoLote(any(), anyMap(), anyBoolean());
         }
 
         @Test
@@ -291,7 +291,7 @@ class MovimentacaoRevendedoraServiceTest {
             movimentacaoRevendedoraService.atualizarStatus(1L,
                     new MovimentacaoRevendedoraStatusPatchDto(3L));
 
-            verify(maletaNotificacaoService, times(1)).notificarFechamentoLote(movimentacao);
+            verify(maletaNotificacaoService, times(1)).notificarFechamentoLote(eq(movimentacao), any(), anyBoolean());
             verify(maletaNotificacaoService, never()).notificarLoteEmConsignacao(any());
         }
 
@@ -312,7 +312,7 @@ class MovimentacaoRevendedoraServiceTest {
                     new MovimentacaoRevendedoraStatusPatchDto(4L));
 
             verify(maletaNotificacaoService, never()).notificarLoteEmConsignacao(any());
-            verify(maletaNotificacaoService, never()).notificarFechamentoLote(any());
+            verify(maletaNotificacaoService, never()).notificarFechamentoLote(any(), anyMap(), anyBoolean());
         }
     }
 
