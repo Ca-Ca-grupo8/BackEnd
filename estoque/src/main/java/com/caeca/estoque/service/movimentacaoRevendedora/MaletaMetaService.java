@@ -2,7 +2,6 @@ package com.caeca.estoque.service.movimentacaoRevendedora;
 
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
-import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +10,6 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import com.caeca.estoque.dto.maleta.MaletaNotificacaoMapper;
 
 @Component
@@ -43,52 +41,22 @@ public class MaletaMetaService {
     }
 
     private long calcularQuantidadeVendida(MovimentacaoRevendedora maleta) {
-        long saidas = calcularQuantidadePorTipo(maleta, TipoMovimentacaoEnum.SAIDA);
-        long reentradas = calcularQuantidadePorTipo(maleta, TipoMovimentacaoEnum.REENTRADA);
-        return Math.max(0L, saidas - reentradas);
+        return MaletaCalculos.quantidadeVendida(movimentacoesDaMaleta(maleta));
     }
 
     private long calcularQuantidadeTotal(MovimentacaoRevendedora maleta) {
-        return calcularQuantidadePorTipo(maleta, TipoMovimentacaoEnum.SAIDA);
-    }
-
-    private long calcularQuantidadePorTipo(MovimentacaoRevendedora maleta, TipoMovimentacaoEnum tipo) {
-        return movimentacoesDaMaleta(maleta).stream()
-                .filter(m -> isTipo(m, tipo))
-                .filter(m -> m.getQuantidade() != null)
-                .mapToLong(Movimentacao::getQuantidade)
-                .sum();
+        return MaletaCalculos.quantidadePorTipo(movimentacoesDaMaleta(maleta), TipoMovimentacaoEnum.SAIDA);
     }
 
     private double calcularValorTotalVendas(MovimentacaoRevendedora maleta) {
-        double saidas = calcularValorPorTipo(maleta, TipoMovimentacaoEnum.SAIDA);
-        double reentradas = calcularValorPorTipo(maleta, TipoMovimentacaoEnum.REENTRADA);
-        return saidas - reentradas;
-    }
-
-    private double calcularValorPorTipo(MovimentacaoRevendedora maleta, TipoMovimentacaoEnum tipo) {
-        return movimentacoesDaMaleta(maleta).stream()
-                .filter(m -> isTipo(m, tipo))
-                .filter(m -> m.getQuantidade() != null)
-                .mapToDouble(m -> (m.getPrecoSaida() != null ? m.getPrecoSaida() : 0.0) * m.getQuantidade())
-                .sum();
+        return MaletaCalculos.valorTotalVendas(movimentacoesDaMaleta(maleta));
     }
 
     private List<Movimentacao> movimentacoesDaMaleta(MovimentacaoRevendedora maleta) {
-        if (maleta == null || maleta.getMovimentacoes() == null) {
+        if (maleta == null) {
             return List.of();
         }
-        return maleta.getMovimentacoes().stream()
-                .filter(Objects::nonNull)
-                .toList();
-    }
-
-    private boolean isTipo(Movimentacao movimentacao, TipoMovimentacaoEnum tipo) {
-        MotivoMovimentacao motivo = movimentacao.getMotivoMovimentacao();
-        if (motivo == null || motivo.getTipoMovimentacao() == null) {
-            return false;
-        }
-        return motivo.getTipoMovimentacao().getNome() == tipo;
+        return MaletaCalculos.lista(maleta.getMovimentacoes());
     }
 
     private String formatarMoeda(double valor) {

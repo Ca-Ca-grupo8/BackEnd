@@ -2,21 +2,18 @@ package com.caeca.estoque.service.NotificacaoBrevo;
 
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
 import com.caeca.estoque.database.model.revendedora.Revendedora;
-import com.caeca.estoque.dto.brevo.NotificacaoEventoDto;
-import org.junit.jupiter.api.BeforeEach;
+import com.caeca.estoque.producer.interfaceProducer.NotificacaoProducer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -24,14 +21,10 @@ import static org.mockito.Mockito.verify;
 class NotificacaoBrevoServiceTest {
 
     @Mock
-    private ApplicationEventPublisher applicationEventPublisher;
+    private NotificacaoProducer notificacaoProducer;
 
+    @InjectMocks
     private NotificacaoBrevoService notificacaoBrevoService;
-
-    @BeforeEach
-    void setUp() {
-        notificacaoBrevoService = new NotificacaoBrevoService(applicationEventPublisher);
-    }
 
     private MovimentacaoRevendedora maleta() {
         Revendedora revendedora = new Revendedora();
@@ -46,31 +39,23 @@ class NotificacaoBrevoServiceTest {
         return maleta;
     }
 
-    private NotificacaoEventoDto capturarEvento() {
-        ArgumentCaptor<NotificacaoEventoDto> captor = ArgumentCaptor.forClass(NotificacaoEventoDto.class);
-        verify(applicationEventPublisher, times(1)).publishEvent(captor.capture());
-
-        return captor.getValue();
-    }
-
     @Nested
     @DisplayName("notificacaoLoteEmConsignacao")
     class notificacaoLoteEmConsignacao {
 
         @Test
-        @DisplayName("Deve publicar o template 3 com nome da revendedora e data de vencimento")
-        void devePublicarTemplateTres() {
+        @DisplayName("Deve enviar o template 3 com nome da revendedora e data de vencimento")
+        void deveEnviarTemplateTres() {
             notificacaoBrevoService.notificacaoLoteEmConsignacao(maleta());
 
-            NotificacaoEventoDto evento = capturarEvento();
-
-            assertEquals(3L, evento.templateId());
-            assertEquals("joias@exemplo.com", evento.emailDestino());
-            assertEquals("Joias Silva", evento.nomeRevendedora());
-            assertEquals(Map.of(
-                    "nomeRevendedora", "Joias Silva",
-                    "dataVencimento", "15/01/2026"
-            ), evento.parametros());
+            verify(notificacaoProducer, times(1)).enviarMensagem(
+                    "joias@exemplo.com",
+                    "Joias Silva",
+                    3L,
+                    Map.of(
+                            "nomeRevendedora", "Joias Silva",
+                            "dataVencimento", "15/01/2026"
+                    ));
         }
     }
 
@@ -79,18 +64,19 @@ class NotificacaoBrevoServiceTest {
     class notificacaoAlertaVencimento {
 
         @Test
-        @DisplayName("Deve publicar o template 4 com dias restantes e data de vencimento")
-        void devePublicarTemplateQuatro() {
+        @DisplayName("Deve enviar o template 4 com dias restantes e data de vencimento")
+        void deveEnviarTemplateQuatro() {
             notificacaoBrevoService.notificacaoAlertaVencimento(maleta(), 7L);
 
-            NotificacaoEventoDto evento = capturarEvento();
-
-            assertEquals(4L, evento.templateId());
-            assertEquals(Map.of(
-                    "nomeRevendedora", "Joias Silva",
-                    "diasRestantes", "7",
-                    "dataVencimento", "15/01/2026"
-            ), evento.parametros());
+            verify(notificacaoProducer, times(1)).enviarMensagem(
+                    "joias@exemplo.com",
+                    "Joias Silva",
+                    4L,
+                    Map.of(
+                            "nomeRevendedora", "Joias Silva",
+                            "diasRestantes", "7",
+                            "dataVencimento", "15/01/2026"
+                    ));
         }
     }
 
@@ -99,36 +85,51 @@ class NotificacaoBrevoServiceTest {
     class notificacaoCobrancaAtraso {
 
         @Test
-        @DisplayName("Deve publicar o template 5 com nome e data de vencimento")
-        void devePublicarTemplateCinco() {
+        @DisplayName("Deve enviar o template 5 com nome e data de vencimento")
+        void deveEnviarTemplateCinco() {
             notificacaoBrevoService.notificacaoCobrancaAtraso(maleta());
 
-            NotificacaoEventoDto evento = capturarEvento();
-
-            assertEquals(5L, evento.templateId());
-            assertEquals(Map.of(
-                    "nomeRevendedora", "Joias Silva",
-                    "dataVencimento", "15/01/2026"
-            ), evento.parametros());
+            verify(notificacaoProducer, times(1)).enviarMensagem(
+                    "joias@exemplo.com",
+                    "Joias Silva",
+                    5L,
+                    Map.of(
+                            "nomeRevendedora", "Joias Silva",
+                            "dataVencimento", "15/01/2026"
+                    ));
         }
     }
 
     @Nested
-    @DisplayName("notificacaoFechamentoLote")
-    class notificacaoFechamentoLote {
+    @DisplayName("notificacaoMetaAtingida")
+    class notificacaoMetaAtingida {
 
         @Test
-        @DisplayName("Deve publicar o template 6 com o mes e ano de criacao da maleta")
-        void devePublicarTemplateSeis() {
-            notificacaoBrevoService.notificacaoFechamentoLote(maleta());
+        @DisplayName("Deve enviar o template 8 quando a meta foi atingida")
+        void deveEnviarTemplateOito() {
+            Map<String, String> params = Map.of("mes", "janeiro de 2025");
 
-            NotificacaoEventoDto evento = capturarEvento();
+            notificacaoBrevoService.notificacaoMetaAtingida(maleta(), params, true);
 
-            assertEquals(6L, evento.templateId());
-            assertEquals(Map.of(
-                    "nomeRevendedora", "Joias Silva",
-                    "mes", "janeiro de 2025"
-            ), evento.parametros());
+            verify(notificacaoProducer, times(1)).enviarMensagem(
+                    "joias@exemplo.com",
+                    "Joias Silva",
+                    8L,
+                    params);
+        }
+
+        @Test
+        @DisplayName("Deve enviar o template 6 de fechamento quando a meta nao foi atingida")
+        void deveEnviarTemplateSeis() {
+            Map<String, String> params = Map.of("mes", "janeiro de 2025");
+
+            notificacaoBrevoService.notificacaoMetaAtingida(maleta(), params, false);
+
+            verify(notificacaoProducer, times(1)).enviarMensagem(
+                    "joias@exemplo.com",
+                    "Joias Silva",
+                    6L,
+                    params);
         }
     }
 
@@ -137,15 +138,15 @@ class NotificacaoBrevoServiceTest {
     class notificacaoBoasVindas {
 
         @Test
-        @DisplayName("Deve publicar o template 2 mantendo o comportamento existente")
-        void devePublicarTemplateDois() {
+        @DisplayName("Deve enviar o template 2 mantendo o comportamento existente")
+        void deveEnviarTemplateDois() {
             notificacaoBrevoService.notificacaoBoasVindas("nova@exemplo.com", "Revendedora Nova");
 
-            NotificacaoEventoDto evento = capturarEvento();
-
-            assertEquals(2L, evento.templateId());
-            assertEquals("nova@exemplo.com", evento.emailDestino());
-            assertEquals(Map.of("nomeRevendedora", "Revendedora Nova"), evento.parametros());
+            verify(notificacaoProducer, times(1)).enviarMensagem(
+                    "nova@exemplo.com",
+                    "Revendedora Nova",
+                    2L,
+                    Map.of("nomeRevendedora", "Revendedora Nova"));
         }
     }
 }

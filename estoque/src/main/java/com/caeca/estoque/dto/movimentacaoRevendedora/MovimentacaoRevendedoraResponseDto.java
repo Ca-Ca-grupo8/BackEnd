@@ -1,5 +1,6 @@
 package com.caeca.estoque.dto.movimentacaoRevendedora;
 
+import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.dto.joia.JoiaSaidaDto;
 import com.caeca.estoque.dto.statusMaleta.StatusMaletaResponseDto;
 
@@ -51,15 +52,17 @@ public class MovimentacaoRevendedoraResponseDto {
         private JoiaSaidaDto joia;
         private Integer quantidade;
         private Double precoSaida;
+        private TipoMovimentacaoEnum tipo;
 
         public MovimentacaoItemDto() {
         }
 
-        public MovimentacaoItemDto(Long idMovimentacao, JoiaSaidaDto joia, Integer decimal, Double precoSaida) {
+        public MovimentacaoItemDto(Long idMovimentacao, JoiaSaidaDto joia, Integer decimal, Double precoSaida, TipoMovimentacaoEnum tipo) {
             this.idMovimentacao = idMovimentacao;
             this.joia = joia;
             this.quantidade = decimal;
             this.precoSaida = precoSaida;
+            this.tipo = tipo;
         }
 
         public Long getIdMovimentacao() {
@@ -92,6 +95,14 @@ public class MovimentacaoRevendedoraResponseDto {
 
         public void setPrecoSaida(Double precoSaida) {
             this.precoSaida = precoSaida;
+        }
+
+        public TipoMovimentacaoEnum getTipo() {
+            return tipo;
+        }
+
+        public void setTipo(TipoMovimentacaoEnum tipo) {
+            this.tipo = tipo;
         }
     }
 

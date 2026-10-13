@@ -4,6 +4,7 @@ import com.caeca.estoque.database.model.notificacaoEnvio.TipoReferencia;
 import com.caeca.estoque.database.model.revendedora.Revendedora;
 import com.caeca.estoque.service.NotificacaoBrevo.NotificacaoBrevoService;
 import com.caeca.estoque.service.notificacaoEnvio.NotificacaoEnvioService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Map;
 
@@ -32,6 +34,12 @@ class RevendedoraNotificacaoServiceTest {
 
     @InjectMocks
     private RevendedoraNotificacaoService revendedoraNotificacaoService;
+
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(revendedoraNotificacaoService, "internalRecipient", "equipe@caeca.com");
+        ReflectionTestUtils.setField(revendedoraNotificacaoService, "internalRecipientName", "Equipe Caeca");
+    }
 
     @Nested
     @DisplayName("notificarAniversario")
@@ -97,7 +105,7 @@ class RevendedoraNotificacaoServiceTest {
 
             verify(notificacaoEnvioService).registrarEnvio(
                     TipoReferencia.REVENDEDORA, 1L, NotificacaoBrevoService.TEMPLATE_REVENDEDORA_INATIVA, true);
-            verify(notificacaoBrevoService).notificacaoRevendedoraInativa("maria@email.com", "Maria", Map.of(
+            verify(notificacaoBrevoService).notificacaoRevendedoraInativa("equipe@caeca.com", "Equipe Caeca", Map.of(
                     "nomeRevendedora", "Maria",
                     "diasInatividade", "75",
                     "telefoneRevendedora", "11987654321"));
@@ -112,7 +120,7 @@ class RevendedoraNotificacaoServiceTest {
 
             revendedoraNotificacaoService.notificarInatividade(revendedora, 75L);
 
-            verify(notificacaoBrevoService).notificacaoRevendedoraInativa("maria@email.com", "Maria", Map.of(
+            verify(notificacaoBrevoService).notificacaoRevendedoraInativa("equipe@caeca.com", "Equipe Caeca", Map.of(
                     "nomeRevendedora", "Maria",
                     "diasInatividade", "75"));
         }
