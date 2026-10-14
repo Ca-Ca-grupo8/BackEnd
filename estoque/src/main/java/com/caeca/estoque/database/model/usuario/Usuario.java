@@ -18,6 +18,9 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private PerfilUsuario perfil;
 
+    @Enumerated(EnumType.STRING)
+    private StatusUsuario status = StatusUsuario.PENDENTE;
+
     public Long getId() {
         return id;
     }
@@ -56,5 +59,13 @@ public class Usuario {
 
     public void setPerfil(PerfilUsuario perfil) {
         this.perfil = perfil;
+    }
+
+    public StatusUsuario getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusUsuario status) {
+        this.status = status;
     }
 }
