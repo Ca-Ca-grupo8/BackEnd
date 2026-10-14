@@ -83,6 +83,8 @@ public class SecurityConfiguracao {
             "/actuator/*",
             "/usuarios/login/**",
             "/usuarios/logout/**",
+            "/usuarios/convites/*",
+            "/usuarios/convites/*/senha",
             "/h2-console/**",
             "/h2-console/*/**",
             "/error/**"

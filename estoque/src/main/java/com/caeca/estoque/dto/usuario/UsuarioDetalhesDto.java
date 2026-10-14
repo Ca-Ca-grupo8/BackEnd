@@ -1,5 +1,6 @@
 package com.caeca.estoque.dto.usuario;
 
+import com.caeca.estoque.database.model.usuario.StatusUsuario;
 import com.caeca.estoque.database.model.usuario.Usuario;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,11 +19,14 @@ public class UsuarioDetalhesDto implements UserDetails {
 
     private final String perfil;
 
+    private final StatusUsuario status;
+
     public UsuarioDetalhesDto(Usuario usuario) {
         this.nome = usuario.getNome();
         this.email = usuario.getEmail();
         this.senha = usuario.getSenha();
         this.perfil = usuario.getPerfil().toString();
+        this.status = usuario.getStatus();
     }
 
     public String getNome() {
@@ -61,6 +65,6 @@ public class UsuarioDetalhesDto implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return StatusUsuario.ATIVO.equals(this.status);
     }
 }

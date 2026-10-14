@@ -1,5 +1,6 @@
 package com.caeca.estoque.dto.usuario;
 
+import com.caeca.estoque.database.model.usuario.StatusUsuario;
 import com.caeca.estoque.database.model.usuario.Usuario;
 
 public class UsuarioMapper {
@@ -63,5 +64,33 @@ public class UsuarioMapper {
         usuarioListarDto.setRole(usuario.getPerfil());
 
         return usuarioListarDto;
+    }
+
+    public static Usuario toEntity(ConviteUsuarioRequestDto conviteUsuarioRequestDto) {
+        Usuario usuario = new Usuario();
+
+        usuario.setNome(conviteUsuarioRequestDto.getNome());
+        usuario.setEmail(conviteUsuarioRequestDto.getEmail());
+        usuario.setPerfil(conviteUsuarioRequestDto.getPerfilUsuario());
+        usuario.setStatus(StatusUsuario.PENDENTE);
+        usuario.setSenha(null);
+
+        return usuario;
+    }
+
+    public static ConviteUsuarioResponseDto toResponse(Usuario usuario) {
+        ConviteUsuarioResponseDto dto = new ConviteUsuarioResponseDto();
+
+        dto.setId(usuario.getId());
+        dto.setNome(usuario.getNome());
+        dto.setEmail(usuario.getEmail());
+        dto.setPerfil(usuario.getPerfil());
+        dto.setStatus(usuario.getStatus());
+
+        return dto;
+    }
+
+    public static ConviteValidacaoResponseDto toValidacao(Usuario usuario) {
+        return new ConviteValidacaoResponseDto(usuario);
     }
 }

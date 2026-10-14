@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.caeca.estoque.config.GerenciadorTokenJwt;
 import com.caeca.estoque.database.repository.usuario.UsuarioRepository;
+import com.caeca.estoque.database.model.usuario.StatusUsuario;
 import com.caeca.estoque.database.model.usuario.Usuario;
 import com.caeca.estoque.dto.usuario.UsuarioListarDto;
 import com.caeca.estoque.dto.usuario.UsuarioMapper;
@@ -40,6 +41,7 @@ public class UsuarioService {
 
         String senhaCriptografada = passwordEncoder.encode(novoUsuario.getSenha());
         novoUsuario.setSenha(senhaCriptografada);
+        novoUsuario.setStatus(StatusUsuario.ATIVO);
 
         this.usuarioRepository.save(novoUsuario);
     }
