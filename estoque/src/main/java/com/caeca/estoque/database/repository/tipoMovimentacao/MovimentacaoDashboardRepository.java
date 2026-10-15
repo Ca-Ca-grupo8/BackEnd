@@ -17,27 +17,31 @@ public interface MovimentacaoDashboardRepository extends Repository<Movimentacao
         WHERE m.motivoMovimentacao.tipoMovimentacao.nome IN :tipos
         AND m.data >= :dataInicio 
         AND m.data <= :dataFim
+        AND (:categoriaId IS NULL OR m.joia.categoria.id = :categoriaId)
     """)
     long somarQuantidadePorTipo(
             @Param("tipos") List<TipoMovimentacaoEnum> tipos,
             @Param("dataInicio") LocalDateTime dataInicio,
-            @Param("dataFim") LocalDateTime dataFim
+            @Param("dataFim") LocalDateTime dataFim,
+            @Param("categoriaId") Long categoriaId
     );
 
-    // Retorna um array de objetos por linha: [String data, Long entradas, Long saidas]
+    // Retorna um array de objetos por linha: [String mes (yyyy-MM), Long entradas, Long saidas]
     @Query("""
         SELECT 
-            FUNCTION('DATE_FORMAT', m.data, '%Y-%m-%d'),
+            FUNCTION('DATE_FORMAT', m.data, '%Y-%m'),
             SUM(CASE WHEN m.motivoMovimentacao.tipoMovimentacao.nome IN ('ENTRADA', 'REENTRADA') THEN m.quantidade ELSE 0 END),
             SUM(CASE WHEN m.motivoMovimentacao.tipoMovimentacao.nome = 'SAIDA' THEN m.quantidade ELSE 0 END)
         FROM Movimentacao m
         WHERE m.data >= :dataInicio AND m.data <= :dataFim
-        GROUP BY FUNCTION('DATE_FORMAT', m.data, '%Y-%m-%d')
-        ORDER BY FUNCTION('DATE_FORMAT', m.data, '%Y-%m-%d')
+        AND (:categoriaId IS NULL OR m.joia.categoria.id = :categoriaId)
+        GROUP BY FUNCTION('DATE_FORMAT', m.data, '%Y-%m')
+        ORDER BY FUNCTION('DATE_FORMAT', m.data, '%Y-%m')
     """)
     List<Object[]> buscarDadosParaGrafico(
             @Param("dataInicio") LocalDateTime dataInicio,
-            @Param("dataFim") LocalDateTime dataFim
+            @Param("dataFim") LocalDateTime dataFim,
+            @Param("categoriaId") Long categoriaId
     );
 
 }
