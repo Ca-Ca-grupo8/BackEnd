@@ -7,6 +7,7 @@ import com.caeca.estoque.dto.dashboard.GraficoMotivoDto;
 import com.caeca.estoque.dto.dashboard.TopCincoDto;
 import com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDto;
 import com.caeca.estoque.dto.joia.JoiaParadaDto;
+import com.caeca.estoque.dto.movimentacaoRevendedora.JoiaSaidaMaletaDto;
 import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -129,6 +130,27 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
             @Param("dataFim") LocalDateTime dataFim,
             Pageable pageable
     );
+
+    @Query("""
+            SELECT new com.caeca.estoque.dto.movimentacaoRevendedora.JoiaSaidaMaletaDto(
+                m.joia.id,
+                m.joia.nome,
+                SUM(CASE
+                        WHEN m.motivoMovimentacao.tipoMovimentacao.nome = 'SAIDA' THEN m.quantidade
+                        WHEN m.motivoMovimentacao.tipoMovimentacao.nome = 'REENTRADA' THEN -m.quantidade
+                        ELSE 0
+                    END))
+            FROM Movimentacao m
+            WHERE m.movimentacaoRevendedora.id = :idMaleta
+            GROUP BY m.joia.id, m.joia.nome
+            HAVING SUM(CASE
+                        WHEN m.motivoMovimentacao.tipoMovimentacao.nome = 'SAIDA' THEN m.quantidade
+                        WHEN m.motivoMovimentacao.tipoMovimentacao.nome = 'REENTRADA' THEN -m.quantidade
+                        ELSE 0
+                    END) > 0
+            ORDER BY m.joia.nome
+    """)
+    List<JoiaSaidaMaletaDto> buscarJoiasComSaidaNaMaleta(@Param("idMaleta") Long idMaleta);
 
     Movimentacao findFirstByJoiaIdOrderByDataDesc(long id);
 
