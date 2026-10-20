@@ -197,23 +197,27 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
     );
 
     @Query(value = """
-    SELECT ROUND(
+    SELECT COALESCE(ROUND(
         100.0 * SUM(
             CASE
                 WHEN NOT EXISTS (
                     SELECT 1
                     FROM movimentacao m
+                    JOIN motivo_movimentacao mm
+                      ON mm.id_motivo_movimentacao = m.motivo_movimentacao_id_motivo_movimentacao
+                    JOIN tipo_movimentacao tm
+                      ON tm.id = mm.tipo_movimentacao_id
                     WHERE m.joia_id = j.id
-                      AND m.tipo_movimentacao_id_tipo_movimentacao = 2
+                      AND lower(tm.nome) LIKE '%saida%'
                       AND m.data >= :dataInicio
                       AND m.data < :dataTermino
                 )
                 THEN 1
                 ELSE 0
             END
-        ) / COUNT(j.id),
+        ) / NULLIF(COUNT(j.id), 0),
         2
-    )
+    ), 0)
     FROM joia j
     WHERE j.is_ativo = true
       AND (:categoriaId = 0 OR j.categoria_id = :categoriaId)
@@ -225,23 +229,27 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
     );
 
     @Query(value = """
-    SELECT ROUND(
+    SELECT COALESCE(ROUND(
         100.0 * SUM(
             CASE
                 WHEN NOT EXISTS (
                     SELECT 1
                     FROM movimentacao m
+                    JOIN motivo_movimentacao mm
+                      ON mm.id_motivo_movimentacao = m.motivo_movimentacao_id_motivo_movimentacao
+                    JOIN tipo_movimentacao tm
+                      ON tm.id = mm.tipo_movimentacao_id
                     WHERE m.joia_id = j.id
-                      AND m.tipo_movimentacao_id_tipo_movimentacao = 2
+                      AND lower(tm.nome) LIKE '%saida%'
                       AND m.data >= :inicioMesAnterior
                       AND m.data < :fimMesAnterior
                 )
                 THEN 1
                 ELSE 0
             END
-        ) / COUNT(j.id),
+        ) / NULLIF(COUNT(j.id), 0),
         2
-    )
+    ), 0)
     FROM joia j
     WHERE j.is_ativo = true
       AND (:categoriaId = 0 OR j.categoria_id = :categoriaId)

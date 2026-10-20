@@ -15,7 +15,7 @@ import java.util.List;
 
 public interface JoiaRepository extends JpaRepository<Joia, Long> {
     @Query("""
-    SELECT SUM(j.quantidade)
+    SELECT COALESCE(SUM(j.quantidade), 0)
     FROM Joia as j
 """)
     long somarTotalEstoque ();
