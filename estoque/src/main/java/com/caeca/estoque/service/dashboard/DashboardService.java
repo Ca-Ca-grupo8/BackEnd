@@ -1,6 +1,8 @@
 package com.caeca.estoque.service.dashboard;
 
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
+import com.caeca.estoque.database.model.historicoEstoque.HistoricoEstoque;
+import com.caeca.estoque.database.repository.historicoEstoque.HistoricoEstoqueRepository;
 import com.caeca.estoque.database.repository.joia.JoiaRepository;
 import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
 import com.caeca.estoque.database.repository.tipoMovimentacao.MovimentacaoDashboardRepository;
@@ -21,11 +23,16 @@ public class DashboardService {
     private final MovimentacaoDashboardRepository dashboardRepository;
     private final MovimentacaoRepository movimentacaoRepository;
     private final JoiaRepository joiaRepository;
+    private final HistoricoEstoqueRepository historicoEstoqueRepository;
 
-    public DashboardService(MovimentacaoDashboardRepository dashboardRepository, MovimentacaoRepository movimentacaoRepository, JoiaRepository joiaRepository) {
+    public DashboardService(MovimentacaoDashboardRepository dashboardRepository,
+                             MovimentacaoRepository movimentacaoRepository,
+                             JoiaRepository joiaRepository,
+                             HistoricoEstoqueRepository historicoEstoqueRepository) {
         this.dashboardRepository = dashboardRepository;
         this.movimentacaoRepository = movimentacaoRepository;
         this.joiaRepository = joiaRepository;
+        this.historicoEstoqueRepository = historicoEstoqueRepository;
     }
 
     public Map<String, Object> buscarKpisEgraficoGeral(FiltroDashboardDto filtro) {
@@ -37,16 +44,19 @@ public class DashboardService {
         List<TipoMovimentacaoEnum> tipoEntrada = List.of(TipoMovimentacaoEnum.ENTRADA, TipoMovimentacaoEnum.REENTRADA);
         List<TipoMovimentacaoEnum> tipoSaida = List.of(TipoMovimentacaoEnum.SAIDA);
 
-        long entradasAtuais = dashboardRepository.somarQuantidadePorTipo(tipoEntrada, periodo.inicio(), periodo.fim());
-        long saidasAtuais = dashboardRepository.somarQuantidadePorTipo(tipoSaida, periodo.inicio(), periodo.fim());
+        Long categoriaId = filtro.categoriaId();
 
-        long entradasPassadas = dashboardRepository.somarQuantidadePorTipo(tipoEntrada, inicioAnterior, fimAnterior);
-        long saidasPassadas = dashboardRepository.somarQuantidadePorTipo(tipoSaida, inicioAnterior, fimAnterior);
+        long entradasAtuais = dashboardRepository.somarQuantidadePorTipo(tipoEntrada, periodo.inicio(), periodo.fim(), categoriaId);
+        long saidasAtuais = dashboardRepository.somarQuantidadePorTipo(tipoSaida, periodo.inicio(), periodo.fim(), categoriaId);
+
+        long entradasPassadas = dashboardRepository.somarQuantidadePorTipo(tipoEntrada, inicioAnterior, fimAnterior, categoriaId);
+        long saidasPassadas = dashboardRepository.somarQuantidadePorTipo(tipoSaida, inicioAnterior, fimAnterior, categoriaId);
 
         long totalEstoque = joiaRepository.somarTotalEstoque();
 
         // 5. Dados do Gráfico de Barras (Formatados em Map)
-        List<Object[]> dadosGraficoRaw = dashboardRepository.buscarDadosParaGrafico(periodo.inicio(), periodo.fim());
+        List<Object[]> dadosGraficoRaw = dashboardRepository
+                .buscarDadosParaGrafico(periodo.inicio(), periodo.fim(), filtro.categoriaId());
         List<Map<String, Object>> graficoFormatted = dadosGraficoRaw.stream()
                 .map(linha -> Map.of(
                         "dataAgrupada", linha[0],
@@ -55,10 +65,26 @@ public class DashboardService {
                 ))
                 .toList();
 
+        // Histórico de estoque: estoque no início do período (se não existir, aproxima)
+        long estoquePassado;
+        java.util.Optional<HistoricoEstoque> historicoPassado = historicoEstoqueRepository
+                .findTopByDataLessThanEqualOrderByDataDesc(periodo.inicio().toLocalDate());
+        if (historicoPassado.isPresent()) {
+            estoquePassado = historicoPassado.get().getTotalEstoque();
+        } else {
+            estoquePassado = totalEstoque - entradasAtuais + saidasAtuais;
+        }
+        if (estoquePassado < 0) {
+            estoquePassado = 0;
+        }
+
         Map<String, Object> kpis = Map.of(
                 "totalEntradas", entradasAtuais,
                 "totalSaidas", saidasAtuais,
-                "totalEmEstoque", totalEstoque
+                "totalEmEstoque", totalEstoque,
+                "entradasPassadas", entradasPassadas,
+                "saidasPassadas", saidasPassadas,
+                "estoquePassado", estoquePassado
         );
 
         return Map.of(
