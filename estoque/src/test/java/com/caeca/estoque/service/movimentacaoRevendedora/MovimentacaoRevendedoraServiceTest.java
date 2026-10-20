@@ -4,8 +4,10 @@ import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoReve
 import com.caeca.estoque.database.model.revendedora.Revendedora;
 import com.caeca.estoque.database.model.statusMaleta.StatusMaleta;
 import com.caeca.estoque.database.model.statusMaleta.StatusMaletaEnum;
+import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
 import com.caeca.estoque.database.repository.movimentacaoRevendedora.MovimentacaoRevendedoraRepository;
 import com.caeca.estoque.database.repository.revendedora.RevendedoraRepository;
+import com.caeca.estoque.dto.movimentacaoRevendedora.JoiaSaidaMaletaDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraRequestDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraStatusPatchDto;
 import com.caeca.estoque.exception.NotFoundException;
@@ -30,6 +32,9 @@ class MovimentacaoRevendedoraServiceTest {
 
     @Mock
     private MovimentacaoRevendedoraRepository mrRepository;
+
+    @Mock
+    private MovimentacaoRepository movimentacaoRepository;
 
     @Mock
     private RevendedoraService revendedoraService;
@@ -185,6 +190,37 @@ class MovimentacaoRevendedoraServiceTest {
     }
 
     @Nested
+    @DisplayName("buscarVendaAtualPorRevendedora")
+    class buscarVendaAtualPorRevendedora {
+
+        @Test
+        @DisplayName("Deve retornar a venda mais recente que não esteja finalizada ou com erro")
+        void deveRetornarVendaAtualQuandoExistir() {
+            MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
+            when(mrRepository.findFirstByRevendedoraIdAndStatusNomeNotInOrderByIdMovimentacaoRevendedoraDesc(
+                    1L, List.of(StatusMaletaEnum.FINALIZADA, StatusMaletaEnum.ERRO)))
+                    .thenReturn(Optional.of(movimentacao));
+
+            MovimentacaoRevendedora resultado =
+                    movimentacaoRevendedoraService.buscarVendaAtualPorRevendedora(1L);
+
+            assertNotNull(resultado);
+            assertEquals(movimentacao, resultado);
+        }
+
+        @Test
+        @DisplayName("Deve lançar NotFoundException quando todas as vendas estiverem finalizadas ou com erro")
+        void deveLancarNotFoundExceptionQuandoNaoHouverVendaAtual() {
+            when(mrRepository.findFirstByRevendedoraIdAndStatusNomeNotInOrderByIdMovimentacaoRevendedoraDesc(
+                    1L, List.of(StatusMaletaEnum.FINALIZADA, StatusMaletaEnum.ERRO)))
+                    .thenReturn(Optional.empty());
+
+            assertThrows(NotFoundException.class,
+                    () -> movimentacaoRevendedoraService.buscarVendaAtualPorRevendedora(1L));
+        }
+    }
+
+    @Nested
     @DisplayName("listarPorIdRevendedora")
     class listarPorIdRevendedora {
 
@@ -212,6 +248,67 @@ class MovimentacaoRevendedoraServiceTest {
 
             assertNotNull(resultado);
             assertTrue(resultado.isEmpty());
+        }
+    }
+
+    @Nested
+    @DisplayName("listarJoiasComSaidaPorRevendedora")
+    class listarJoiasComSaidaPorRevendedora {
+
+        @Test
+        @DisplayName("Deve retornar joias com saída quando existir venda atual para a revendedora")
+        void deveRetornarJoiasComSaidaQuandoExistirVendaAtual() {
+            MovimentacaoRevendedora maleta = new MovimentacaoRevendedora();
+            maleta.setIdMovimentacaoRevendedora(7L);
+
+            List<JoiaSaidaMaletaDto> joias = List.of(
+                    new JoiaSaidaMaletaDto(1L, "Colar prata", 3L),
+                    new JoiaSaidaMaletaDto(2L, "Bracelete ouro", 1L));
+
+            when(mrRepository.findFirstByRevendedoraIdAndStatusNomeNotInOrderByIdMovimentacaoRevendedoraDesc(
+                    1L, List.of(StatusMaletaEnum.FINALIZADA, StatusMaletaEnum.ERRO)))
+                    .thenReturn(Optional.of(maleta));
+            when(movimentacaoRepository.buscarJoiasComSaidaNaMaleta(7L)).thenReturn(joias);
+
+            List<JoiaSaidaMaletaDto> resultado =
+                    movimentacaoRevendedoraService.listarJoiasComSaidaPorRevendedora(1L);
+
+            assertNotNull(resultado);
+            assertEquals(2, resultado.size());
+            assertEquals("Colar prata", resultado.get(0).getNome());
+            assertEquals(3L, resultado.get(0).getQuantidade());
+            verify(movimentacaoRepository, times(1)).buscarJoiasComSaidaNaMaleta(7L);
+        }
+
+        @Test
+        @DisplayName("Deve retornar lista vazia quando a maleta atual não tiver saídas")
+        void deveRetornarListaVaziaQuandoMaletaNaoTiverSaidas() {
+            MovimentacaoRevendedora maleta = new MovimentacaoRevendedora();
+            maleta.setIdMovimentacaoRevendedora(7L);
+
+            when(mrRepository.findFirstByRevendedoraIdAndStatusNomeNotInOrderByIdMovimentacaoRevendedoraDesc(
+                    1L, List.of(StatusMaletaEnum.FINALIZADA, StatusMaletaEnum.ERRO)))
+                    .thenReturn(Optional.of(maleta));
+            when(movimentacaoRepository.buscarJoiasComSaidaNaMaleta(7L)).thenReturn(List.of());
+
+            List<JoiaSaidaMaletaDto> resultado =
+                    movimentacaoRevendedoraService.listarJoiasComSaidaPorRevendedora(1L);
+
+            assertNotNull(resultado);
+            assertTrue(resultado.isEmpty());
+        }
+
+        @Test
+        @DisplayName("Deve lançar NotFoundException quando não houver venda atual para a revendedora")
+        void deveLancarNotFoundExceptionQuandoNaoHouverVendaAtual() {
+            when(mrRepository.findFirstByRevendedoraIdAndStatusNomeNotInOrderByIdMovimentacaoRevendedoraDesc(
+                    1L, List.of(StatusMaletaEnum.FINALIZADA, StatusMaletaEnum.ERRO)))
+                    .thenReturn(Optional.empty());
+
+            assertThrows(NotFoundException.class,
+                    () -> movimentacaoRevendedoraService.listarJoiasComSaidaPorRevendedora(1L));
+
+            verify(movimentacaoRepository, never()).buscarJoiasComSaidaNaMaleta(anyLong());
         }
     }
 

@@ -4,6 +4,7 @@ import com.caeca.estoque.dto.endereco.ErroResponseDto;
 import com.caeca.estoque.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -81,6 +82,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErroResponseDto> handleAuthentication(AuthenticationException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErroResponseDto("Não autorizado"));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErroResponseDto> handleAccessDenied(AccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErroResponseDto("Acesso negado"));
     }
 
     @ExceptionHandler(RuntimeException.class)
