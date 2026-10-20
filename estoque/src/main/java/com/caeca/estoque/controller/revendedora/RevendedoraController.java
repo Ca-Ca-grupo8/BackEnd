@@ -39,6 +39,13 @@ class RevendedoraController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/maleta-aberta")
+    public ResponseEntity<Page<RevendedoraResponseDto>> listarComMaletaAberta(
+            @PageableDefault(size = 10, sort = "id") Pageable pageable
+    ) {
+        return ResponseEntity.ok(revendedoraService.listarComMaletaAberta(pageable));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<RevendedoraResponseDto> buscarPorId(@PathVariable Long id){
         return ResponseEntity.ok(RevendedoraMapper.toResponse(revendedoraService.buscarPorId(id)));
