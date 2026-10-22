@@ -83,7 +83,9 @@ public class MovimentacaoService {
         List<JoiaMaisSaidaDto> joias = topJoias.stream()
                 .map(joia -> new JoiaMaisSaidaDto(
                         joia.idJoia(),
+                        joia.nomeJoia(),
                         joia.quantidadeMedia(),
+                        motivoMaisComumPorJoia.get(joia.idJoia()).idMotivo().longValue(),
                         motivoMaisComumPorJoia.get(joia.idJoia()).motivo()))
                 .toList();
 
