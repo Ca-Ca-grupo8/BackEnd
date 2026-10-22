@@ -1,4 +1,4 @@
 package com.caeca.estoque.database.repository.movimentacao;
 
-public record JoiaSaidaProjecao(Long idJoia, Long totalQuantidade, Double quantidadeMedia) {
+public record JoiaSaidaProjecao(Long idJoia, String nomeJoia, Long totalQuantidade, Double quantidadeMedia) {
 }

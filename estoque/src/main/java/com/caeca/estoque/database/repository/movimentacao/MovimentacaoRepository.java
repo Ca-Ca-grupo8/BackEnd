@@ -155,6 +155,7 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
     @Query("""
             SELECT new com.caeca.estoque.database.repository.movimentacao.JoiaSaidaProjecao(
                 m.joia.id,
+                m.joia.nome,
                 SUM(m.quantidade),
                 AVG(m.quantidade))
             FROM Movimentacao m
@@ -168,13 +169,14 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
     @Query("""
             SELECT new com.caeca.estoque.database.repository.movimentacao.MotivoSaidaJoiaProjecao(
                 m.joia.id,
+                m.motivoMovimentacao.idMotivoMovimentacao,
                 m.motivoMovimentacao.descricao,
                 COUNT(m))
             FROM Movimentacao m
             WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%saida%')
             AND m.data BETWEEN :inicio AND :fim
             AND m.joia.id IN :joiaIds
-            GROUP BY m.joia.id, m.motivoMovimentacao.descricao
+            GROUP BY m.joia.id, m.motivoMovimentacao.idMotivoMovimentacao, m.motivoMovimentacao.descricao
     """)
     List<MotivoSaidaJoiaProjecao> buscarMotivosSaidaDasJoias(LocalDateTime inicio, LocalDateTime fim, List<Long> joiaIds);
 
