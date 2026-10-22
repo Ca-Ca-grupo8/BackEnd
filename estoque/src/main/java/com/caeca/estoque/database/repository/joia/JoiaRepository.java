@@ -69,4 +69,12 @@ public interface JoiaRepository extends JpaRepository<Joia, Long> {
     )
 """)
     List<JoiaParadaDto> findJoiasParadas(@Param("dataLimite") LocalDateTime dataLimite);
+
+    @Query("""
+    SELECT j FROM Joia j
+    WHERE j.isAtivo = true
+    AND j.quantidade <= j.quantidadeMinima
+    ORDER BY (j.quantidade - j.quantidadeMinima) ASC
+""")
+    List<Joia> findAbaixoDoMinimo(Pageable pageable);
 }

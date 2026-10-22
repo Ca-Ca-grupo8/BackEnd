@@ -66,7 +66,7 @@ class V1GarantirStatusMaletaETest {
         try (Connection conexao = base.getConnection()) {
             executar(conexao, DDL_STATUS);
             executar(conexao, DDL_VENDA_COM_COLUNA_LEGADA);
-            executar(conexao, "INSERT INTO status_maleta (id, nome) VALUES (0, 'ABERTO')");
+            executar(conexao, "INSERT INTO status_maleta (id, nome) VALUES (0, 'EM_PREPARACAO')");
             executar(conexao, """
                     INSERT INTO movimentacao_revendedora
                         (id_movimentacao_revendedora, nome, is_finalizada, status_maleta_id)
@@ -78,9 +78,9 @@ class V1GarantirStatusMaletaETest {
 
             aplicar(conexao);
 
-            assertEquals(List.of("ABERTO", "EM_ACERTO", "EM_CONSIGNACAO", "ERRO", "FINALIZADA"),
+            assertEquals(List.of("EM_ACERTO", "EM_CONSIGNACAO", "EM_PREPARACAO", "ERRO", "FINALIZADA"),
                     nomesDosStatus(conexao));
-            assertEquals(List.of("FINALIZADA", "FINALIZADA", "ABERTO"),
+            assertEquals(List.of("FINALIZADA", "FINALIZADA", "EM_PREPARACAO"),
                     statusDasMaletas(conexao));
             assertFalse(colunaExiste(conexao, "movimentacao_revendedora", "is_finalizada"),
                     "A coluna legada is_finalizada deve ser removida");
@@ -88,7 +88,7 @@ class V1GarantirStatusMaletaETest {
     }
 
     @Test
-    @DisplayName("Deve preencher com ABERTO quando a base nao tem a coluna legada")
+    @DisplayName("Deve preencher com EM_PREPARACAO quando a base nao tem a coluna legada")
     void devePreencherComAbertoQuandoNaoHaColunaLegada() throws Exception {
         DataSource base = novaBase();
         try (Connection conexao = base.getConnection()) {
@@ -102,7 +102,7 @@ class V1GarantirStatusMaletaETest {
             aplicar(conexao);
 
             assertEquals(5, contar(conexao, "status_maleta"));
-            assertEquals(List.of("ABERTO", "ABERTO"), statusDasMaletas(conexao));
+            assertEquals(List.of("EM_PREPARACAO", "EM_PREPARACAO"), statusDasMaletas(conexao));
             assertTrue(colunaExiste(conexao, "movimentacao_revendedora", "status_maleta_id"));
         }
     }
@@ -114,7 +114,7 @@ class V1GarantirStatusMaletaETest {
         try (Connection conexao = base.getConnection()) {
             executar(conexao, DDL_STATUS);
             executar(conexao, DDL_VENDA_COM_COLUNA_LEGADA);
-            for (String nome : List.of("ABERTO", "EM_CONSIGNACAO", "EM_ACERTO", "FINALIZADA", "ERRO")) {
+            for (String nome : List.of("EM_PREPARACAO", "EM_CONSIGNACAO", "EM_ACERTO", "FINALIZADA", "ERRO")) {
                 executar(conexao, "INSERT INTO status_maleta (nome) VALUES ('" + nome + "')");
             }
             executar(conexao, """
@@ -164,7 +164,7 @@ class V1GarantirStatusMaletaETest {
         try (Connection conexao = base.getConnection()) {
             executar(conexao, DDL_STATUS);
             executar(conexao, DDL_VENDA_COM_COLUNA_LEGADA);
-            executar(conexao, "INSERT INTO status_maleta (nome) VALUES ('ABERTO')");
+            executar(conexao, "INSERT INTO status_maleta (nome) VALUES ('EM_PREPARACAO')");
             executar(conexao, """
                     INSERT INTO movimentacao_revendedora (id_movimentacao_revendedora, nome, is_finalizada, status_maleta_id)
                     VALUES (1, 'maleta-1', TRUE, NULL)
