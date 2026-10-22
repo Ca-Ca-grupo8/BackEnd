@@ -5,6 +5,7 @@ import com.caeca.estoque.database.model.statusMaleta.StatusMaletaEnum;
 import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
 import com.caeca.estoque.database.repository.movimentacaoRevendedora.MovimentacaoRevendedoraRepository;
 import com.caeca.estoque.dto.movimentacaoRevendedora.JoiaSaidaMaletaDto;
+import com.caeca.estoque.dto.movimentacaoRevendedora.MaletaResumoDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraMapper;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraRequestDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResponseDto;
@@ -17,11 +18,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class MovimentacaoRevendedoraService {
+
+    private static final List<StatusMaletaEnum> STATUS_FORA_DO_RESUMO = List.of(StatusMaletaEnum.FINALIZADA, StatusMaletaEnum.ERRO);
+    private static final List<StatusMaletaEnum> STATUS_EM_ANDAMENTO = List.of(
+            StatusMaletaEnum.EM_PREPARACAO, StatusMaletaEnum.EM_CONSIGNACAO, StatusMaletaEnum.EM_ACERTO);
+    private static final int TOP_PROXIMOS_VENCIMENTOS = 5;
 
     private final MovimentacaoRevendedoraRepository mrRepository;
     private final MovimentacaoRepository movimentacaoRepository;
@@ -50,11 +59,11 @@ public class MovimentacaoRevendedoraService {
     }
 
     public MovimentacaoRevendedora buscarOuCriarVendaPorRevendedora(MovimentacaoRevendedoraRequestDto requestDto){
-        return mrRepository.findByRevendedoraIdAndStatusNome(requestDto.getIdRevendedora(), StatusMaletaEnum.ABERTO)
+        return mrRepository.findByRevendedoraIdAndStatusNome(requestDto.getIdRevendedora(), StatusMaletaEnum.EM_PREPARACAO)
                 .orElseGet(() -> {
                     MovimentacaoRevendedora movimentacaoRevendedora = MovimentacaoRevendedoraMapper.toEntity(requestDto);
                     movimentacaoRevendedora.setRevendedora(revendedoraService.buscarPorId(requestDto.getIdRevendedora()));
-                    movimentacaoRevendedora.setStatus(statusMaletaService.buscarPorNome(StatusMaletaEnum.ABERTO));
+                    movimentacaoRevendedora.setStatus(statusMaletaService.buscarPorNome(StatusMaletaEnum.EM_PREPARACAO));
                     int rand = ThreadLocalRandom.current().nextInt(1000, 10000);
                     movimentacaoRevendedora.setNome((movimentacaoRevendedora.getRevendedora().getNome()
                             + "-" + LocalDate.now().getMonth()
@@ -65,7 +74,7 @@ public class MovimentacaoRevendedoraService {
     }
 
     public MovimentacaoRevendedora buscarVendaAbertaPorRevendedora(Long idRevendedora) {
-        return mrRepository.findByRevendedoraIdAndStatusNome(idRevendedora, StatusMaletaEnum.ABERTO)
+        return mrRepository.findByRevendedoraIdAndStatusNome(idRevendedora, StatusMaletaEnum.EM_PREPARACAO)
                 .orElseThrow(() -> new NotFoundException("Venda com o id da revendora " + idRevendedora + " não encontrada."));
     }
 
@@ -103,13 +112,35 @@ public class MovimentacaoRevendedoraService {
     public MovimentacaoRevendedora criar(MovimentacaoRevendedoraRequestDto dto){
         MovimentacaoRevendedora entity = MovimentacaoRevendedoraMapper.toEntity(dto);
         entity.setRevendedora(revendedoraService.buscarPorId(dto.getIdRevendedora()));
-        entity.setStatus(statusMaletaService.buscarPorNome(StatusMaletaEnum.ABERTO));
+        entity.setStatus(statusMaletaService.buscarPorNome(StatusMaletaEnum.EM_PREPARACAO));
         return mrRepository.save(entity);
     }
 
     public Page<MovimentacaoRevendedoraResponseDto> listarTodas(Pageable pageable) {
         return mrRepository.findAll(pageable)
                 .map(MovimentacaoRevendedoraMapper::toResponse);
+    }
+
+    public MaletaResumoDto resumoNaoFinalizadas() {
+        List<MovimentacaoRevendedora> maletas = mrRepository.findByStatusNomeNotIn(STATUS_FORA_DO_RESUMO);
+
+        Map<StatusMaletaEnum, Long> porStatus = new EnumMap<>(StatusMaletaEnum.class);
+        STATUS_EM_ANDAMENTO.forEach(status -> porStatus.put(status, 0L));
+        maletas.forEach(maleta -> porStatus.merge(maleta.getStatus().getNome(), 1L, Long::sum));
+
+        List<MaletaResumoDto.ProximoVencimentoDto> proximos = maletas.stream()
+                .filter(maleta -> maleta.getDataLimite() != null)
+                .sorted(Comparator.comparing(MovimentacaoRevendedora::getDataLimite))
+                .limit(TOP_PROXIMOS_VENCIMENTOS)
+                .map(maleta -> new MaletaResumoDto.ProximoVencimentoDto(
+                        maleta.getIdMovimentacaoRevendedora(),
+                        maleta.getNome(),
+                        maleta.getStatus().getNome(),
+                        maleta.getDataLimite()
+                ))
+                .toList();
+
+        return new MaletaResumoDto(maletas.size(), porStatus, proximos);
     }
 
     private void notificarMudancaDeStatus(MovimentacaoRevendedora maleta) {
