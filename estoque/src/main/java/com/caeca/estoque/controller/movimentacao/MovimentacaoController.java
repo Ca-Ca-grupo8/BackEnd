@@ -4,6 +4,7 @@ import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoResponseDto;
+import com.caeca.estoque.dto.movimentacao.TopJoiasSaidaDto;
 import com.caeca.estoque.service.movimentacao.MovimentacaoService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,6 +43,11 @@ public class MovimentacaoController {
         Page<MovimentacaoResponseDto> response = movimentacaoService.listar(nome, tipo, dataInicio, dataFim, pageable);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/top-joias-saida")
+    public ResponseEntity<TopJoiasSaidaDto> topJoiasMaisSaidas(){
+        return ResponseEntity.ok(movimentacaoService.buscarTopJoiasMaisSaidas());
     }
 
     @GetMapping("/{id}")

@@ -18,6 +18,8 @@ public interface MovimentacaoRevendedoraRepository extends JpaRepository<Movimen
 
     List<MovimentacaoRevendedora> findByDataLimiteBefore(LocalDateTime limite);
 
+    List<MovimentacaoRevendedora> findByStatusNomeNotIn(Collection<StatusMaletaEnum> statusMaletaEnums);
+
     MovimentacaoRevendedora findFirstByRevendedoraIdOrderByIdMovimentacaoRevendedoraDesc(Long id);
 
     Optional<MovimentacaoRevendedora> findByRevendedoraIdAndStatusNomeNot(Long idRevendedora, StatusMaletaEnum statusMaletaEnum);

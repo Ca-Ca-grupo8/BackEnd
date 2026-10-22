@@ -4,11 +4,15 @@ import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
 import com.caeca.estoque.database.model.motivoMovimentacao.MotivoMovimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
+import com.caeca.estoque.database.repository.movimentacao.JoiaSaidaProjecao;
+import com.caeca.estoque.database.repository.movimentacao.MotivoSaidaJoiaProjecao;
 import com.caeca.estoque.database.repository.movimentacao.MovimentacaoRepository;
+import com.caeca.estoque.dto.movimentacao.JoiaMaisSaidaDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoContextDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoMapper;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoRequestDto;
 import com.caeca.estoque.dto.movimentacao.MovimentacaoResponseDto;
+import com.caeca.estoque.dto.movimentacao.TopJoiasSaidaDto;
 import com.caeca.estoque.exception.BadRequestException;
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.joia.JoiaService;
@@ -18,6 +22,7 @@ import com.caeca.estoque.strategy.movimentacao.MovimentacaoContext;
 import com.caeca.estoque.strategy.movimentacao.MovimentacaoStrategy;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Pageable;
@@ -25,8 +30,11 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MovimentacaoService {
@@ -51,6 +59,35 @@ public class MovimentacaoService {
 
         return movimentacaoRepository.buscarComFiltros(nome, tipo, inicioComHora, fimComHora, pageable)
                 .map(MovimentacaoMapper::toResponse);
+    }
+
+    public TopJoiasSaidaDto buscarTopJoiasMaisSaidas() {
+        LocalDateTime inicio = LocalDate.now().minusMonths(1).withDayOfMonth(1).atStartOfDay();
+        LocalDateTime fim = inicio.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX);
+
+        List<JoiaSaidaProjecao> topJoias = movimentacaoRepository.buscarJoiasMaisSaidas(inicio, fim, PageRequest.of(0, 3));
+        if (topJoias.isEmpty()) {
+            return new TopJoiasSaidaDto(List.of());
+        }
+
+        List<Long> idsJoias = topJoias.stream().map(JoiaSaidaProjecao::idJoia).toList();
+
+        Map<Long, MotivoSaidaJoiaProjecao> motivoMaisComumPorJoia = new HashMap<>();
+        for (MotivoSaidaJoiaProjecao motivo : movimentacaoRepository.buscarMotivosSaidaDasJoias(inicio, fim, idsJoias)) {
+            MotivoSaidaJoiaProjecao atual = motivoMaisComumPorJoia.get(motivo.idJoia());
+            if (atual == null || motivo.quantidade() > atual.quantidade()) {
+                motivoMaisComumPorJoia.put(motivo.idJoia(), motivo);
+            }
+        }
+
+        List<JoiaMaisSaidaDto> joias = topJoias.stream()
+                .map(joia -> new JoiaMaisSaidaDto(
+                        joia.idJoia(),
+                        joia.quantidadeMedia(),
+                        motivoMaisComumPorJoia.get(joia.idJoia()).motivo()))
+                .toList();
+
+        return new TopJoiasSaidaDto(joias);
     }
 
     public Movimentacao buscarPorId(Long id) {
