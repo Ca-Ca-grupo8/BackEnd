@@ -16,6 +16,7 @@ import com.caeca.estoque.service.banho.BanhoService;
 import com.caeca.estoque.service.categoria.CategoriaService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -83,6 +84,18 @@ public class JoiaService {
 
         JoiaSaidaDto response = JoiaMapper.toResponse(joia);
         preencherFornecedores(response, joia.getId());
+
+        return response;
+    }
+
+    public List<JoiaSaidaDto> listarAbaixoDoMinimo(int limite) {
+        List<JoiaSaidaDto> response = joiaRepository
+                .findAbaixoDoMinimo(PageRequest.of(0, Math.max(limite, 1)))
+                .stream()
+                .map(JoiaMapper::toResponse)
+                .toList();
+
+        preencherFornecedoresEmLote(response);
 
         return response;
     }

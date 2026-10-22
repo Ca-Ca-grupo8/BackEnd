@@ -77,7 +77,7 @@ public class V1__garantir_status_maleta_e_backfill extends BaseJavaMigration {
                                      Map<StatusMaletaEnum, Long> ids) throws SQLException {
         boolean temColunaLegada = colunaExiste(meta, TABELA_VENDA, COLUNA_LEGADA);
 
-        long idAberto = ids.get(StatusMaletaEnum.ABERTO);
+        long idAberto = ids.get(StatusMaletaEnum.EM_PREPARACAO);
         long idFinalizada = ids.get(StatusMaletaEnum.FINALIZADA);
 
         String consulta = "SELECT " + COLUNA_VENDA_ID

@@ -35,7 +35,7 @@ class StatusMaletaServiceTest {
         @DisplayName("Deve retornar lista de status com sucesso quando existirem dados")
         void deveRetornarListaQuandoExistiremDados() {
             when(statusMaletaRepository.findAll()).thenReturn(List.of(
-                    new StatusMaleta(1L, StatusMaletaEnum.ABERTO),
+                    new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO),
                     new StatusMaleta(2L, StatusMaletaEnum.FINALIZADA)
             ));
 
@@ -43,7 +43,7 @@ class StatusMaletaServiceTest {
 
             assertNotNull(resultado);
             assertEquals(2, resultado.size());
-            assertEquals(StatusMaletaEnum.ABERTO, resultado.get(0).getNome());
+            assertEquals(StatusMaletaEnum.EM_PREPARACAO, resultado.get(0).getNome());
             verify(statusMaletaRepository, times(1)).findAll();
         }
 
@@ -67,14 +67,14 @@ class StatusMaletaServiceTest {
         @Test
         @DisplayName("Deve retornar o status quando ele existir na base")
         void deveRetornarStatusQuandoExistirNaBase() {
-            StatusMaleta aberto = new StatusMaleta(1L, StatusMaletaEnum.ABERTO);
-            when(statusMaletaRepository.findByNome(StatusMaletaEnum.ABERTO))
+            StatusMaleta aberto = new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO);
+            when(statusMaletaRepository.findByNome(StatusMaletaEnum.EM_PREPARACAO))
                     .thenReturn(Optional.of(aberto));
 
-            StatusMaleta resultado = statusMaletaService.buscarPorNome(StatusMaletaEnum.ABERTO);
+            StatusMaleta resultado = statusMaletaService.buscarPorNome(StatusMaletaEnum.EM_PREPARACAO);
 
             assertEquals(aberto, resultado);
-            verify(statusMaletaRepository, times(1)).findByNome(StatusMaletaEnum.ABERTO);
+            verify(statusMaletaRepository, times(1)).findByNome(StatusMaletaEnum.EM_PREPARACAO);
         }
 
         @Test
@@ -95,7 +95,7 @@ class StatusMaletaServiceTest {
         @Test
         @DisplayName("Deve retornar o status quando ele existir na base")
         void deveRetornarStatusQuandoExistirNaBase() {
-            StatusMaleta aberto = new StatusMaleta(1L, StatusMaletaEnum.ABERTO);
+            StatusMaleta aberto = new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO);
             when(statusMaletaRepository.findById(1L)).thenReturn(Optional.of(aberto));
 
             StatusMaleta resultado = statusMaletaService.buscarPorId(1L);

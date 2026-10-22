@@ -1,6 +1,7 @@
 package com.caeca.estoque.controller.movimentacaoRevendedora;
 
 import com.caeca.estoque.dto.movimentacaoRevendedora.JoiaSaidaMaletaDto;
+import com.caeca.estoque.dto.movimentacaoRevendedora.MaletaResumoDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraMapper;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraRequestDto;
 import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraResponseDto;
@@ -35,6 +36,11 @@ public class MovimentacaoRevendedoraController {
         Page<MovimentacaoRevendedoraResponseDto> response = mrService.listarTodas(pageable);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/resumo")
+    public ResponseEntity<MaletaResumoDto> resumo(){
+        return ResponseEntity.ok(mrService.resumoNaoFinalizadas());
     }
 
     @GetMapping("/{id}")

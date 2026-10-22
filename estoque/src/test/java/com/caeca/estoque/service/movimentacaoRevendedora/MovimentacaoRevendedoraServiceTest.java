@@ -124,7 +124,7 @@ class MovimentacaoRevendedoraServiceTest {
             requestDto.setIdRevendedora(1L);
 
             MovimentacaoRevendedora movimentacaoExistente = new MovimentacaoRevendedora();
-            when(mrRepository.findByRevendedoraIdAndStatusNome(1L, StatusMaletaEnum.ABERTO))
+            when(mrRepository.findByRevendedoraIdAndStatusNome(1L, StatusMaletaEnum.EM_PREPARACAO))
                     .thenReturn(Optional.of(movimentacaoExistente));
 
             MovimentacaoRevendedora resultado =
@@ -144,11 +144,11 @@ class MovimentacaoRevendedoraServiceTest {
             Revendedora revendedora = new Revendedora();
             MovimentacaoRevendedora novaMovimentacao = new MovimentacaoRevendedora();
 
-            when(mrRepository.findByRevendedoraIdAndStatusNome(1L, StatusMaletaEnum.ABERTO))
+            when(mrRepository.findByRevendedoraIdAndStatusNome(1L, StatusMaletaEnum.EM_PREPARACAO))
                     .thenReturn(Optional.empty());
             when(revendedoraService.buscarPorId(1L)).thenReturn(revendedora);
-            when(statusMaletaService.buscarPorNome(StatusMaletaEnum.ABERTO))
-                    .thenReturn(new StatusMaleta(1L, StatusMaletaEnum.ABERTO));
+            when(statusMaletaService.buscarPorNome(StatusMaletaEnum.EM_PREPARACAO))
+                    .thenReturn(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
             when(mrRepository.save(any(MovimentacaoRevendedora.class))).thenReturn(novaMovimentacao);
 
             MovimentacaoRevendedora resultado =
@@ -168,7 +168,7 @@ class MovimentacaoRevendedoraServiceTest {
         @DisplayName("Deve retornar movimentação quando encontrar venda aberta para a revendedora")
         void deveRetornarMovimentacaoQuandoEncontrarVendaAberta() {
             MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
-            when(mrRepository.findByRevendedoraIdAndStatusNome(1L, StatusMaletaEnum.ABERTO))
+            when(mrRepository.findByRevendedoraIdAndStatusNome(1L, StatusMaletaEnum.EM_PREPARACAO))
                     .thenReturn(Optional.of(movimentacao));
 
             MovimentacaoRevendedora resultado =
@@ -181,7 +181,7 @@ class MovimentacaoRevendedoraServiceTest {
         @Test
         @DisplayName("Deve lançar NotFoundException quando não houver venda aberta para a revendedora")
         void deveLancarNotFoundExceptionQuandoNaoHouverVendaAberta() {
-            when(mrRepository.findByRevendedoraIdAndStatusNome(1L, StatusMaletaEnum.ABERTO))
+            when(mrRepository.findByRevendedoraIdAndStatusNome(1L, StatusMaletaEnum.EM_PREPARACAO))
                     .thenReturn(Optional.empty());
 
             assertThrows(NotFoundException.class,
@@ -320,7 +320,7 @@ class MovimentacaoRevendedoraServiceTest {
         @DisplayName("Deve atualizar o status da maleta com sucesso quando encontrar pelo id")
         void deveAtualizarStatusComSucesso() {
             MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
-            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.ABERTO));
+            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
 
             MovimentacaoRevendedoraStatusPatchDto patch =
                     new MovimentacaoRevendedoraStatusPatchDto(2L);
@@ -357,7 +357,7 @@ class MovimentacaoRevendedoraServiceTest {
         void deveNotificarLoteEmConsignacao() {
             MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
             movimentacao.setIdMovimentacaoRevendedora(7L);
-            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.ABERTO));
+            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
 
             StatusMaleta emConsignacao = new StatusMaleta(2L, StatusMaletaEnum.EM_CONSIGNACAO);
 
@@ -397,7 +397,7 @@ class MovimentacaoRevendedoraServiceTest {
         void deveNaoNotificarQuandoStatusNaoTiverRegra() {
             MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
             movimentacao.setIdMovimentacaoRevendedora(9L);
-            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.ABERTO));
+            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
 
             StatusMaleta emAcerto = new StatusMaleta(4L, StatusMaletaEnum.EM_ACERTO);
 
@@ -427,8 +427,8 @@ class MovimentacaoRevendedoraServiceTest {
             MovimentacaoRevendedora movimentacaoSalva = new MovimentacaoRevendedora();
 
             when(revendedoraService.buscarPorId(1L)).thenReturn(revendedora);
-            when(statusMaletaService.buscarPorNome(StatusMaletaEnum.ABERTO))
-                    .thenReturn(new StatusMaleta(1L, StatusMaletaEnum.ABERTO));
+            when(statusMaletaService.buscarPorNome(StatusMaletaEnum.EM_PREPARACAO))
+                    .thenReturn(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
             when(mrRepository.save(any(MovimentacaoRevendedora.class))).thenReturn(movimentacaoSalva);
 
             MovimentacaoRevendedora resultado = movimentacaoRevendedoraService.criar(dto);
