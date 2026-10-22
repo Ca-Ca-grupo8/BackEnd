@@ -84,4 +84,23 @@ public class NotificacaoBrevoService {
     public void notificacaoRevendedoraInativa(String email, String nome, Map<String, String> params) {
         notificacaoProducer.enviarMensagem(email, nome, TEMPLATE_REVENDEDORA_INATIVA, params);
     }
+
+    public static String nomeTemplate(Long templateId) {
+        if (templateId == null) {
+            return null;
+        }
+        return switch (templateId.intValue()) {
+            case 2 -> "Boas-vindas";
+            case 3 -> "Lote em consignação";
+            case 4 -> "Alerta de vencimento";
+            case 5 -> "Cobrança de atraso";
+            case 6 -> "Fechamento de lote";
+            case 7 -> "Aniversário";
+            case 8 -> "Meta atingida";
+            case 9 -> "Estoque baixo";
+            case 10 -> "Peça parada";
+            case 11 -> "Revendedora inativa";
+            default -> "Desconhecido (" + templateId + ")";
+        };
+    }
 }

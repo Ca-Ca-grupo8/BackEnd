@@ -174,7 +174,7 @@ class MaletaRotinaDiariaServiceTest {
         @Test
         @DisplayName("Deve devolver zero quando a maleta nao tem vencimento definido")
         void deveDevolverZeroSemVencimento() {
-            MovimentacaoRevendedora maleta = maleta(9L, null, StatusMaletaEnum.ABERTO);
+            MovimentacaoRevendedora maleta = maleta(9L, null, StatusMaletaEnum.EM_PREPARACAO);
 
             assertEquals(0L, maletaRotinaDiariaService.diasAteVencimento(maleta, HOJE));
         }
