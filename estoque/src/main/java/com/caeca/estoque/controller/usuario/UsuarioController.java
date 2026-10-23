@@ -44,6 +44,14 @@ public class UsuarioController {
         return ResponseEntity.status(201).build();
     }
 
+    @GetMapping("/{id}")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<UsuarioListarDto> buscarPorId(@PathVariable Long id) {
+        Usuario usuario = this.usuarioService.buscarPorId(id);
+        return ResponseEntity.ok(UsuarioMapper.of(usuario));
+    }
+
     /**
      * Autentica o usuário e retorna o token JWT como cookie HttpOnly.
      *

@@ -79,4 +79,10 @@ public class UsuarioService {
         return usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(404, "Usuário logado não encontrado", null));
     }
+
+    public Usuario buscarPorId(Long id) {
+        return this.usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(404, "Usuário não encontrado", null));
+    }
+
 }
