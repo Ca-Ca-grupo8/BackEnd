@@ -2,9 +2,15 @@ package com.caeca.estoque.database.model.usuario;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Tag(name = "Usuários")
+@EntityListeners(AuditingEntityListener.class)
 public class Usuario {
 
     @Id
@@ -20,6 +26,14 @@ public class Usuario {
 
     @Enumerated(EnumType.STRING)
     private StatusUsuario status = StatusUsuario.PENDENTE;
+
+    @CreatedDate
+    @Column(name = "data_cadastro", updatable = false)
+    private LocalDateTime dataCadastro;
+
+    @LastModifiedDate
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao;
 
     public Long getId() {
         return id;
@@ -67,5 +81,21 @@ public class Usuario {
 
     public void setStatus(StatusUsuario status) {
         this.status = status;
+    }
+
+    public LocalDateTime getDataCadastro() {
+        return dataCadastro;
+    }
+
+    public void setDataCadastro(LocalDateTime dataCadastro) {
+        this.dataCadastro = dataCadastro;
+    }
+
+    public LocalDateTime getDataAtualizacao() {
+        return dataAtualizacao;
+    }
+
+    public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
     }
 }
