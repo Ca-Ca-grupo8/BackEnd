@@ -62,6 +62,9 @@ public class UsuarioMapper {
         usuarioListarDto.setEmail(usuario.getEmail());
         usuarioListarDto.setNome(usuario.getNome());
         usuarioListarDto.setRole(usuario.getPerfil());
+        usuarioListarDto.setStatus(usuario.getStatus());
+        usuarioListarDto.setDataCadastro(usuario.getDataCadastro());
+        usuarioListarDto.setDataAtualizacao(usuario.getDataAtualizacao());
 
         return usuarioListarDto;
     }
