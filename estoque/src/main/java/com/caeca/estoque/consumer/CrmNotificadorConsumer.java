@@ -44,10 +44,14 @@ public class CrmNotificadorConsumer {
         log.warn("chegou no consumer");
 
         var destinatario = new BrevoEmailRequest.Destinatario(evento.emailDestino(), evento.nomeRevendedora());
+        var anexos = evento.anexos() == null ? null : evento.anexos().stream()
+                .map(anexo -> new BrevoEmailRequest.Anexo(anexo.nome(), anexo.conteudoBase64()))
+                .toList();
         var requestBrevo = new BrevoEmailRequest(
                 List.of(destinatario),
                 evento.templateId(),
-                evento.parametros()
+                evento.parametros(),
+                anexos
         );
 
         try {

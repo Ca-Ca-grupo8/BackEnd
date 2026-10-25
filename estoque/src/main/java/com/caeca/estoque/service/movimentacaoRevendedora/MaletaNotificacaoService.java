@@ -18,9 +18,9 @@ public class MaletaNotificacaoService {
         this.notificacaoEnvioService = notificacaoEnvioService;
     }
 
-    public void notificarLoteEmConsignacao(MovimentacaoRevendedora maleta) {
+    public void notificarLoteEmConsignacao(MovimentacaoRevendedora maleta, byte[] comprovante) {
         if (registrarEnvio(maleta, NotificacaoBrevoService.TEMPLATE_LOTE_EM_CONSIGNACAO, false)) {
-            notificacaoBrevoService.notificacaoLoteEmConsignacao(maleta);
+            notificacaoBrevoService.notificacaoLoteEmConsignacao(maleta, comprovante);
         }
     }
 
