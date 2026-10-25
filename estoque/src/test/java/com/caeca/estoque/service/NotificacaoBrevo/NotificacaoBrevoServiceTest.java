@@ -2,6 +2,7 @@ package com.caeca.estoque.service.NotificacaoBrevo;
 
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
 import com.caeca.estoque.database.model.revendedora.Revendedora;
+import com.caeca.estoque.dto.brevo.NotificacaoEventoDto;
 import com.caeca.estoque.producer.interfaceProducer.NotificacaoProducer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Mockito.times;
@@ -44,9 +46,12 @@ class NotificacaoBrevoServiceTest {
     class notificacaoLoteEmConsignacao {
 
         @Test
-        @DisplayName("Deve enviar o template 3 com nome da revendedora e data de vencimento")
-        void deveEnviarTemplateTres() {
-            notificacaoBrevoService.notificacaoLoteEmConsignacao(maleta());
+        @DisplayName("Deve enviar o template 3 com nome da revendedora, data de vencimento e comprovante em anexo")
+        void deveEnviarTemplateTresComComprovante() {
+            MovimentacaoRevendedora maleta = maleta();
+            maleta.setIdMovimentacaoRevendedora(9L);
+
+            notificacaoBrevoService.notificacaoLoteEmConsignacao(maleta, new byte[]{1, 2, 3});
 
             verify(notificacaoProducer, times(1)).enviarMensagem(
                     "joias@exemplo.com",
@@ -55,7 +60,24 @@ class NotificacaoBrevoServiceTest {
                     Map.of(
                             "nomeRevendedora", "Joias Silva",
                             "dataVencimento", "15/01/2026"
-                    ));
+                    ),
+                    List.of(new NotificacaoEventoDto.Anexo("comprovante-maleta-9.pdf", "AQID")));
+        }
+
+        @Test
+        @DisplayName("Deve enviar o template 3 sem anexo quando o comprovante nao foi gerado")
+        void deveEnviarTemplateTresSemComprovante() {
+            notificacaoBrevoService.notificacaoLoteEmConsignacao(maleta(), null);
+
+            verify(notificacaoProducer, times(1)).enviarMensagem(
+                    "joias@exemplo.com",
+                    "Joias Silva",
+                    3L,
+                    Map.of(
+                            "nomeRevendedora", "Joias Silva",
+                            "dataVencimento", "15/01/2026"
+                    ),
+                    List.of());
         }
     }
 
