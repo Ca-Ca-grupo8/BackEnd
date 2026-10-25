@@ -13,20 +13,36 @@ import com.caeca.estoque.dto.movimentacaoRevendedora.MovimentacaoRevendedoraStat
 import com.caeca.estoque.exception.NotFoundException;
 import com.caeca.estoque.service.revendedora.RevendedoraService;
 import com.caeca.estoque.service.statusMaleta.StatusMaletaService;
+import com.caeca.estoque.dto.maleta.MaletaNotificacaoMapper;
+import org.openpdf.text.Chunk;
+import org.openpdf.text.Document;
+import org.openpdf.text.DocumentException;
+import org.openpdf.text.FontFactory;
+import org.openpdf.text.PageSize;
+import org.openpdf.text.Paragraph;
+import org.openpdf.text.Phrase;
+import org.openpdf.text.pdf.PdfPCell;
+import org.openpdf.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfWriter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Slf4j
 @Service
 public class MovimentacaoRevendedoraService {
 
+    private static final DateTimeFormatter DATA_ENVIO = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final List<StatusMaletaEnum> STATUS_FORA_DO_RESUMO = List.of(StatusMaletaEnum.FINALIZADA, StatusMaletaEnum.ERRO);
     private static final List<StatusMaletaEnum> STATUS_EM_ANDAMENTO = List.of(
             StatusMaletaEnum.EM_PREPARACAO, StatusMaletaEnum.EM_CONSIGNACAO, StatusMaletaEnum.EM_ACERTO);
@@ -98,6 +114,45 @@ public class MovimentacaoRevendedoraService {
         return movimentacaoRepository.buscarJoiasComSaidaNaMaleta(maleta.getIdMovimentacaoRevendedora());
     }
 
+    public byte[] gerarComprovantePdf(MovimentacaoRevendedora maleta) {
+        List<JoiaSaidaMaletaDto> joias = movimentacaoRepository.buscarJoiasComSaidaNaMaleta(maleta.getIdMovimentacaoRevendedora());
+        long totalPecas = joias.stream().mapToLong(JoiaSaidaMaletaDto::getQuantidade).sum();
+
+        var saida = new ByteArrayOutputStream();
+        var documento = new Document(PageSize.A4);
+        try {
+            PdfWriter.getInstance(documento, saida);
+            documento.open();
+
+            documento.add(new Paragraph("Comprovante de envio de maleta", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16)));
+            documento.add(new Paragraph("Revendedora: " + MaletaNotificacaoMapper.nomeRevendedora(maleta)));
+            documento.add(new Paragraph("Maleta: " + maleta.getNome()));
+            documento.add(new Paragraph("Data de envio: " + LocalDate.now().format(DATA_ENVIO)));
+            documento.add(new Paragraph("Data limite: " + MaletaNotificacaoMapper.dataVencimento(maleta)));
+            documento.add(Chunk.NEWLINE);
+
+            PdfPTable tabela = new PdfPTable(new float[]{1f, 4f, 1.5f});
+            tabela.setWidthPercentage(100);
+            for (String titulo : List.of("ID", "Joia", "Quantidade")) {
+                tabela.addCell(new PdfPCell(new Phrase(titulo, FontFactory.getFont(FontFactory.HELVETICA_BOLD))));
+            }
+            for (JoiaSaidaMaletaDto joia : joias) {
+                tabela.addCell(String.valueOf(joia.getId()));
+                tabela.addCell(joia.getNome());
+                tabela.addCell(String.valueOf(joia.getQuantidade()));
+            }
+            documento.add(tabela);
+
+            documento.add(new Paragraph("Total de peças: " + totalPecas));
+        } catch (DocumentException e) {
+            throw new IllegalStateException("Falha ao gerar comprovante da maleta " + maleta.getIdMovimentacaoRevendedora(), e);
+        } finally {
+            documento.close();
+        }
+
+        return saida.toByteArray();
+    }
+
     public MovimentacaoRevendedora atualizarStatus(Long id, MovimentacaoRevendedoraStatusPatchDto patch) {
         MovimentacaoRevendedora response = buscarPorId(id);
         response.setStatus(statusMaletaService.buscarPorId(patch.getIdStatus()));
@@ -143,11 +198,20 @@ public class MovimentacaoRevendedoraService {
         return new MaletaResumoDto(maletas.size(), porStatus, proximos);
     }
 
+    private byte[] gerarComprovantePdfSeguro(MovimentacaoRevendedora maleta) {
+        try {
+            return gerarComprovantePdf(maleta);
+        } catch (RuntimeException e) {
+            log.error("Falha ao gerar comprovante da maleta {}. O e-mail será enviado sem anexo.", maleta.getIdMovimentacaoRevendedora(), e);
+            return null;
+        }
+    }
+
     private void notificarMudancaDeStatus(MovimentacaoRevendedora maleta) {
         StatusMaletaEnum status = maleta.getStatus() != null ? maleta.getStatus().getNome() : null;
 
         if (status == StatusMaletaEnum.EM_CONSIGNACAO) {
-            maletaNotificacaoService.notificarLoteEmConsignacao(maleta);
+            maletaNotificacaoService.notificarLoteEmConsignacao(maleta, gerarComprovantePdfSeguro(maleta));
             return;
         }
 

@@ -21,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -368,8 +369,28 @@ class MovimentacaoRevendedoraServiceTest {
             movimentacaoRevendedoraService.atualizarStatus(1L,
                     new MovimentacaoRevendedoraStatusPatchDto(2L));
 
-            verify(maletaNotificacaoService, times(1)).notificarLoteEmConsignacao(movimentacao);
+            verify(maletaNotificacaoService, times(1)).notificarLoteEmConsignacao(eq(movimentacao), any(byte[].class));
             verify(maletaNotificacaoService, never()).notificarFechamentoLote(any(), anyMap(), anyBoolean());
+        }
+
+        @Test
+        @DisplayName("Deve notificar sem anexo quando a geracao do comprovante falhar")
+        void deveNotificarSemAnexoQuandoComprovanteFalhar() {
+            MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
+            movimentacao.setIdMovimentacaoRevendedora(7L);
+            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
+
+            StatusMaleta emConsignacao = new StatusMaleta(2L, StatusMaletaEnum.EM_CONSIGNACAO);
+
+            when(mrRepository.findById(1L)).thenReturn(Optional.of(movimentacao));
+            when(statusMaletaService.buscarPorId(2L)).thenReturn(emConsignacao);
+            when(mrRepository.save(any(MovimentacaoRevendedora.class))).thenReturn(movimentacao);
+            when(movimentacaoRepository.buscarJoiasComSaidaNaMaleta(7L)).thenThrow(new RuntimeException("Banco indisponivel"));
+
+            movimentacaoRevendedoraService.atualizarStatus(1L,
+                    new MovimentacaoRevendedoraStatusPatchDto(2L));
+
+            verify(maletaNotificacaoService, times(1)).notificarLoteEmConsignacao(movimentacao, null);
         }
 
         @Test
@@ -389,7 +410,7 @@ class MovimentacaoRevendedoraServiceTest {
                     new MovimentacaoRevendedoraStatusPatchDto(3L));
 
             verify(maletaNotificacaoService, times(1)).notificarFechamentoLote(eq(movimentacao), any(), anyBoolean());
-            verify(maletaNotificacaoService, never()).notificarLoteEmConsignacao(any());
+            verify(maletaNotificacaoService, never()).notificarLoteEmConsignacao(any(), any());
         }
 
         @Test
@@ -408,8 +429,40 @@ class MovimentacaoRevendedoraServiceTest {
             movimentacaoRevendedoraService.atualizarStatus(1L,
                     new MovimentacaoRevendedoraStatusPatchDto(4L));
 
-            verify(maletaNotificacaoService, never()).notificarLoteEmConsignacao(any());
+            verify(maletaNotificacaoService, never()).notificarLoteEmConsignacao(any(), any());
             verify(maletaNotificacaoService, never()).notificarFechamentoLote(any(), anyMap(), anyBoolean());
+        }
+    }
+
+    @Nested
+    @DisplayName("gerarComprovantePdf")
+    class gerarComprovantePdf {
+
+        @Test
+        @DisplayName("Deve gerar um PDF com as joias enviadas na maleta")
+        void deveGerarPdfComJoias() {
+            MovimentacaoRevendedora maleta = new MovimentacaoRevendedora();
+            maleta.setIdMovimentacaoRevendedora(7L);
+
+            when(movimentacaoRepository.buscarJoiasComSaidaNaMaleta(7L))
+                    .thenReturn(List.of(new JoiaSaidaMaletaDto(1L, "Anel", 2L)));
+
+            byte[] pdf = movimentacaoRevendedoraService.gerarComprovantePdf(maleta);
+
+            assertEquals("%PDF", new String(pdf, 0, 4, StandardCharsets.US_ASCII));
+        }
+
+        @Test
+        @DisplayName("Deve gerar um PDF valido mesmo quando a maleta nao tem joias")
+        void deveGerarPdfSemJoias() {
+            MovimentacaoRevendedora maleta = new MovimentacaoRevendedora();
+            maleta.setIdMovimentacaoRevendedora(7L);
+
+            when(movimentacaoRepository.buscarJoiasComSaidaNaMaleta(7L)).thenReturn(List.of());
+
+            byte[] pdf = movimentacaoRevendedoraService.gerarComprovantePdf(maleta);
+
+            assertEquals("%PDF", new String(pdf, 0, 4, StandardCharsets.US_ASCII));
         }
     }
 

@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -20,10 +21,10 @@ public class RabbitMqNotificacaoProducer implements NotificacaoProducer {
     }
 
     @Override
-    public void enviarMensagem(String email, String nome, Long templateId, Map<String, String> params) {
-        var evento = new NotificacaoEventoDto(email, nome, templateId, params);
+    public void enviarMensagem(String email, String nome, Long templateId, Map<String, String> params, List<NotificacaoEventoDto.Anexo> anexos) {
+        var evento = new NotificacaoEventoDto(email, nome, templateId, params, anexos);
 
-        log.warn("passou no convert and send: " + evento);
+        log.warn("passou no convert and send: template=" + templateId + " anexos=" + anexos.size());
 
         rabbitTemplate.convertAndSend(
                 RabbitMQConfig.EXCHANGE_NOTIFICACAO,
