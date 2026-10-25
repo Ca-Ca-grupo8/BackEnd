@@ -50,14 +50,15 @@ class MaletaNotificacaoServiceTest {
         @DisplayName("Deve enviar o template 3 quando o envio ainda nao foi registrado")
         void deveEnviarQuandoNaoRegistradoAnteriormente() {
             MovimentacaoRevendedora maleta = maleta(1L);
+            byte[] comprovante = new byte[]{1, 2, 3};
             when(notificacaoEnvioService.registrarEnvio(TipoReferencia.MALETA, 1L,
                     NotificacaoBrevoService.TEMPLATE_LOTE_EM_CONSIGNACAO, false)).thenReturn(true);
 
-            maletaNotificacaoService.notificarLoteEmConsignacao(maleta);
+            maletaNotificacaoService.notificarLoteEmConsignacao(maleta, comprovante);
 
             verify(notificacaoEnvioService, times(1)).registrarEnvio(TipoReferencia.MALETA, 1L,
                     NotificacaoBrevoService.TEMPLATE_LOTE_EM_CONSIGNACAO, false);
-            verify(notificacaoBrevoService, times(1)).notificacaoLoteEmConsignacao(maleta);
+            verify(notificacaoBrevoService, times(1)).notificacaoLoteEmConsignacao(maleta, comprovante);
         }
 
         @Test
@@ -67,11 +68,11 @@ class MaletaNotificacaoServiceTest {
             when(notificacaoEnvioService.registrarEnvio(TipoReferencia.MALETA, 1L,
                     NotificacaoBrevoService.TEMPLATE_LOTE_EM_CONSIGNACAO, false)).thenReturn(false);
 
-            maletaNotificacaoService.notificarLoteEmConsignacao(maleta);
+            maletaNotificacaoService.notificarLoteEmConsignacao(maleta, new byte[]{1, 2, 3});
 
             verify(notificacaoEnvioService, times(1)).registrarEnvio(TipoReferencia.MALETA, 1L,
                     NotificacaoBrevoService.TEMPLATE_LOTE_EM_CONSIGNACAO, false);
-            verify(notificacaoBrevoService, never()).notificacaoLoteEmConsignacao(any());
+            verify(notificacaoBrevoService, never()).notificacaoLoteEmConsignacao(any(), any());
         }
     }
 
@@ -187,9 +188,9 @@ class MaletaNotificacaoServiceTest {
             MovimentacaoRevendedora maleta = maleta(5L);
             when(notificacaoEnvioService.registrarEnvio(any(), anyLong(), anyLong(), anyBoolean())).thenReturn(false);
 
-            maletaNotificacaoService.notificarLoteEmConsignacao(maleta);
+            maletaNotificacaoService.notificarLoteEmConsignacao(maleta, new byte[]{1, 2, 3});
 
-            verify(notificacaoBrevoService, never()).notificacaoLoteEmConsignacao(any());
+            verify(notificacaoBrevoService, never()).notificacaoLoteEmConsignacao(any(), any());
         }
     }
 }

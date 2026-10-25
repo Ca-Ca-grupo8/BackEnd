@@ -1,11 +1,14 @@
 package com.caeca.estoque.service.NotificacaoBrevo;
 
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
+import com.caeca.estoque.dto.brevo.NotificacaoEventoDto;
 import com.caeca.estoque.dto.maleta.MaletaNotificacaoMapper;
 import com.caeca.estoque.producer.interfaceProducer.NotificacaoProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -33,12 +36,15 @@ public class NotificacaoBrevoService {
         notificacaoProducer.enviarMensagem(email, nome, TEMPLATE_BOAS_VINDAS, Map.of("nomeRevendedora", nome));
     }
 
-    public void notificacaoLoteEmConsignacao(MovimentacaoRevendedora maleta) {
+    public void notificacaoLoteEmConsignacao(MovimentacaoRevendedora maleta, byte[] comprovante) {
         log.warn("passou no envio");
         enviarParaMaleta(maleta, TEMPLATE_LOTE_EM_CONSIGNACAO, Map.of(
                 "nomeRevendedora", MaletaNotificacaoMapper.nomeRevendedora(maleta),
                 "dataVencimento", MaletaNotificacaoMapper.dataVencimento(maleta)
-        ));
+        ), comprovante == null ? List.of() : List.of(new NotificacaoEventoDto.Anexo(
+                "comprovante-maleta-" + maleta.getIdMovimentacaoRevendedora() + ".pdf",
+                Base64.getEncoder().encodeToString(comprovante)
+        )));
     }
 
     public void notificacaoAlertaVencimento(MovimentacaoRevendedora maleta, long diasRestantes) {
@@ -62,6 +68,16 @@ public class NotificacaoBrevoService {
                 MaletaNotificacaoMapper.nomeRevendedora(maleta),
                 templateId,
                 params
+        );
+    }
+
+    private void enviarParaMaleta(MovimentacaoRevendedora maleta, long templateId, Map<String, String> params, List<NotificacaoEventoDto.Anexo> anexos) {
+        notificacaoProducer.enviarMensagem(
+                MaletaNotificacaoMapper.emailRevendedora(maleta),
+                MaletaNotificacaoMapper.nomeRevendedora(maleta),
+                templateId,
+                params,
+                anexos
         );
     }
 
