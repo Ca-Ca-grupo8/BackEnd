@@ -1,6 +1,7 @@
 package com.caeca.estoque.database.repository.movimentacao;
 
 import com.caeca.estoque.database.model.fornecedores.Fornecedor;
+import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.dto.dashboard.GraficoMotivoDto;
@@ -198,6 +199,15 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
               AND m.fornecedor IS NOT NULL
     """)
     List<FornecedorJoiaProjecao> buscarFornecedoresDasJoias(@Param("joiaIds") List<Long> joiaIds);
+
+    @Query("""
+            SELECT j FROM Joia j
+            WHERE j.id IN (
+                SELECT m.joia.id FROM Movimentacao m
+                WHERE m.fornecedor.id = :fornecedorId
+            )
+    """)
+    Page<Joia> buscarJoiasDoFornecedor(@Param("fornecedorId") Long fornecedorId, Pageable pageable);
 
     @Query("""
     SELECT new com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDto(
