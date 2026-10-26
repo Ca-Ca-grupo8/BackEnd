@@ -52,7 +52,7 @@ public class DashboardService {
         long entradasPassadas = dashboardRepository.somarQuantidadePorTipo(tipoEntrada, inicioAnterior, fimAnterior, categoriaId);
         long saidasPassadas = dashboardRepository.somarQuantidadePorTipo(tipoSaida, inicioAnterior, fimAnterior, categoriaId);
 
-        long totalEstoque = joiaRepository.somarTotalEstoque();
+        long totalEstoque = joiaRepository.somarTotalEstoquePorCategoria(categoriaId);
 
         // 5. Dados do Gráfico de Barras (Formatados em Map)
         List<Object[]> dadosGraficoRaw = dashboardRepository
@@ -98,10 +98,11 @@ public class DashboardService {
         LocalDateTime inicio = periodo.inicio();
         LocalDateTime fim = periodo.fim();
 
-        Double atualBusca = movimentacaoRepository.somarValorTotalDasSaidas(inicio, fim);
+        Double atualBusca = movimentacaoRepository.somarValorTotalDasSaidas(inicio, fim, filtro.categoriaId());
         Double atual = (atualBusca != null) ? atualBusca : 0.0;
 
-        Double anteriorBusca = movimentacaoRepository.somarValorTotalDasSaidas(inicio.minusMonths(1), fim.minusMonths(1));
+        Double anteriorBusca = movimentacaoRepository.somarValorTotalDasSaidas(
+                inicio.minusMonths(1), fim.minusMonths(1), filtro.categoriaId());
         Double anterior = (anteriorBusca != null) ? anteriorBusca : 0.0;
 
         Double varianca = 0.0;
@@ -143,12 +144,12 @@ public class DashboardService {
         LocalDateTime inicio = periodo.inicio();
         LocalDateTime fim = periodo.fim();
 
-        double giroEstoque = calcularGiroEstoque(inicio, fim);
+        double giroEstoque = calcularGiroEstoque(inicio, fim, filtro.categoriaId());
 
         LocalDateTime inicioAntigo = inicio.minusMonths(1);
         LocalDateTime fimAntigo = fim.minusMonths(1);
 
-        double giroEstoqueAntigo = calcularGiroEstoque(inicioAntigo, fimAntigo);
+        double giroEstoqueAntigo = calcularGiroEstoque(inicioAntigo, fimAntigo, filtro.categoriaId());
 
         double varianca = 0.0;
         if (giroEstoqueAntigo > 0.0) {
@@ -164,16 +165,16 @@ public class DashboardService {
         );
     }
 
-    private double calcularGiroEstoque(LocalDateTime inicio, LocalDateTime fim){
-        long totalJoiasAtual = joiaRepository.somarTotalEstoque();
+    private double calcularGiroEstoque(LocalDateTime inicio, LocalDateTime fim, Long categoriaId){
+        long totalJoiasAtual = joiaRepository.somarTotalEstoquePorCategoria(categoriaId);
 
-        long vendasAposFim = movimentacaoRepository.buscarTotalDeItensVendidosApos(fim);
-        long entradasAposFim = movimentacaoRepository.buscarTotalDeEntradasApos(fim);
+        long vendasAposFim = movimentacaoRepository.buscarTotalDeItensVendidosApos(fim, categoriaId);
+        long entradasAposFim = movimentacaoRepository.buscarTotalDeEntradasApos(fim, categoriaId);
 
         double estoqueFinal = (double) (totalJoiasAtual + vendasAposFim - entradasAposFim);
 
-        long totalVendido = movimentacaoRepository.buscarTotalDeItensVendidos(inicio, fim);
-        long totalDeEntradas = movimentacaoRepository.buscarTotalDeEntradas(inicio, fim);
+        long totalVendido = movimentacaoRepository.buscarTotalDeItensVendidos(inicio, fim, categoriaId);
+        long totalDeEntradas = movimentacaoRepository.buscarTotalDeEntradas(inicio, fim, categoriaId);
 
         double estoqueInicial = (double) (estoqueFinal + totalVendido - totalDeEntradas);
 
