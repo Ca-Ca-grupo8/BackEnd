@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -69,5 +70,25 @@ class CrmNotificadorConsumerTest {
         assertDoesNotThrow(() -> consumer().processarNotificacao(evento()));
 
         verify(brevoClient, times(1)).enviarEmailTransacional(any(), any());
+    }
+
+    @Test
+    @DisplayName("Deve enviar os anexos do evento ao Brevo")
+    void deveEnviarAnexosAoBrevo() {
+        var evento = new NotificacaoEventoDto(
+                "joias@exemplo.com",
+                "Joias Silva",
+                3L,
+                Map.of("nomeRevendedora", "Joias Silva"),
+                List.of(new NotificacaoEventoDto.Anexo("comprovante-maleta-7.pdf", "AQID"))
+        );
+
+        consumer().processarNotificacao(evento);
+
+        ArgumentCaptor<BrevoEmailRequest> captor = ArgumentCaptor.forClass(BrevoEmailRequest.class);
+        verify(brevoClient, times(1)).enviarEmailTransacional(eq("chave-de-teste"), captor.capture());
+
+        assertEquals(List.of(new BrevoEmailRequest.Anexo("comprovante-maleta-7.pdf", "AQID")),
+                captor.getValue().attachment());
     }
 }

@@ -1,7 +1,7 @@
 package com.caeca.estoque.database.model.statusMaleta;
 
 public enum StatusMaletaEnum {
-    ABERTO,
+    EM_PREPARACAO,
     EM_CONSIGNACAO,
     EM_ACERTO,
     FINALIZADA,

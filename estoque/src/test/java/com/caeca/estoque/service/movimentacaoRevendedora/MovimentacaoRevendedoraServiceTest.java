@@ -21,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,7 +125,7 @@ class MovimentacaoRevendedoraServiceTest {
             requestDto.setIdRevendedora(1L);
 
             MovimentacaoRevendedora movimentacaoExistente = new MovimentacaoRevendedora();
-            when(mrRepository.findByRevendedoraIdAndStatusNome(1L, StatusMaletaEnum.ABERTO))
+            when(mrRepository.findByRevendedoraIdAndStatusNome(1L, StatusMaletaEnum.EM_PREPARACAO))
                     .thenReturn(Optional.of(movimentacaoExistente));
 
             MovimentacaoRevendedora resultado =
@@ -144,11 +145,11 @@ class MovimentacaoRevendedoraServiceTest {
             Revendedora revendedora = new Revendedora();
             MovimentacaoRevendedora novaMovimentacao = new MovimentacaoRevendedora();
 
-            when(mrRepository.findByRevendedoraIdAndStatusNome(1L, StatusMaletaEnum.ABERTO))
+            when(mrRepository.findByRevendedoraIdAndStatusNome(1L, StatusMaletaEnum.EM_PREPARACAO))
                     .thenReturn(Optional.empty());
             when(revendedoraService.buscarPorId(1L)).thenReturn(revendedora);
-            when(statusMaletaService.buscarPorNome(StatusMaletaEnum.ABERTO))
-                    .thenReturn(new StatusMaleta(1L, StatusMaletaEnum.ABERTO));
+            when(statusMaletaService.buscarPorNome(StatusMaletaEnum.EM_PREPARACAO))
+                    .thenReturn(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
             when(mrRepository.save(any(MovimentacaoRevendedora.class))).thenReturn(novaMovimentacao);
 
             MovimentacaoRevendedora resultado =
@@ -168,7 +169,7 @@ class MovimentacaoRevendedoraServiceTest {
         @DisplayName("Deve retornar movimentação quando encontrar venda aberta para a revendedora")
         void deveRetornarMovimentacaoQuandoEncontrarVendaAberta() {
             MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
-            when(mrRepository.findByRevendedoraIdAndStatusNome(1L, StatusMaletaEnum.ABERTO))
+            when(mrRepository.findByRevendedoraIdAndStatusNome(1L, StatusMaletaEnum.EM_PREPARACAO))
                     .thenReturn(Optional.of(movimentacao));
 
             MovimentacaoRevendedora resultado =
@@ -181,7 +182,7 @@ class MovimentacaoRevendedoraServiceTest {
         @Test
         @DisplayName("Deve lançar NotFoundException quando não houver venda aberta para a revendedora")
         void deveLancarNotFoundExceptionQuandoNaoHouverVendaAberta() {
-            when(mrRepository.findByRevendedoraIdAndStatusNome(1L, StatusMaletaEnum.ABERTO))
+            when(mrRepository.findByRevendedoraIdAndStatusNome(1L, StatusMaletaEnum.EM_PREPARACAO))
                     .thenReturn(Optional.empty());
 
             assertThrows(NotFoundException.class,
@@ -320,7 +321,7 @@ class MovimentacaoRevendedoraServiceTest {
         @DisplayName("Deve atualizar o status da maleta com sucesso quando encontrar pelo id")
         void deveAtualizarStatusComSucesso() {
             MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
-            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.ABERTO));
+            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
 
             MovimentacaoRevendedoraStatusPatchDto patch =
                     new MovimentacaoRevendedoraStatusPatchDto(2L);
@@ -357,7 +358,7 @@ class MovimentacaoRevendedoraServiceTest {
         void deveNotificarLoteEmConsignacao() {
             MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
             movimentacao.setIdMovimentacaoRevendedora(7L);
-            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.ABERTO));
+            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
 
             StatusMaleta emConsignacao = new StatusMaleta(2L, StatusMaletaEnum.EM_CONSIGNACAO);
 
@@ -368,8 +369,28 @@ class MovimentacaoRevendedoraServiceTest {
             movimentacaoRevendedoraService.atualizarStatus(1L,
                     new MovimentacaoRevendedoraStatusPatchDto(2L));
 
-            verify(maletaNotificacaoService, times(1)).notificarLoteEmConsignacao(movimentacao);
+            verify(maletaNotificacaoService, times(1)).notificarLoteEmConsignacao(eq(movimentacao), any(byte[].class));
             verify(maletaNotificacaoService, never()).notificarFechamentoLote(any(), anyMap(), anyBoolean());
+        }
+
+        @Test
+        @DisplayName("Deve notificar sem anexo quando a geracao do comprovante falhar")
+        void deveNotificarSemAnexoQuandoComprovanteFalhar() {
+            MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
+            movimentacao.setIdMovimentacaoRevendedora(7L);
+            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
+
+            StatusMaleta emConsignacao = new StatusMaleta(2L, StatusMaletaEnum.EM_CONSIGNACAO);
+
+            when(mrRepository.findById(1L)).thenReturn(Optional.of(movimentacao));
+            when(statusMaletaService.buscarPorId(2L)).thenReturn(emConsignacao);
+            when(mrRepository.save(any(MovimentacaoRevendedora.class))).thenReturn(movimentacao);
+            when(movimentacaoRepository.buscarJoiasComSaidaNaMaleta(7L)).thenThrow(new RuntimeException("Banco indisponivel"));
+
+            movimentacaoRevendedoraService.atualizarStatus(1L,
+                    new MovimentacaoRevendedoraStatusPatchDto(2L));
+
+            verify(maletaNotificacaoService, times(1)).notificarLoteEmConsignacao(movimentacao, null);
         }
 
         @Test
@@ -389,7 +410,7 @@ class MovimentacaoRevendedoraServiceTest {
                     new MovimentacaoRevendedoraStatusPatchDto(3L));
 
             verify(maletaNotificacaoService, times(1)).notificarFechamentoLote(eq(movimentacao), any(), anyBoolean());
-            verify(maletaNotificacaoService, never()).notificarLoteEmConsignacao(any());
+            verify(maletaNotificacaoService, never()).notificarLoteEmConsignacao(any(), any());
         }
 
         @Test
@@ -397,7 +418,7 @@ class MovimentacaoRevendedoraServiceTest {
         void deveNaoNotificarQuandoStatusNaoTiverRegra() {
             MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
             movimentacao.setIdMovimentacaoRevendedora(9L);
-            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.ABERTO));
+            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
 
             StatusMaleta emAcerto = new StatusMaleta(4L, StatusMaletaEnum.EM_ACERTO);
 
@@ -408,8 +429,40 @@ class MovimentacaoRevendedoraServiceTest {
             movimentacaoRevendedoraService.atualizarStatus(1L,
                     new MovimentacaoRevendedoraStatusPatchDto(4L));
 
-            verify(maletaNotificacaoService, never()).notificarLoteEmConsignacao(any());
+            verify(maletaNotificacaoService, never()).notificarLoteEmConsignacao(any(), any());
             verify(maletaNotificacaoService, never()).notificarFechamentoLote(any(), anyMap(), anyBoolean());
+        }
+    }
+
+    @Nested
+    @DisplayName("gerarComprovantePdf")
+    class gerarComprovantePdf {
+
+        @Test
+        @DisplayName("Deve gerar um PDF com as joias enviadas na maleta")
+        void deveGerarPdfComJoias() {
+            MovimentacaoRevendedora maleta = new MovimentacaoRevendedora();
+            maleta.setIdMovimentacaoRevendedora(7L);
+
+            when(movimentacaoRepository.buscarJoiasComSaidaNaMaleta(7L))
+                    .thenReturn(List.of(new JoiaSaidaMaletaDto(1L, "Anel", 2L)));
+
+            byte[] pdf = movimentacaoRevendedoraService.gerarComprovantePdf(maleta);
+
+            assertEquals("%PDF", new String(pdf, 0, 4, StandardCharsets.US_ASCII));
+        }
+
+        @Test
+        @DisplayName("Deve gerar um PDF valido mesmo quando a maleta nao tem joias")
+        void deveGerarPdfSemJoias() {
+            MovimentacaoRevendedora maleta = new MovimentacaoRevendedora();
+            maleta.setIdMovimentacaoRevendedora(7L);
+
+            when(movimentacaoRepository.buscarJoiasComSaidaNaMaleta(7L)).thenReturn(List.of());
+
+            byte[] pdf = movimentacaoRevendedoraService.gerarComprovantePdf(maleta);
+
+            assertEquals("%PDF", new String(pdf, 0, 4, StandardCharsets.US_ASCII));
         }
     }
 
@@ -427,8 +480,8 @@ class MovimentacaoRevendedoraServiceTest {
             MovimentacaoRevendedora movimentacaoSalva = new MovimentacaoRevendedora();
 
             when(revendedoraService.buscarPorId(1L)).thenReturn(revendedora);
-            when(statusMaletaService.buscarPorNome(StatusMaletaEnum.ABERTO))
-                    .thenReturn(new StatusMaleta(1L, StatusMaletaEnum.ABERTO));
+            when(statusMaletaService.buscarPorNome(StatusMaletaEnum.EM_PREPARACAO))
+                    .thenReturn(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
             when(mrRepository.save(any(MovimentacaoRevendedora.class))).thenReturn(movimentacaoSalva);
 
             MovimentacaoRevendedora resultado = movimentacaoRevendedoraService.criar(dto);

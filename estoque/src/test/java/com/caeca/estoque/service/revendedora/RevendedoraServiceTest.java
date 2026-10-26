@@ -2,9 +2,11 @@ package com.caeca.estoque.service.revendedora;
 
 import com.caeca.estoque.database.model.endereco.Endereco;
 import com.caeca.estoque.database.model.revendedora.Revendedora;
+import com.caeca.estoque.database.model.statusMaleta.StatusMaletaEnum;
 import com.caeca.estoque.database.repository.revendedora.RevendedoraRepository;
 import com.caeca.estoque.dto.revendedora.RevendedoraPatchDto;
 import com.caeca.estoque.dto.revendedora.RevendedoraRequestDto;
+import com.caeca.estoque.dto.revendedora.RevendedoraResponseDto;
 import com.caeca.estoque.service.endereco.EnderecoService;
 import com.caeca.estoque.service.NotificacaoBrevo.NotificacaoBrevoService;
 import com.caeca.estoque.exception.ConflictException;
@@ -18,6 +20,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -435,5 +441,27 @@ class RevendedoraServiceTest {
                 revendedoraService.atualizarParcialmente(1L, dto);
 
         Assertions.assertEquals(LocalDate.of(1990, 9, 15), resultado.getDataNascimento());
+    }
+
+    @Test
+    @DisplayName("Deve listar apenas revendedoras com maleta não fechada")
+    void deveListarRevendedorasComMaletaAberta() {
+
+        Revendedora revendedora = new Revendedora();
+        revendedora.setId(1L);
+        revendedora.setNome("Maria");
+        revendedora.setEndereco(new Endereco());
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Mockito.when(revendedoraRepository.findComMaletaAberta(
+                        List.of(StatusMaletaEnum.FINALIZADA, StatusMaletaEnum.ERRO), pageable))
+                .thenReturn(new PageImpl<>(List.of(revendedora), pageable, 1));
+
+        Page<RevendedoraResponseDto> resultado =
+                revendedoraService.listarComMaletaAberta(pageable);
+
+        Assertions.assertEquals(1, resultado.getTotalElements());
+        Assertions.assertEquals("Maria", resultado.getContent().get(0).getNome());
     }
 }
