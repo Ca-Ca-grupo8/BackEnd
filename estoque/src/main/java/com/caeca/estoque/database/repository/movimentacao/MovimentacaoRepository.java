@@ -1,6 +1,7 @@
 package com.caeca.estoque.database.repository.movimentacao;
 
 import com.caeca.estoque.database.model.fornecedores.Fornecedor;
+import com.caeca.estoque.database.model.joia.Joia;
 import com.caeca.estoque.database.model.movimentacao.Movimentacao;
 import com.caeca.estoque.database.model.tipoMovimentacao.TipoMovimentacaoEnum;
 import com.caeca.estoque.dto.dashboard.GraficoMotivoDto;
@@ -164,6 +165,34 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
     """)
     List<JoiaSaidaMaletaDto> buscarJoiasComSaidaNaMaleta(@Param("idMaleta") Long idMaleta);
 
+    @Query("""
+            SELECT new com.caeca.estoque.database.repository.movimentacao.JoiaSaidaProjecao(
+                m.joia.id,
+                m.joia.nome,
+                SUM(m.quantidade),
+                AVG(m.quantidade))
+            FROM Movimentacao m
+            WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%saida%')
+            AND m.data BETWEEN :inicio AND :fim
+            GROUP BY m.joia.id
+            ORDER BY SUM(m.quantidade) DESC
+    """)
+    List<JoiaSaidaProjecao> buscarJoiasMaisSaidas(LocalDateTime inicio, LocalDateTime fim, Pageable pageable);
+
+    @Query("""
+            SELECT new com.caeca.estoque.database.repository.movimentacao.MotivoSaidaJoiaProjecao(
+                m.joia.id,
+                m.motivoMovimentacao.idMotivoMovimentacao,
+                m.motivoMovimentacao.descricao,
+                COUNT(m))
+            FROM Movimentacao m
+            WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%saida%')
+            AND m.data BETWEEN :inicio AND :fim
+            AND m.joia.id IN :joiaIds
+            GROUP BY m.joia.id, m.motivoMovimentacao.idMotivoMovimentacao, m.motivoMovimentacao.descricao
+    """)
+    List<MotivoSaidaJoiaProjecao> buscarMotivosSaidaDasJoias(LocalDateTime inicio, LocalDateTime fim, List<Long> joiaIds);
+
     Movimentacao findFirstByJoiaIdOrderByDataDesc(long id);
 
     @Query("""
@@ -182,6 +211,15 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
               AND m.fornecedor IS NOT NULL
     """)
     List<FornecedorJoiaProjecao> buscarFornecedoresDasJoias(@Param("joiaIds") List<Long> joiaIds);
+
+    @Query("""
+            SELECT j FROM Joia j
+            WHERE j.id IN (
+                SELECT m.joia.id FROM Movimentacao m
+                WHERE m.fornecedor.id = :fornecedorId
+            )
+    """)
+    Page<Joia> buscarJoiasDoFornecedor(@Param("fornecedorId") Long fornecedorId, Pageable pageable);
 
     @Query("""
     SELECT new com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDto(

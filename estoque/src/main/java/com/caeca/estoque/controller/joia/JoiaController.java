@@ -1,7 +1,7 @@
 package com.caeca.estoque.controller.joia;
 
 import com.caeca.estoque.dto.joia.*;
-import com.caeca.estoque.exception.NotFoundException;
+import com.caeca.estoque.exception  .NotFoundException;
 import com.caeca.estoque.service.joia.JoiaService;
 import com.caeca.estoque.service.Material.MaterialService;
 import com.caeca.estoque.service.banho.BanhoService;
@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/joias")
@@ -57,6 +58,25 @@ public class JoiaController {
                 dataInicio,
                 dataFim,
                 pageable);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/abaixo-do-minimo")
+    public ResponseEntity<List<JoiaSaidaDto>> listarAbaixoDoMinimo(
+            @RequestParam(defaultValue = "5") int limite
+    ) {
+        List<JoiaSaidaDto> response = joiaService.listarAbaixoDoMinimo(limite);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/fornecedor/{fornecedorId}")
+    public ResponseEntity<Page<JoiaSaidaDto>> listarPorFornecedor(
+            @PathVariable Long fornecedorId,
+            @PageableDefault(size = 10, sort = "nome") Pageable pageable
+    ) {
+        Page<JoiaSaidaDto> response = joiaService.listarPorFornecedor(fornecedorId, pageable);
 
         return ResponseEntity.ok(response);
     }

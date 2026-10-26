@@ -1,11 +1,14 @@
 package com.caeca.estoque.service.NotificacaoBrevo;
 
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
+import com.caeca.estoque.dto.brevo.NotificacaoEventoDto;
 import com.caeca.estoque.dto.maleta.MaletaNotificacaoMapper;
 import com.caeca.estoque.producer.interfaceProducer.NotificacaoProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -33,12 +36,15 @@ public class NotificacaoBrevoService {
         notificacaoProducer.enviarMensagem(email, nome, TEMPLATE_BOAS_VINDAS, Map.of("nomeRevendedora", nome));
     }
 
-    public void notificacaoLoteEmConsignacao(MovimentacaoRevendedora maleta) {
+    public void notificacaoLoteEmConsignacao(MovimentacaoRevendedora maleta, byte[] comprovante) {
         log.warn("passou no envio");
         enviarParaMaleta(maleta, TEMPLATE_LOTE_EM_CONSIGNACAO, Map.of(
                 "nomeRevendedora", MaletaNotificacaoMapper.nomeRevendedora(maleta),
                 "dataVencimento", MaletaNotificacaoMapper.dataVencimento(maleta)
-        ));
+        ), comprovante == null ? List.of() : List.of(new NotificacaoEventoDto.Anexo(
+                "comprovante-maleta-" + maleta.getIdMovimentacaoRevendedora() + ".pdf",
+                Base64.getEncoder().encodeToString(comprovante)
+        )));
     }
 
     public void notificacaoAlertaVencimento(MovimentacaoRevendedora maleta, long diasRestantes) {
@@ -65,6 +71,16 @@ public class NotificacaoBrevoService {
         );
     }
 
+    private void enviarParaMaleta(MovimentacaoRevendedora maleta, long templateId, Map<String, String> params, List<NotificacaoEventoDto.Anexo> anexos) {
+        notificacaoProducer.enviarMensagem(
+                MaletaNotificacaoMapper.emailRevendedora(maleta),
+                MaletaNotificacaoMapper.nomeRevendedora(maleta),
+                templateId,
+                params,
+                anexos
+        );
+    }
+
     public void notificacaoAniversario(String email, String nome) {
         notificacaoProducer.enviarMensagem(email, nome, TEMPLATE_ANIVERSARIO, Map.of("nomeRevendedora", nome));
     }
@@ -83,5 +99,24 @@ public class NotificacaoBrevoService {
 
     public void notificacaoRevendedoraInativa(String email, String nome, Map<String, String> params) {
         notificacaoProducer.enviarMensagem(email, nome, TEMPLATE_REVENDEDORA_INATIVA, params);
+    }
+
+    public static String nomeTemplate(Long templateId) {
+        if (templateId == null) {
+            return null;
+        }
+        return switch (templateId.intValue()) {
+            case 2 -> "Boas-vindas";
+            case 3 -> "Lote em consignação";
+            case 4 -> "Alerta de vencimento";
+            case 5 -> "Cobrança de atraso";
+            case 6 -> "Fechamento de lote";
+            case 7 -> "Aniversário";
+            case 8 -> "Meta atingida";
+            case 9 -> "Estoque baixo";
+            case 10 -> "Peça parada";
+            case 11 -> "Revendedora inativa";
+            default -> "Desconhecido (" + templateId + ")";
+        };
     }
 }

@@ -3,6 +3,7 @@ package com.caeca.estoque.service.revendedora;
 import com.caeca.estoque.database.model.endereco.Endereco;
 import com.caeca.estoque.database.model.notificacaoEnvio.TipoReferencia;
 import com.caeca.estoque.database.model.revendedora.Revendedora;
+import com.caeca.estoque.database.model.statusMaleta.StatusMaletaEnum;
 import com.caeca.estoque.database.repository.revendedora.RevendedoraRepository;
 import com.caeca.estoque.dto.revendedora.RevendedoraMapper;
 import com.caeca.estoque.dto.revendedora.RevendedoraPatchDto;
@@ -147,6 +148,12 @@ public class RevendedoraService {
 
     public Page<RevendedoraResponseDto> listarTodas(Pageable pageable) {
         return revendedoraRepository.findAll(pageable)
+                .map(RevendedoraMapper::toResponse);
+    }
+
+    public Page<RevendedoraResponseDto> listarComMaletaAberta(Pageable pageable) {
+        return revendedoraRepository.findComMaletaAberta(
+                        List.of(StatusMaletaEnum.FINALIZADA, StatusMaletaEnum.ERRO), pageable)
                 .map(RevendedoraMapper::toResponse);
     }
 }
