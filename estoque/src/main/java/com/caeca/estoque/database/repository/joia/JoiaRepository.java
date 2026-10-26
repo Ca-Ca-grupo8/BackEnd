@@ -20,6 +20,18 @@ public interface JoiaRepository extends JpaRepository<Joia, Long> {
 """)
     long somarTotalEstoque ();
 
+    /**
+     * Mesmo total restrito a uma categoria, para a dashboard filtrada.
+     * O {@link #somarTotalEstoque()} continua sem filtro porque o snapshot
+     * do histórico de estoque precisa sempre do total geral.
+     */
+    @Query("""
+    SELECT COALESCE(SUM(j.quantidade), 0)
+    FROM Joia as j
+    WHERE (:categoriaId IS NULL OR j.categoria.id = :categoriaId)
+""")
+    long somarTotalEstoquePorCategoria(@Param("categoriaId") Long categoriaId);
+
     @Query("""
     SELECT j FROM Joia as j
     WHERE (:nome IS NULL OR LOWER(j.nome) LIKE LOWER(CONCAT('%', :nome, '%')))

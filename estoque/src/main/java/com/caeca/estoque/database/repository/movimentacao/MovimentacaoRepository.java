@@ -25,11 +25,14 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
             FROM Movimentacao m
             WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%saida%')
             AND m.data BETWEEN :inicio AND :fim
+            AND (:categoriaId IS NULL OR m.joia.categoria.id = :categoriaId)
     """)
-    Double somarValorTotalDasSaidas(LocalDateTime inicio, LocalDateTime fim);
+    Double somarValorTotalDasSaidas(LocalDateTime inicio, LocalDateTime fim,
+                                    @Param("categoriaId") Long categoriaId);
 
     @Query("""
             SELECT new com.caeca.estoque.dto.dashboard.TopCincoDto(
+                m.joia.categoria.id,
                 m.joia.categoria.nome,
                 SUM(m.quantidade))
             FROM Movimentacao m
@@ -37,13 +40,14 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
                     LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%saida%'
                   )
             AND m.data BETWEEN :inicio AND :fim
-            GROUP BY m.joia.categoria.nome
+            GROUP BY m.joia.categoria.id, m.joia.categoria.nome
             ORDER BY SUM(m.quantidade) DESC
     """)
     List<TopCincoDto> buscarTopCincoCategorias(LocalDateTime inicio, LocalDateTime fim, Pageable pageable);
 
     @Query("""
             SELECT new com.caeca.estoque.dto.dashboard.TopCincoDto(
+                m.joia.id,
                 m.joia.nome,
                 SUM(m.quantidade))
             FROM Movimentacao m
@@ -52,7 +56,7 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
                   )
             AND m.data BETWEEN :inicio AND :fim
             AND m.joia.categoria.id = :categoriaId
-            GROUP BY m.joia.nome
+            GROUP BY m.joia.id, m.joia.nome
             ORDER BY SUM(m.quantidade) DESC
     """)
     List<TopCincoDto> buscarTopCincoProdutos(LocalDateTime inicio, LocalDateTime fim, Long categoriaId, Pageable pageable);
@@ -62,32 +66,40 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
             FROM Movimentacao m
             WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%saida%')
             AND m.data BETWEEN :inicio AND :fim
+            AND (:categoriaId IS NULL OR m.joia.categoria.id = :categoriaId)
     """)
-    Long buscarTotalDeItensVendidos(LocalDateTime inicio, LocalDateTime fim);
+    Long buscarTotalDeItensVendidos(LocalDateTime inicio, LocalDateTime fim,
+                                    @Param("categoriaId") Long categoriaId);
 
     @Query("""
         SELECT COALESCE(SUM(m.quantidade), 0.0)
             FROM Movimentacao m
             WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%entrada%')
             AND m.data BETWEEN :inicio AND :fim
+            AND (:categoriaId IS NULL OR m.joia.categoria.id = :categoriaId)
     """)
-    Long buscarTotalDeEntradas(LocalDateTime inicio, LocalDateTime fim);
+    Long buscarTotalDeEntradas(LocalDateTime inicio, LocalDateTime fim,
+                               @Param("categoriaId") Long categoriaId);
+
+    @Query("""
+        SELECT COALESCE(SUM(m.quantidade), 0.0)
+            FROM Movimentacao m
+            WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%saida%')
+            AND m.data > :fim
+            AND (:categoriaId IS NULL OR m.joia.categoria.id = :categoriaId)
+    """)
+    long buscarTotalDeItensVendidosApos(LocalDateTime fim,
+                                        @Param("categoriaId") Long categoriaId);
 
     @Query("""
         SELECT COALESCE(SUM(m.quantidade), 0.0)
             FROM Movimentacao m
             WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%entrada%')
             AND m.data > :fim
+            AND (:categoriaId IS NULL OR m.joia.categoria.id = :categoriaId)
     """)
-    long buscarTotalDeItensVendidosApos(LocalDateTime fim);
-
-    @Query("""
-        SELECT COALESCE(SUM(m.quantidade), 0.0)
-            FROM Movimentacao m
-            WHERE (LOWER(m.motivoMovimentacao.tipoMovimentacao.nome) LIKE '%entrada%')
-            AND m.data > :fim
-    """)
-    long buscarTotalDeEntradasApos(LocalDateTime fim);
+    long buscarTotalDeEntradasApos(LocalDateTime fim,
+                                   @Param("categoriaId") Long categoriaId);
 
 
     @Query("""
@@ -173,6 +185,7 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
 
     @Query("""
     SELECT new com.caeca.estoque.dto.dashboard.TopCincoMaisFriasDto(
+        j.id,
         j.nome,
         j.quantidade,
         MAX(m.data)
@@ -183,7 +196,7 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
         AND m.motivoMovimentacao.tipoMovimentacao.id = 2
         AND m.data BETWEEN :inicio AND :fim
     WHERE j.isAtivo = true
-        AND (:categoriaId = 0 OR j.categoria.id = :categoriaId)
+        AND (:categoriaId IS NULL OR j.categoria.id = :categoriaId)
     GROUP BY j.id, j.nome, j.quantidade
     ORDER BY
         CASE WHEN MAX(m.data) IS NULL THEN 0 ELSE 1 END,
@@ -220,7 +233,7 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
     ), 0)
     FROM joia j
     WHERE j.is_ativo = true
-      AND (:categoriaId = 0 OR j.categoria_id = :categoriaId)
+      AND (:categoriaId IS NULL OR j.categoria_id = :categoriaId)
     """, nativeQuery = true)
     Number buscarIndiceAtual(
             @Param("dataInicio") LocalDateTime dataInicio,
@@ -252,7 +265,7 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Long
     ), 0)
     FROM joia j
     WHERE j.is_ativo = true
-      AND (:categoriaId = 0 OR j.categoria_id = :categoriaId)
+      AND (:categoriaId IS NULL OR j.categoria_id = :categoriaId)
     """, nativeQuery = true)
     Number buscarIndiceMesAnterior(
             @Param("inicioMesAnterior") LocalDateTime inicioMesAnterior,
