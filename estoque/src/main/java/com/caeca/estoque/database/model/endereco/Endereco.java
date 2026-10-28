@@ -19,7 +19,7 @@ public class Endereco {
     private Long id;
 
     @NotBlank
-    @Size(max = 9, min = 9)
+    @Size(max = 8, min = 8)
     private String cep;
 
     @NotBlank
