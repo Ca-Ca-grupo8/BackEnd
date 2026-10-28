@@ -38,7 +38,7 @@ public class CrmNotificadorConsumer {
         this.brevoClient = brevoClient;
     }
 
-    @RabbitListener(queues = RabbitMQConfig.QUEUE_NOTIFICACAO_BREVO)
+    @RabbitListener(queues = {RabbitMQConfig.QUEUE_NOTIFICACAO_EXTERNA, RabbitMQConfig.QUEUE_NOTIFICACAO_INTERNA})
     public void processarNotificacao(NotificacaoEventoDto evento) {
 
         log.warn("chegou no consumer");

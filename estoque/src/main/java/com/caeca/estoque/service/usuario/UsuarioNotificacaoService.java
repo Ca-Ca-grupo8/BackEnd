@@ -17,7 +17,7 @@ public class UsuarioNotificacaoService {
     }
 
     public void notificacaoConviteUsuario(String email, String nome, String link) {
-        notificacaoProducer.enviarMensagem(
+        notificacaoProducer.enviarInterno(
                 email,
                 nome,
                 TEMPLATE_CONVITE_USUARIO,

@@ -33,7 +33,7 @@ public class NotificacaoBrevoService {
     }
 
     public void notificacaoBoasVindas(String email, String nome) {
-        notificacaoProducer.enviarMensagem(email, nome, TEMPLATE_BOAS_VINDAS, Map.of("nomeRevendedora", nome));
+        notificacaoProducer.enviarExterno(email, nome, TEMPLATE_BOAS_VINDAS, Map.of("nomeRevendedora", nome));
     }
 
     public void notificacaoLoteEmConsignacao(MovimentacaoRevendedora maleta, byte[] comprovante) {
@@ -63,7 +63,7 @@ public class NotificacaoBrevoService {
     }
 
     private void enviarParaMaleta(MovimentacaoRevendedora maleta, long templateId, Map<String, String> params) {
-        notificacaoProducer.enviarMensagem(
+        notificacaoProducer.enviarExterno(
                 MaletaNotificacaoMapper.emailRevendedora(maleta),
                 MaletaNotificacaoMapper.nomeRevendedora(maleta),
                 templateId,
@@ -72,7 +72,7 @@ public class NotificacaoBrevoService {
     }
 
     private void enviarParaMaleta(MovimentacaoRevendedora maleta, long templateId, Map<String, String> params, List<NotificacaoEventoDto.Anexo> anexos) {
-        notificacaoProducer.enviarMensagem(
+        notificacaoProducer.enviarExternoComAnexos(
                 MaletaNotificacaoMapper.emailRevendedora(maleta),
                 MaletaNotificacaoMapper.nomeRevendedora(maleta),
                 templateId,
@@ -82,7 +82,7 @@ public class NotificacaoBrevoService {
     }
 
     public void notificacaoAniversario(String email, String nome) {
-        notificacaoProducer.enviarMensagem(email, nome, TEMPLATE_ANIVERSARIO, Map.of("nomeRevendedora", nome));
+        notificacaoProducer.enviarExterno(email, nome, TEMPLATE_ANIVERSARIO, Map.of("nomeRevendedora", nome));
     }
 
     public void notificacaoMetaAtingida(MovimentacaoRevendedora maleta, Map<String, String> params, boolean metaAtingida) {
@@ -90,15 +90,15 @@ public class NotificacaoBrevoService {
     }
 
     public void notificacaoEstoqueBaixo(String email, String nome, Map<String, String> params) {
-        notificacaoProducer.enviarMensagem(email, nome, TEMPLATE_ESTOQUE_BAIXO, params);
+        notificacaoProducer.enviarInterno(email, nome, TEMPLATE_ESTOQUE_BAIXO, params);
     }
 
     public void notificacaoPecaParada(String email, String nome, Map<String, String> params) {
-        notificacaoProducer.enviarMensagem(email, nome, TEMPLATE_PECA_PARADA, params);
+        notificacaoProducer.enviarInterno(email, nome, TEMPLATE_PECA_PARADA, params);
     }
 
     public void notificacaoRevendedoraInativa(String email, String nome, Map<String, String> params) {
-        notificacaoProducer.enviarMensagem(email, nome, TEMPLATE_REVENDEDORA_INATIVA, params);
+        notificacaoProducer.enviarInterno(email, nome, TEMPLATE_REVENDEDORA_INATIVA, params);
     }
 
     public static String nomeTemplate(Long templateId) {
