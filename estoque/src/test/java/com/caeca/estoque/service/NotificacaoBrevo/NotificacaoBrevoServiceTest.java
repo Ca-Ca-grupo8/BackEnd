@@ -53,7 +53,7 @@ class NotificacaoBrevoServiceTest {
 
             notificacaoBrevoService.notificacaoLoteEmConsignacao(maleta, new byte[]{1, 2, 3});
 
-            verify(notificacaoProducer, times(1)).enviarMensagem(
+            verify(notificacaoProducer, times(1)).enviarExternoComAnexos(
                     "joias@exemplo.com",
                     "Joias Silva",
                     3L,
@@ -69,7 +69,7 @@ class NotificacaoBrevoServiceTest {
         void deveEnviarTemplateTresSemComprovante() {
             notificacaoBrevoService.notificacaoLoteEmConsignacao(maleta(), null);
 
-            verify(notificacaoProducer, times(1)).enviarMensagem(
+            verify(notificacaoProducer, times(1)).enviarExternoComAnexos(
                     "joias@exemplo.com",
                     "Joias Silva",
                     3L,
@@ -90,7 +90,7 @@ class NotificacaoBrevoServiceTest {
         void deveEnviarTemplateQuatro() {
             notificacaoBrevoService.notificacaoAlertaVencimento(maleta(), 7L);
 
-            verify(notificacaoProducer, times(1)).enviarMensagem(
+            verify(notificacaoProducer, times(1)).enviarExterno(
                     "joias@exemplo.com",
                     "Joias Silva",
                     4L,
@@ -111,7 +111,7 @@ class NotificacaoBrevoServiceTest {
         void deveEnviarTemplateCinco() {
             notificacaoBrevoService.notificacaoCobrancaAtraso(maleta());
 
-            verify(notificacaoProducer, times(1)).enviarMensagem(
+            verify(notificacaoProducer, times(1)).enviarExterno(
                     "joias@exemplo.com",
                     "Joias Silva",
                     5L,
@@ -133,7 +133,7 @@ class NotificacaoBrevoServiceTest {
 
             notificacaoBrevoService.notificacaoMetaAtingida(maleta(), params, true);
 
-            verify(notificacaoProducer, times(1)).enviarMensagem(
+            verify(notificacaoProducer, times(1)).enviarExterno(
                     "joias@exemplo.com",
                     "Joias Silva",
                     8L,
@@ -147,7 +147,7 @@ class NotificacaoBrevoServiceTest {
 
             notificacaoBrevoService.notificacaoMetaAtingida(maleta(), params, false);
 
-            verify(notificacaoProducer, times(1)).enviarMensagem(
+            verify(notificacaoProducer, times(1)).enviarExterno(
                     "joias@exemplo.com",
                     "Joias Silva",
                     6L,
@@ -164,7 +164,7 @@ class NotificacaoBrevoServiceTest {
         void deveEnviarTemplateDois() {
             notificacaoBrevoService.notificacaoBoasVindas("nova@exemplo.com", "Revendedora Nova");
 
-            verify(notificacaoProducer, times(1)).enviarMensagem(
+            verify(notificacaoProducer, times(1)).enviarExterno(
                     "nova@exemplo.com",
                     "Revendedora Nova",
                     2L,

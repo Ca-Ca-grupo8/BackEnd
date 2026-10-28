@@ -28,7 +28,7 @@ class UsuarioNotificacaoServiceTest {
         usuarioNotificacaoService.notificacaoConviteUsuario(
                 "joao@email.com", "João Silva", "http://localhost:5173/primeiro-acesso?token=abc");
 
-        verify(notificacaoProducer).enviarMensagem(
+        verify(notificacaoProducer).enviarInterno(
                 "joao@email.com",
                 "João Silva",
                 UsuarioNotificacaoService.TEMPLATE_CONVITE_USUARIO,

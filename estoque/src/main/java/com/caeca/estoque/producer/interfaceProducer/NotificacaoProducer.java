@@ -7,9 +7,17 @@ import java.util.Map;
 
 public interface NotificacaoProducer {
 
-    default void enviarMensagem(String email, String nome, Long templateId, Map<String, String> params) {
-        enviarMensagem(email, nome, templateId, params, List.of());
+    default void enviarExterno(String email, String nome, Long templateId, Map<String, String> params) {
+        publicar(email, nome, templateId, params, List.of(), PublicoNotificacao.EXTERNO);
     }
 
-    void enviarMensagem(String email, String nome, Long templateId, Map<String, String> params, List<NotificacaoEventoDto.Anexo> anexos);
+    default void enviarExternoComAnexos(String email, String nome, Long templateId, Map<String, String> params, List<NotificacaoEventoDto.Anexo> anexos) {
+        publicar(email, nome, templateId, params, anexos, PublicoNotificacao.EXTERNO);
+    }
+
+    default void enviarInterno(String email, String nome, Long templateId, Map<String, String> params) {
+        publicar(email, nome, templateId, params, List.of(), PublicoNotificacao.INTERNO);
+    }
+
+    void publicar(String email, String nome, Long templateId, Map<String, String> params, List<NotificacaoEventoDto.Anexo> anexos, PublicoNotificacao publico);
 }
