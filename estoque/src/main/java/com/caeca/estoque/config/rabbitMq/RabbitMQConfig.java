@@ -36,7 +36,6 @@ public class RabbitMQConfig {
         return new DirectExchange(EXCHANGE_NOTIFICACAO_DLX);
     }
 
-    // Filas principais: falha esgotada no consumer vai para a fila de retry via DLX.
     @Bean
     public Queue queueExterna() {
         return QueueBuilder.durable(QUEUE_NOTIFICACAO_EXTERNA)
@@ -53,7 +52,6 @@ public class RabbitMQConfig {
                 .build();
     }
 
-    // Retry: sem consumer. Ao expirar o TTL, a mensagem volta para a exchange principal.
     @Bean
     public Queue queueExternaRetry(@Value("${app.notificacao.retry.ttl-ms:300000}") int ttlMs) {
         return QueueBuilder.durable(QUEUE_NOTIFICACAO_EXTERNA_RETRY)
@@ -72,7 +70,6 @@ public class RabbitMQConfig {
                 .build();
     }
 
-    // Parking: fila de descarte para análise manual, após esgotar as voltas.
     @Bean
     public Queue queueExternaParking() {
         return QueueBuilder.durable(QUEUE_NOTIFICACAO_EXTERNA_PARKING).build();
