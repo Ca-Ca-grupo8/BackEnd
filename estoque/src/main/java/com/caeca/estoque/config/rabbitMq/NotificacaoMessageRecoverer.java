@@ -12,11 +12,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Chamado quando as tentativas em memória se esgotam. Devolve a mensagem para o
- * ciclo de retry (DLQ com TTL) enquanto não passar do limite de voltas; depois disso
- * a envia para a fila de parking, para análise manual.
- */
 @Slf4j
 @Component
 public class NotificacaoMessageRecoverer implements MessageRecoverer {
