@@ -120,7 +120,7 @@ class RevendedoraRepositoryTest {
 
     private Endereco endereco(String nome) {
         return Endereco.builder()
-                .cep("01001-000")
+                .cep("01001000")
                 .logradouro("Rua " + nome)
                 .numero(100)
                 .bairro("Bairro")
