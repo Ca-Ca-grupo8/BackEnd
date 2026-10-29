@@ -8,8 +8,10 @@ import com.caeca.estoque.database.model.usuario.StatusUsuario;
 import com.caeca.estoque.database.model.usuario.Usuario;
 import com.caeca.estoque.dto.usuario.UsuarioListarDto;
 import com.caeca.estoque.dto.usuario.UsuarioMapper;
+import com.caeca.estoque.dto.usuario.UsuarioPatchDto;
 import com.caeca.estoque.dto.usuario.UsuarioTokenDto;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -83,6 +85,34 @@ public class UsuarioService {
     public Usuario buscarPorId(Long id) {
         return this.usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(404, "Usuário não encontrado", null));
+    }
+
+    public Usuario atualizarParcialmente(Long id, UsuarioPatchDto dto) {
+        Usuario usuario = buscarPorId(id);
+
+        if (dto.getNome() != null) {
+            usuario.setNome(dto.getNome());
+        }
+        if (dto.getEmail() != null) {
+            validarEmailDuplicado(dto.getEmail(), id);
+            usuario.setEmail(dto.getEmail());
+        }
+        if (dto.getPerfilUsuario() != null) {
+            usuario.setPerfil(dto.getPerfilUsuario());
+        }
+        if (dto.getStatus() != null) {
+            usuario.setStatus(dto.getStatus());
+        }
+
+        return this.usuarioRepository.save(usuario);
+    }
+
+    private void validarEmailDuplicado(String email, Long idAtual) {
+        usuarioRepository.findByEmail(email)
+                .filter(outro -> !outro.getId().equals(idAtual))
+                .ifPresent(outro -> {
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Email já cadastrado");
+                });
     }
 
 }
