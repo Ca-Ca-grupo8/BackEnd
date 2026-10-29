@@ -130,6 +130,15 @@ public class UsuarioController {
         return ResponseEntity.ok(usuariosEncontrados);
     }
 
+    @PatchMapping("/{id}")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<UsuarioListarDto> atualizarParcialmente(@PathVariable Long id,
+                                                                  @RequestBody @Valid UsuarioPatchDto usuarioPatchDto) {
+        Usuario atualizado = this.usuarioService.atualizarParcialmente(id, usuarioPatchDto);
+        return ResponseEntity.ok(UsuarioMapper.of(atualizado));
+    }
+
     @GetMapping("/me")
     @SecurityRequirement(name = "Bearer")
     public ResponseEntity<UsuarioListarDto> autoValidacao() {
