@@ -4,14 +4,24 @@ import java.time.LocalDateTime;
 
 public class TopCincoMaisFriasDto {
 
+    private Long id;
     private String nome;
     private Integer quantidade;
     private LocalDateTime ultimaMovimentacao;
 
-    public TopCincoMaisFriasDto(String nome, Integer quantidade, LocalDateTime ultimaMovimentacao) {
+    public TopCincoMaisFriasDto(Long id, String nome, Integer quantidade, LocalDateTime ultimaMovimentacao) {
+        this.id = id;
         this.nome = nome;
         this.quantidade = quantidade;
         this.ultimaMovimentacao = ultimaMovimentacao;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNome() {
