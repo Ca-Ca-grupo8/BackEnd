@@ -75,7 +75,7 @@ jobs:
     env:
       IMAGE_NAME: eduardonl/caeca-backend
       SERVICE: backend
-      ECR_REPOSITORY: erc_caeca
+      ECR_REPOSITORY: caeca-backend
       AWS_REGION: us-east-1
       EVENT_NAME: ${{ github.event_name }}
       TAG_INPUT: ${{ github.event.inputs.tag }}
