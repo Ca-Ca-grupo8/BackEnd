@@ -47,6 +47,10 @@ public class MovimentacaoRevendedoraService {
     private static final List<StatusMaletaEnum> STATUS_EM_ANDAMENTO = List.of(
             StatusMaletaEnum.EM_PREPARACAO, StatusMaletaEnum.EM_CONSIGNACAO, StatusMaletaEnum.EM_ACERTO);
     private static final int TOP_PROXIMOS_VENCIMENTOS = 5;
+    private static final String[] MESES = {
+            "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+            "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+    };
 
     private final MovimentacaoRevendedoraRepository mrRepository;
     private final MovimentacaoRepository movimentacaoRepository;
@@ -82,7 +86,7 @@ public class MovimentacaoRevendedoraService {
                     movimentacaoRevendedora.setStatus(statusMaletaService.buscarPorNome(StatusMaletaEnum.EM_PREPARACAO));
                     int rand = ThreadLocalRandom.current().nextInt(1000, 10000);
                     movimentacaoRevendedora.setNome((movimentacaoRevendedora.getRevendedora().getNome()
-                            + "-" + LocalDate.now().getMonth()
+                            + "-" + MESES[LocalDate.now().getMonthValue() - 1]
                             + "-" + LocalDate.now().getYear()
                             + "-" + rand).toLowerCase().strip());
                     return mrRepository.save(movimentacaoRevendedora);
