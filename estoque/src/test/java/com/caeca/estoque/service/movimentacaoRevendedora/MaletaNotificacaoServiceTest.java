@@ -47,32 +47,29 @@ class MaletaNotificacaoServiceTest {
     class notificarLoteEmConsignacao {
 
         @Test
-        @DisplayName("Deve enviar o template 3 quando o envio ainda nao foi registrado")
-        void deveEnviarQuandoNaoRegistradoAnteriormente() {
+        @DisplayName("Deve sincronizar o contato na lista do Brevo quando o envio ainda nao foi registrado")
+        void deveSincronizarQuandoNaoRegistradoAnteriormente() {
             MovimentacaoRevendedora maleta = maleta(1L);
-            byte[] comprovante = new byte[]{1, 2, 3};
             when(notificacaoEnvioService.registrarEnvio(TipoReferencia.MALETA, 1L,
-                    NotificacaoBrevoService.TEMPLATE_LOTE_EM_CONSIGNACAO, false)).thenReturn(true);
+                    NotificacaoBrevoService.TEMPLATE_LOTE_EM_CONSIGNACAO, true)).thenReturn(true);
 
-            maletaNotificacaoService.notificarLoteEmConsignacao(maleta, comprovante);
+            maletaNotificacaoService.notificarLoteEmConsignacao(maleta);
 
             verify(notificacaoEnvioService, times(1)).registrarEnvio(TipoReferencia.MALETA, 1L,
-                    NotificacaoBrevoService.TEMPLATE_LOTE_EM_CONSIGNACAO, false);
-            verify(notificacaoBrevoService, times(1)).notificacaoLoteEmConsignacao(maleta, comprovante);
+                    NotificacaoBrevoService.TEMPLATE_LOTE_EM_CONSIGNACAO, true);
+            verify(notificacaoBrevoService, times(1)).sincronizarContatoMaletaEmConsignacao(maleta);
         }
 
         @Test
-        @DisplayName("Deve nao enviar o template 3 quando o envio ja foi registrado")
-        void deveNaoEnviarQuandoJaRegistrado() {
+        @DisplayName("Deve nao sincronizar quando o registro de envio nao for gravado")
+        void deveNaoSincronizarQuandoRegistroFalhar() {
             MovimentacaoRevendedora maleta = maleta(1L);
             when(notificacaoEnvioService.registrarEnvio(TipoReferencia.MALETA, 1L,
-                    NotificacaoBrevoService.TEMPLATE_LOTE_EM_CONSIGNACAO, false)).thenReturn(false);
+                    NotificacaoBrevoService.TEMPLATE_LOTE_EM_CONSIGNACAO, true)).thenReturn(false);
 
-            maletaNotificacaoService.notificarLoteEmConsignacao(maleta, new byte[]{1, 2, 3});
+            maletaNotificacaoService.notificarLoteEmConsignacao(maleta);
 
-            verify(notificacaoEnvioService, times(1)).registrarEnvio(TipoReferencia.MALETA, 1L,
-                    NotificacaoBrevoService.TEMPLATE_LOTE_EM_CONSIGNACAO, false);
-            verify(notificacaoBrevoService, never()).notificacaoLoteEmConsignacao(any(), any());
+            verify(notificacaoBrevoService, never()).sincronizarContatoMaletaEmConsignacao(any());
         }
     }
 
@@ -188,9 +185,9 @@ class MaletaNotificacaoServiceTest {
             MovimentacaoRevendedora maleta = maleta(5L);
             when(notificacaoEnvioService.registrarEnvio(any(), anyLong(), anyLong(), anyBoolean())).thenReturn(false);
 
-            maletaNotificacaoService.notificarLoteEmConsignacao(maleta, new byte[]{1, 2, 3});
+            maletaNotificacaoService.notificarLoteEmConsignacao(maleta);
 
-            verify(notificacaoBrevoService, never()).notificacaoLoteEmConsignacao(any(), any());
+            verify(notificacaoBrevoService, never()).sincronizarContatoMaletaEmConsignacao(any());
         }
     }
 }

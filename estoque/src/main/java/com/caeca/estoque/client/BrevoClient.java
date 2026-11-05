@@ -1,5 +1,6 @@
 package com.caeca.estoque.client;
 
+import com.caeca.estoque.dto.brevo.BrevoContatoRequest;
 import com.caeca.estoque.dto.brevo.BrevoEmailRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -14,5 +15,11 @@ public interface BrevoClient {
     void enviarEmailTransacional(
             @RequestHeader("api-key") String apiKey,
             @RequestBody BrevoEmailRequest request
+    );
+
+    @PostMapping(value = "/contacts", consumes = MediaType.APPLICATION_JSON_VALUE)
+    void criarOuAtualizarContato(
+            @RequestHeader("api-key") String apiKey,
+            @RequestBody BrevoContatoRequest request
     );
 }

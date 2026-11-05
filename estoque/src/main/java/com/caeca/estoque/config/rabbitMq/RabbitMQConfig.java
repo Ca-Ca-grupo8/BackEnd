@@ -15,6 +15,9 @@ public class RabbitMQConfig {
     public static final String QUEUE_NOTIFICACAO_INTERNA = "caecaFilaInterna";
     public static final String QUEUE_NOTIFICACAO_INTERNA_RETRY = "caecaFilaInterna.retry";
     public static final String QUEUE_NOTIFICACAO_INTERNA_PARKING = "caecaFilaInterna.parking";
+    public static final String QUEUE_CONTATO = "caecaFilaContato";
+    public static final String QUEUE_CONTATO_RETRY = "caecaFilaContato.retry";
+    public static final String QUEUE_CONTATO_PARKING = "caecaFilaContato.parking";
 
     public static final String EXCHANGE_NOTIFICACAO = "caecaExchange";
     public static final String EXCHANGE_NOTIFICACAO_DLX = "caecaDlx";
@@ -25,6 +28,9 @@ public class RabbitMQConfig {
     public static final String ROUTING_KEY_INTERNA = "caecaKeyInterna";
     public static final String ROUTING_KEY_INTERNA_RETRY = "caecaKeyInterna.retry";
     public static final String ROUTING_KEY_INTERNA_PARKING = "caecaKeyInterna.parking";
+    public static final String ROUTING_KEY_CONTATO = "caecaKeyContato";
+    public static final String ROUTING_KEY_CONTATO_RETRY = "caecaKeyContato.retry";
+    public static final String ROUTING_KEY_CONTATO_PARKING = "caecaKeyContato.parking";
 
     @Bean
     public DirectExchange exchange() {
@@ -81,6 +87,28 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Queue queueContato() {
+        return QueueBuilder.durable(QUEUE_CONTATO)
+                .deadLetterExchange(EXCHANGE_NOTIFICACAO_DLX)
+                .deadLetterRoutingKey(ROUTING_KEY_CONTATO_RETRY)
+                .build();
+    }
+
+    @Bean
+    public Queue queueContatoRetry(@Value("${app.notificacao.retry.ttl-ms:300000}") int ttlMs) {
+        return QueueBuilder.durable(QUEUE_CONTATO_RETRY)
+                .ttl(ttlMs)
+                .deadLetterExchange(EXCHANGE_NOTIFICACAO)
+                .deadLetterRoutingKey(ROUTING_KEY_CONTATO)
+                .build();
+    }
+
+    @Bean
+    public Queue queueContatoParking() {
+        return QueueBuilder.durable(QUEUE_CONTATO_PARKING).build();
+    }
+
+    @Bean
     public Binding bindingExterna(Queue queueExterna, DirectExchange exchange) {
         return BindingBuilder.bind(queueExterna).to(exchange).with(ROUTING_KEY_EXTERNA);
     }
@@ -108,6 +136,21 @@ public class RabbitMQConfig {
     @Bean
     public Binding bindingInternaParking(Queue queueInternaParking, DirectExchange exchangeDlx) {
         return BindingBuilder.bind(queueInternaParking).to(exchangeDlx).with(ROUTING_KEY_INTERNA_PARKING);
+    }
+
+    @Bean
+    public Binding bindingContato(Queue queueContato, DirectExchange exchange) {
+        return BindingBuilder.bind(queueContato).to(exchange).with(ROUTING_KEY_CONTATO);
+    }
+
+    @Bean
+    public Binding bindingContatoRetry(Queue queueContatoRetry, DirectExchange exchangeDlx) {
+        return BindingBuilder.bind(queueContatoRetry).to(exchangeDlx).with(ROUTING_KEY_CONTATO_RETRY);
+    }
+
+    @Bean
+    public Binding bindingContatoParking(Queue queueContatoParking, DirectExchange exchangeDlx) {
+        return BindingBuilder.bind(queueContatoParking).to(exchangeDlx).with(ROUTING_KEY_CONTATO_PARKING);
     }
 
     @Bean

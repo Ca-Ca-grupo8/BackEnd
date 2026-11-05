@@ -54,6 +54,9 @@ public class NotificacaoMessageRecoverer implements MessageRecoverer {
     }
 
     private String routingKeyParking(String fila) {
+        if (RabbitMQConfig.QUEUE_CONTATO.equals(fila)) {
+            return RabbitMQConfig.ROUTING_KEY_CONTATO_PARKING;
+        }
         return RabbitMQConfig.QUEUE_NOTIFICACAO_INTERNA.equals(fila)
                 ? RabbitMQConfig.ROUTING_KEY_INTERNA_PARKING
                 : RabbitMQConfig.ROUTING_KEY_EXTERNA_PARKING;

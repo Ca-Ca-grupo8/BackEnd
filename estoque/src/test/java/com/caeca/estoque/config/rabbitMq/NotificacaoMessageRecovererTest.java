@@ -88,4 +88,17 @@ class NotificacaoMessageRecovererTest {
                 eq(RabbitMQConfig.ROUTING_KEY_INTERNA_PARKING),
                 any(Message.class));
     }
+
+    @Test
+    @DisplayName("deve enviar para o parking de contato ao atingir o limite de voltas")
+    void deveEnviarParaParkingDeContato() {
+        var msg = mensagem(RabbitMQConfig.QUEUE_CONTATO, MAX_VOLTAS);
+
+        assertDoesNotThrow(() -> recoverer().recover(msg, new RuntimeException("Brevo fora do ar")));
+
+        verify(rabbitTemplate).send(
+                eq(RabbitMQConfig.EXCHANGE_NOTIFICACAO_DLX),
+                eq(RabbitMQConfig.ROUTING_KEY_CONTATO_PARKING),
+                any(Message.class));
+    }
 }

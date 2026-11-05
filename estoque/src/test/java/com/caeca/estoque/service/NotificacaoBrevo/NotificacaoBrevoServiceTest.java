@@ -2,7 +2,9 @@ package com.caeca.estoque.service.NotificacaoBrevo;
 
 import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoRevendedora;
 import com.caeca.estoque.database.model.revendedora.Revendedora;
-import com.caeca.estoque.dto.brevo.NotificacaoEventoDto;
+import com.caeca.estoque.database.model.statusMaleta.StatusMaleta;
+import com.caeca.estoque.database.model.statusMaleta.StatusMaletaEnum;
+import com.caeca.estoque.producer.interfaceProducer.ContatoProducer;
 import com.caeca.estoque.producer.interfaceProducer.NotificacaoProducer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,14 +18,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class NotificacaoBrevoServiceTest {
 
     @Mock
     private NotificacaoProducer notificacaoProducer;
+
+    @Mock
+    private ContatoProducer contatoProducer;
 
     @InjectMocks
     private NotificacaoBrevoService notificacaoBrevoService;
@@ -42,42 +49,26 @@ class NotificacaoBrevoServiceTest {
     }
 
     @Nested
-    @DisplayName("notificacaoLoteEmConsignacao")
-    class notificacaoLoteEmConsignacao {
+    @DisplayName("sincronizarContatoMaletaEmConsignacao")
+    class sincronizarContatoMaletaEmConsignacao {
 
         @Test
-        @DisplayName("Deve enviar o template 3 com nome da revendedora, data de vencimento e comprovante em anexo")
-        void deveEnviarTemplateTresComComprovante() {
+        @DisplayName("Deve publicar os atributos da maleta para sincronizar o contato")
+        void devePublicarAtributosDaMaleta() {
             MovimentacaoRevendedora maleta = maleta();
             maleta.setIdMovimentacaoRevendedora(9L);
+            maleta.setStatus(new StatusMaleta(2L, StatusMaletaEnum.EM_CONSIGNACAO));
 
-            notificacaoBrevoService.notificacaoLoteEmConsignacao(maleta, new byte[]{1, 2, 3});
+            notificacaoBrevoService.sincronizarContatoMaletaEmConsignacao(maleta);
 
-            verify(notificacaoProducer, times(1)).enviarExternoComAnexos(
-                    "joias@exemplo.com",
-                    "Joias Silva",
-                    3L,
-                    Map.of(
-                            "nomeRevendedora", "Joias Silva",
-                            "dataVencimento", "15/01/2026"
-                    ),
-                    List.of(new NotificacaoEventoDto.Anexo("comprovante-maleta-9.pdf", "AQID")));
-        }
-
-        @Test
-        @DisplayName("Deve enviar o template 3 sem anexo quando o comprovante nao foi gerado")
-        void deveEnviarTemplateTresSemComprovante() {
-            notificacaoBrevoService.notificacaoLoteEmConsignacao(maleta(), null);
-
-            verify(notificacaoProducer, times(1)).enviarExternoComAnexos(
-                    "joias@exemplo.com",
-                    "Joias Silva",
-                    3L,
-                    Map.of(
-                            "nomeRevendedora", "Joias Silva",
-                            "dataVencimento", "15/01/2026"
-                    ),
-                    List.of());
+            verify(contatoProducer, times(1)).sincronizarContatoMaletaEmConsignacao(Map.of(
+                    "ID_ULTIMA_MALETA", 9L,
+                    "NOME", "Joias Silva",
+                    "EMAIL", "joias@exemplo.com",
+                    "STATUS_MALETA", "EM_CONSIGNACAO",
+                    "DATA_VENCIMENTO", "2026-01-15",
+                    "CREATION_DATE", "2025-01-10"));
+            verifyNoInteractions(notificacaoProducer);
         }
     }
 

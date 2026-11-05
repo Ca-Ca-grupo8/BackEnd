@@ -30,6 +30,15 @@ class RabbitMQConfigTest {
     }
 
     @Test
+    @DisplayName("fila de contato deve encaminhar falhas para o retry de contato via DLX")
+    void filaContatoDeveTerDlx() {
+        Queue queue = config.queueContato();
+
+        assertEquals(RabbitMQConfig.EXCHANGE_NOTIFICACAO_DLX, queue.getArguments().get("x-dead-letter-exchange"));
+        assertEquals(RabbitMQConfig.ROUTING_KEY_CONTATO_RETRY, queue.getArguments().get("x-dead-letter-routing-key"));
+    }
+
+    @Test
     @DisplayName("fila de retry deve expirar com o TTL configurado e voltar para a exchange principal")
     void filaRetryDeveExpirarEVoltar() {
         Queue queue = config.queueExternaRetry(300000);
