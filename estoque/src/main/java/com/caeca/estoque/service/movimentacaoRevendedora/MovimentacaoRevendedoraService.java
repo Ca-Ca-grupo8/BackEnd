@@ -164,6 +164,7 @@ public class MovimentacaoRevendedoraService {
         mrRepository.save(response);
 
         notificarMudancaDeStatus(response);
+        sincronizarUltimaMaletaNoContato(response);
 
         return response;
     }
@@ -175,15 +176,27 @@ public class MovimentacaoRevendedoraService {
         return salvarMaleta(entity);
     }
 
-    /** Salva a maleta e atualiza a data da última maleta no contato. Falha no Brevo não desfaz a maleta. */
     private MovimentacaoRevendedora salvarMaleta(MovimentacaoRevendedora maleta) {
         MovimentacaoRevendedora salva = mrRepository.save(maleta);
-        try {
-            maletaNotificacaoService.atualizarDataUltimaMaleta(salva);
-        } catch (RuntimeException e) {
-            log.error("Falha ao atualizar data da ultima maleta no contato.", e);
-        }
+        sincronizarUltimaMaletaNoContato(salva);
         return salva;
+    }
+
+    /**
+     * Atualiza no contato a última maleta da revendedora. Só vale para a maleta mais recente: mudar o
+     * status de uma maleta antiga não deve sobrescrever os dados da atual. Falha no Brevo não desfaz a operação.
+     */
+    private void sincronizarUltimaMaletaNoContato(MovimentacaoRevendedora maleta) {
+        try {
+            MovimentacaoRevendedora ultima = mrRepository
+                    .findFirstByRevendedoraIdOrderByIdMovimentacaoRevendedoraDesc(maleta.getRevendedora().getId());
+            if (ultima == null || !ultima.getIdMovimentacaoRevendedora().equals(maleta.getIdMovimentacaoRevendedora())) {
+                return;
+            }
+            maletaNotificacaoService.atualizarUltimaMaleta(maleta);
+        } catch (RuntimeException e) {
+            log.error("Falha ao atualizar a ultima maleta no contato.", e);
+        }
     }
 
     public Page<MovimentacaoRevendedoraResponseDto> listarTodas(Pageable pageable) {

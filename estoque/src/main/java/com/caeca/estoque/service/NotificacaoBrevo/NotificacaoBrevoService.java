@@ -49,7 +49,6 @@ public class NotificacaoBrevoService {
         )));
     }
 
-    /** Cadastro: sem maleta ainda, a automação de inatividade usa a data de cadastro. */
     public void criarContatoRevendedora(Revendedora revendedora) {
         criarContatoRevendedora(revendedora, revendedora.getDataCadastro());
     }
@@ -66,10 +65,6 @@ public class NotificacaoBrevoService {
         );
     }
 
-    /**
-     * Atualiza no contato os dados da revendedora. O email só é enviado ao Brevo quando mudou,
-     * para não tentar trocar o identificador do contato à toa.
-     */
     public void atualizarContatoRevendedora(Revendedora revendedora, String emailAnterior) {
         boolean emailMudou = emailAnterior != null && !emailAnterior.equals(revendedora.getEmail());
 
@@ -91,11 +86,18 @@ public class NotificacaoBrevoService {
         );
     }
 
-    /** Mantém o contato com a data da última maleta, usada pela automação de inatividade. */
-    public void atualizarDataUltimaMaleta(MovimentacaoRevendedora maleta) {
-        contatoProducer.atualizarContatoMaleta(maleta.getRevendedora().getId(), Map.of(
-                "DATA_ULTIMA_MALETA", formatarDataAtributo(maleta.getData())
-        ));
+    /**
+     * Mantém no contato a última maleta da revendedora: id, status e data. Chamado na criação e em
+     * toda mudança de status da maleta mais recente.
+     */
+    public void atualizarUltimaMaleta(MovimentacaoRevendedora maleta) {
+        var atributos = new HashMap<String, Object>();
+        atributos.put("ID_ULTIMA_MALETA", maleta.getIdMovimentacaoRevendedora());
+        atributos.put("STATUS_MALETA", maleta.getStatus() != null ? maleta.getStatus().getNome().name() : "");
+        atributos.put("DATA_ULTIMA_MALETA", formatarDataAtributo(maleta.getData()));
+        atributos.put("DATA_VENCIMENTO_MALETA", formatarDataAtributo(maleta.getDataLimite()));
+
+        contatoProducer.atualizarContatoMaleta(maleta.getRevendedora().getId(), atributos);
     }
 
     public void sincronizarContatoMaletaEmConsignacao(MovimentacaoRevendedora maleta) {

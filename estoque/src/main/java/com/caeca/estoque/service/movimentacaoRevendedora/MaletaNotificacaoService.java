@@ -30,9 +30,8 @@ public class MaletaNotificacaoService {
         }
     }
 
-    /** Sem dedup: a data da última maleta é um atributo, e reenviar o mesmo valor não causa efeito. */
-    public void atualizarDataUltimaMaleta(MovimentacaoRevendedora maleta) {
-        notificacaoBrevoService.atualizarDataUltimaMaleta(maleta);
+    public void atualizarUltimaMaleta(MovimentacaoRevendedora maleta) {
+        notificacaoBrevoService.atualizarUltimaMaleta(maleta);
     }
 
     public void notificarFechamentoLote(MovimentacaoRevendedora maleta, java.util.Map<String, String> params, boolean metaAtingida) {

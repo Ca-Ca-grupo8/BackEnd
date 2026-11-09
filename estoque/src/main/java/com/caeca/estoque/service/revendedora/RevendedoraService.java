@@ -121,7 +121,6 @@ public class RevendedoraService {
         return salva;
     }
 
-    /** Falha no Brevo/RabbitMQ não desfaz a atualização da revendedora. */
     private void sincronizarContatoAtualizado(Revendedora revendedora, String emailAnterior) {
         try {
             notificacaoBrevoService.atualizarContatoRevendedora(revendedora, emailAnterior);

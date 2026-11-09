@@ -199,19 +199,26 @@ class NotificacaoBrevoServiceTest {
     }
 
     @Nested
-    @DisplayName("atualizarDataUltimaMaleta")
-    class atualizarDataUltimaMaleta {
+    @DisplayName("atualizarUltimaMaleta")
+    class atualizarUltimaMaleta {
 
         @Test
-        @DisplayName("Deve enviar a data da maleta como DATA_ULTIMA_MALETA")
-        void deveEnviarDataDaMaleta() {
+        @DisplayName("Deve enviar id, status e data da última maleta")
+        void deveEnviarIdStatusEDataDaMaleta() {
             MovimentacaoRevendedora maleta = maleta();
             maleta.getRevendedora().setId(42L);
+            maleta.setIdMovimentacaoRevendedora(9L);
+            maleta.setStatus(new StatusMaleta(2L, StatusMaletaEnum.EM_ACERTO));
             maleta.setData(LocalDateTime.of(2026, 10, 1, 9, 0));
+            maleta.setDataLimite(LocalDateTime.of(2026, 11, 30, 18, 0));
 
-            notificacaoBrevoService.atualizarDataUltimaMaleta(maleta);
+            notificacaoBrevoService.atualizarUltimaMaleta(maleta);
 
-            verify(contatoProducer, times(1)).atualizarContatoMaleta(42L, Map.of("DATA_ULTIMA_MALETA", "2026-10-01"));
+            verify(contatoProducer, times(1)).atualizarContatoMaleta(42L, Map.of(
+                    "ID_ULTIMA_MALETA", 9L,
+                    "STATUS_MALETA", "EM_ACERTO",
+                    "DATA_ULTIMA_MALETA", "2026-10-01",
+                    "DATA_VENCIMENTO_MALETA", "2026-11-30"));
         }
     }
 

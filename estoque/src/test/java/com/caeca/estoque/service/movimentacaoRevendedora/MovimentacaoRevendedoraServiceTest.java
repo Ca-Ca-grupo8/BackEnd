@@ -396,6 +396,52 @@ class MovimentacaoRevendedoraServiceTest {
         }
 
         @Test
+        @DisplayName("Deve atualizar o status da última maleta no contato, mesmo sem regra de e-mail")
+        void deveAtualizarStatusDaUltimaMaletaNoContato() {
+            Revendedora revendedora = new Revendedora();
+            revendedora.setId(5L);
+            MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
+            movimentacao.setIdMovimentacaoRevendedora(9L);
+            movimentacao.setRevendedora(revendedora);
+            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
+
+            StatusMaleta emAcerto = new StatusMaleta(4L, StatusMaletaEnum.EM_ACERTO);
+
+            when(mrRepository.findById(1L)).thenReturn(Optional.of(movimentacao));
+            when(statusMaletaService.buscarPorId(4L)).thenReturn(emAcerto);
+            when(mrRepository.save(any(MovimentacaoRevendedora.class))).thenReturn(movimentacao);
+            when(mrRepository.findFirstByRevendedoraIdOrderByIdMovimentacaoRevendedoraDesc(5L)).thenReturn(movimentacao);
+
+            movimentacaoRevendedoraService.atualizarStatus(1L, new MovimentacaoRevendedoraStatusPatchDto(4L));
+
+            verify(maletaNotificacaoService, times(1)).atualizarUltimaMaleta(movimentacao);
+        }
+
+        @Test
+        @DisplayName("Não deve atualizar o contato quando a maleta alterada não for a mais recente")
+        void naoDeveAtualizarContatoQuandoMaletaNaoForAUltima() {
+            Revendedora revendedora = new Revendedora();
+            revendedora.setId(5L);
+            MovimentacaoRevendedora antiga = new MovimentacaoRevendedora();
+            antiga.setIdMovimentacaoRevendedora(3L);
+            antiga.setRevendedora(revendedora);
+            antiga.setStatus(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
+            MovimentacaoRevendedora ultima = new MovimentacaoRevendedora();
+            ultima.setIdMovimentacaoRevendedora(9L);
+
+            StatusMaleta emAcerto = new StatusMaleta(4L, StatusMaletaEnum.EM_ACERTO);
+
+            when(mrRepository.findById(1L)).thenReturn(Optional.of(antiga));
+            when(statusMaletaService.buscarPorId(4L)).thenReturn(emAcerto);
+            when(mrRepository.save(any(MovimentacaoRevendedora.class))).thenReturn(antiga);
+            when(mrRepository.findFirstByRevendedoraIdOrderByIdMovimentacaoRevendedoraDesc(5L)).thenReturn(ultima);
+
+            movimentacaoRevendedoraService.atualizarStatus(1L, new MovimentacaoRevendedoraStatusPatchDto(4L));
+
+            verify(maletaNotificacaoService, never()).atualizarUltimaMaleta(any());
+        }
+
+        @Test
         @DisplayName("Deve nao notificar quando o status novo nao tiver regra de evento")
         void deveNaoNotificarQuandoStatusNaoTiverRegra() {
             MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
