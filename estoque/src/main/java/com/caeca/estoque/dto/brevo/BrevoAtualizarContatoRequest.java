@@ -1,9 +1,12 @@
 package com.caeca.estoque.dto.brevo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.Map;
 
 /**
- * Corpo de {@code PUT /v3/contacts/{identifier}} da API do Brevo: atualiza apenas os atributos
- * do contato. A lista não é reenviada, então os vínculos existentes são preservados.
+ * Corpo de {@code PUT /v3/contacts/{identifier}} da API do Brevo: atualiza os atributos do contato
+ * e, quando informado, o email. A lista não é reenviada, então os vínculos existentes são preservados.
  */
-public record BrevoAtualizarContatoRequest(Map<String, Object> attributes) {}
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+public record BrevoAtualizarContatoRequest(String email, Map<String, Object> attributes) {}

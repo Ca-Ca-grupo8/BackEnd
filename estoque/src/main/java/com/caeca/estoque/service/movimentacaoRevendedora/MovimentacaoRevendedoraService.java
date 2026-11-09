@@ -89,7 +89,7 @@ public class MovimentacaoRevendedoraService {
                             + "-" + MESES[LocalDate.now().getMonthValue() - 1]
                             + "-" + LocalDate.now().getYear()
                             + "-" + rand).toLowerCase().strip());
-                    return mrRepository.save(movimentacaoRevendedora);
+                    return salvarMaleta(movimentacaoRevendedora);
                 });
     }
 
@@ -172,7 +172,18 @@ public class MovimentacaoRevendedoraService {
         MovimentacaoRevendedora entity = MovimentacaoRevendedoraMapper.toEntity(dto);
         entity.setRevendedora(revendedoraService.buscarPorId(dto.getIdRevendedora()));
         entity.setStatus(statusMaletaService.buscarPorNome(StatusMaletaEnum.EM_PREPARACAO));
-        return mrRepository.save(entity);
+        return salvarMaleta(entity);
+    }
+
+    /** Salva a maleta e atualiza a data da última maleta no contato. Falha no Brevo não desfaz a maleta. */
+    private MovimentacaoRevendedora salvarMaleta(MovimentacaoRevendedora maleta) {
+        MovimentacaoRevendedora salva = mrRepository.save(maleta);
+        try {
+            maletaNotificacaoService.atualizarDataUltimaMaleta(salva);
+        } catch (RuntimeException e) {
+            log.error("Falha ao atualizar data da ultima maleta no contato.", e);
+        }
+        return salva;
     }
 
     public Page<MovimentacaoRevendedoraResponseDto> listarTodas(Pageable pageable) {

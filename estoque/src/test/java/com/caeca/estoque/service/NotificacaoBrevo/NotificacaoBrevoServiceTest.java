@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -125,13 +127,91 @@ class NotificacaoBrevoServiceTest {
             revendedora.setId(42L);
             revendedora.setNome("Joias Silva");
             revendedora.setEmail("joias@exemplo.com");
+            revendedora.setTelefone("11987654321");
+            revendedora.setAtivo(true);
             revendedora.setDataNascimento(LocalDate.of(1990, 3, 7));
+            revendedora.setDataCadastro(LocalDate.of(2025, 2, 1));
 
             notificacaoBrevoService.criarContatoRevendedora(revendedora);
 
+            // Sem maleta ainda: a data usada pela automação de inatividade é a de cadastro.
             verify(contatoProducer, times(1)).criarContatoRevendedora(
-                    42L, "Joias Silva", "joias@exemplo.com", LocalDate.of(1990, 3, 7));
+                    42L, "Joias Silva", "joias@exemplo.com", "11987654321", true,
+                    LocalDate.of(1990, 3, 7), LocalDate.of(2025, 2, 1));
             verifyNoInteractions(notificacaoProducer);
+        }
+
+        @Test
+        @DisplayName("Deve usar a data informada como data da última maleta quando ela existir")
+        void deveUsarDataDaUltimaMaleta() {
+            Revendedora revendedora = new Revendedora();
+            revendedora.setId(42L);
+            revendedora.setNome("Joias Silva");
+            revendedora.setEmail("joias@exemplo.com");
+
+            notificacaoBrevoService.criarContatoRevendedora(revendedora, LocalDate.of(2026, 10, 1));
+
+            verify(contatoProducer, times(1)).criarContatoRevendedora(
+                    42L, "Joias Silva", "joias@exemplo.com", null, false, null, LocalDate.of(2026, 10, 1));
+        }
+    }
+
+    @Nested
+    @DisplayName("atualizarContatoRevendedora")
+    class atualizarContatoRevendedora {
+
+        @Test
+        @DisplayName("Deve enviar os dados da revendedora sem email quando o email não mudou")
+        void deveAtualizarSemEmailQuandoNaoMudou() {
+            Revendedora revendedora = new Revendedora();
+            revendedora.setId(42L);
+            revendedora.setNome("Joias Nova");
+            revendedora.setEmail("joias@exemplo.com");
+            revendedora.setTelefone("11987654321");
+            revendedora.setAtivo(false);
+
+            notificacaoBrevoService.atualizarContatoRevendedora(revendedora, "joias@exemplo.com");
+
+            verify(contatoProducer, times(1)).atualizarContatoRevendedora(eq(42L), isNull(), eq(Map.of(
+                    "NOME", "Joias Nova",
+                    "TELEFONE", "11987654321",
+                    "ATIVO", false)));
+        }
+
+        @Test
+        @DisplayName("Deve enviar o novo email quando ele mudou")
+        void deveEnviarNovoEmailQuandoMudou() {
+            Revendedora revendedora = new Revendedora();
+            revendedora.setId(42L);
+            revendedora.setNome("Joias");
+            revendedora.setEmail("novo@exemplo.com");
+            revendedora.setTelefone("11987654321");
+            revendedora.setAtivo(true);
+
+            notificacaoBrevoService.atualizarContatoRevendedora(revendedora, "antigo@exemplo.com");
+
+            verify(contatoProducer, times(1)).atualizarContatoRevendedora(eq(42L), eq("novo@exemplo.com"), eq(Map.of(
+                    "NOME", "Joias",
+                    "TELEFONE", "11987654321",
+                    "ATIVO", true,
+                    "EMAIL", "novo@exemplo.com")));
+        }
+    }
+
+    @Nested
+    @DisplayName("atualizarDataUltimaMaleta")
+    class atualizarDataUltimaMaleta {
+
+        @Test
+        @DisplayName("Deve enviar a data da maleta como DATA_ULTIMA_MALETA")
+        void deveEnviarDataDaMaleta() {
+            MovimentacaoRevendedora maleta = maleta();
+            maleta.getRevendedora().setId(42L);
+            maleta.setData(LocalDateTime.of(2026, 10, 1, 9, 0));
+
+            notificacaoBrevoService.atualizarDataUltimaMaleta(maleta);
+
+            verify(contatoProducer, times(1)).atualizarContatoMaleta(42L, Map.of("DATA_ULTIMA_MALETA", "2026-10-01"));
         }
     }
 

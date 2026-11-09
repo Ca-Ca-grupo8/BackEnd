@@ -9,9 +9,11 @@ import com.caeca.estoque.producer.interfaceProducer.NotificacaoProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,13 +49,53 @@ public class NotificacaoBrevoService {
         )));
     }
 
+    /** Cadastro: sem maleta ainda, a automação de inatividade usa a data de cadastro. */
     public void criarContatoRevendedora(Revendedora revendedora) {
+        criarContatoRevendedora(revendedora, revendedora.getDataCadastro());
+    }
+
+    public void criarContatoRevendedora(Revendedora revendedora, LocalDate dataUltimaMaleta) {
         contatoProducer.criarContatoRevendedora(
                 revendedora.getId(),
                 revendedora.getNome(),
                 revendedora.getEmail(),
-                revendedora.getDataNascimento()
+                revendedora.getTelefone(),
+                revendedora.isAtivo(),
+                revendedora.getDataNascimento(),
+                dataUltimaMaleta
         );
+    }
+
+    /**
+     * Atualiza no contato os dados da revendedora. O email só é enviado ao Brevo quando mudou,
+     * para não tentar trocar o identificador do contato à toa.
+     */
+    public void atualizarContatoRevendedora(Revendedora revendedora, String emailAnterior) {
+        boolean emailMudou = emailAnterior != null && !emailAnterior.equals(revendedora.getEmail());
+
+        var atributos = new HashMap<String, Object>();
+        atributos.put("NOME", revendedora.getNome());
+        atributos.put("TELEFONE", revendedora.getTelefone());
+        atributos.put("ATIVO", revendedora.isAtivo());
+        if (revendedora.getDataNascimento() != null) {
+            atributos.put("DATA_NASCIMENTO", revendedora.getDataNascimento().format(DATA_ATRIBUTO_BREVO));
+        }
+        if (emailMudou) {
+            atributos.put("EMAIL", revendedora.getEmail());
+        }
+
+        contatoProducer.atualizarContatoRevendedora(
+                revendedora.getId(),
+                emailMudou ? revendedora.getEmail() : null,
+                atributos
+        );
+    }
+
+    /** Mantém o contato com a data da última maleta, usada pela automação de inatividade. */
+    public void atualizarDataUltimaMaleta(MovimentacaoRevendedora maleta) {
+        contatoProducer.atualizarContatoMaleta(maleta.getRevendedora().getId(), Map.of(
+                "DATA_ULTIMA_MALETA", formatarDataAtributo(maleta.getData())
+        ));
     }
 
     public void sincronizarContatoMaletaEmConsignacao(MovimentacaoRevendedora maleta) {

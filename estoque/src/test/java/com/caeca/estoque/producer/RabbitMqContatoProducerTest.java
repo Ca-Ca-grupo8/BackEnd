@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,10 +37,11 @@ class RabbitMqContatoProducerTest {
     }
 
     @Test
-    @DisplayName("Criar deve publicar CRIAR com id, email e atributos completos incluindo data de nascimento")
-    void devePublicarCriacaoComDataDeNascimento() {
-        new RabbitMqContatoProducer(rabbitTemplate)
-                .criarContatoRevendedora(42L, "Joias", "joias@exemplo.com", LocalDate.of(1990, 3, 7));
+    @DisplayName("Criar deve publicar CRIAR com todos os atributos da revendedora e as datas formatadas")
+    void devePublicarCriacaoComTodosOsAtributos() {
+        new RabbitMqContatoProducer(rabbitTemplate).criarContatoRevendedora(
+                42L, "Joias", "joias@exemplo.com", "11987654321", true,
+                LocalDate.of(1990, 3, 7), LocalDate.of(2026, 10, 1));
 
         ContatoEventoDto evento = capturarEvento();
         assertEquals(TipoOperacao.CRIAR, evento.tipo());
@@ -49,24 +51,53 @@ class RabbitMqContatoProducerTest {
                 "ID_REVENDEDORA", 42L,
                 "NOME", "Joias",
                 "EMAIL", "joias@exemplo.com",
-                "DATA_NASCIMENTO", "1990-03-07"), evento.atributos());
+                "TELEFONE", "11987654321",
+                "ATIVO", true,
+                "DATA_NASCIMENTO", "1990-03-07",
+                "DATA_ULTIMA_MALETA", "2026-10-01"), evento.atributos());
     }
 
     @Test
-    @DisplayName("Criar sem data de nascimento deve omitir o atributo DATA_NASCIMENTO")
-    void deveOmitirDataDeNascimentoQuandoNula() {
-        new RabbitMqContatoProducer(rabbitTemplate)
-                .criarContatoRevendedora(42L, "Joias", "joias@exemplo.com", null);
+    @DisplayName("Criar sem data de nascimento, telefone ou maleta deve omitir esses atributos")
+    void deveOmitirAtributosNulos() {
+        new RabbitMqContatoProducer(rabbitTemplate).criarContatoRevendedora(
+                42L, "Joias", "joias@exemplo.com", null, false, null, null);
 
         Map<String, Object> atributos = capturarEvento().atributos();
         assertFalse(atributos.containsKey("DATA_NASCIMENTO"));
+        assertFalse(atributos.containsKey("TELEFONE"));
+        assertFalse(atributos.containsKey("DATA_ULTIMA_MALETA"));
+        assertEquals(false, atributos.get("ATIVO"));
         assertTrue(atributos.containsKey("ID_REVENDEDORA"));
     }
 
     @Test
-    @DisplayName("Atualizar deve publicar ATUALIZAR com o id da revendedora e só os atributos informados")
+    @DisplayName("Atualizar revendedora deve publicar ATUALIZAR com o novo email quando informado")
+    void devePublicarAtualizacaoDaRevendedoraComNovoEmail() {
+        Map<String, Object> atributos = Map.of("NOME", "Joias");
+
+        new RabbitMqContatoProducer(rabbitTemplate).atualizarContatoRevendedora(42L, "novo@exemplo.com", atributos);
+
+        ContatoEventoDto evento = capturarEvento();
+        assertEquals(TipoOperacao.ATUALIZAR, evento.tipo());
+        assertEquals(42L, evento.idRevendedora());
+        assertEquals("novo@exemplo.com", evento.email());
+        assertEquals(atributos, evento.atributos());
+    }
+
+    @Test
+    @DisplayName("Atualizar revendedora sem troca de email deve publicar ATUALIZAR com email nulo")
+    void devePublicarAtualizacaoDaRevendedoraSemEmail() {
+        new RabbitMqContatoProducer(rabbitTemplate).atualizarContatoRevendedora(42L, null, Map.of("ATIVO", true));
+
+        ContatoEventoDto evento = capturarEvento();
+        assertEquals(null, evento.email());
+    }
+
+    @Test
+    @DisplayName("Atualizar maleta deve publicar ATUALIZAR com o id da revendedora e só os atributos informados")
     void devePublicarAtualizacao() {
-        Map<String, Object> atributos = Map.of("ID_ULTIMA_MALETA", 9L);
+        Map<String, Object> atributos = new HashMap<>(Map.of("ID_ULTIMA_MALETA", 9L));
 
         new RabbitMqContatoProducer(rabbitTemplate).atualizarContatoMaleta(42L, atributos);
 

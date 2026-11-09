@@ -37,7 +37,7 @@ public class CrmContatoConsumer {
                 case CRIAR -> brevoClient.criarOuAtualizarContato(apiKey, new BrevoContatoRequest(
                         evento.email(), List.of(LISTA_REVENDEDORAS), true, extId, evento.atributos()));
                 case ATUALIZAR -> brevoClient.atualizarContato(apiKey, extId, IDENTIFICADOR_EXT_ID,
-                        new BrevoAtualizarContatoRequest(evento.atributos()));
+                        new BrevoAtualizarContatoRequest(evento.email(), evento.atributos()));
             }
 
             log.info("Contato sincronizado no Brevo. tipo={} extId={}", evento.tipo(), extId);

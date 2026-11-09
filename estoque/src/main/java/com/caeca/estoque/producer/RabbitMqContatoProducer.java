@@ -26,21 +26,35 @@ public class RabbitMqContatoProducer implements ContatoProducer {
     }
 
     @Override
-    public void criarContatoRevendedora(Long idRevendedora, String nome, String email, LocalDate dataNascimento) {
+    public void criarContatoRevendedora(Long idRevendedora, String nome, String email, String telefone,
+                                        boolean ativo, LocalDate dataNascimento, LocalDate dataUltimaMaleta) {
         var atributos = new HashMap<String, Object>();
         atributos.put("ID_REVENDEDORA", idRevendedora);
         atributos.put("NOME", nome);
         atributos.put("EMAIL", email);
-        if (dataNascimento != null) {
-            atributos.put("DATA_NASCIMENTO", dataNascimento.format(DATA_ATRIBUTO_BREVO));
-        }
+        atributos.put("ATIVO", ativo);
+        putSeNaoNulo(atributos, "TELEFONE", telefone);
+        putSeNaoNulo(atributos, "DATA_NASCIMENTO", dataNascimento);
+        putSeNaoNulo(atributos, "DATA_ULTIMA_MALETA", dataUltimaMaleta);
 
         publicar(new ContatoEventoDto(TipoOperacao.CRIAR, idRevendedora, email, atributos));
     }
 
     @Override
+    public void atualizarContatoRevendedora(Long idRevendedora, String emailNovo, Map<String, Object> atributos) {
+        publicar(new ContatoEventoDto(TipoOperacao.ATUALIZAR, idRevendedora, emailNovo, atributos));
+    }
+
+    @Override
     public void atualizarContatoMaleta(Long idRevendedora, Map<String, Object> atributos) {
         publicar(new ContatoEventoDto(TipoOperacao.ATUALIZAR, idRevendedora, null, atributos));
+    }
+
+    private static void putSeNaoNulo(Map<String, Object> atributos, String chave, Object valor) {
+        if (valor == null) {
+            return;
+        }
+        atributos.put(chave, valor instanceof LocalDate data ? data.format(DATA_ATRIBUTO_BREVO) : valor);
     }
 
     private void publicar(ContatoEventoDto evento) {

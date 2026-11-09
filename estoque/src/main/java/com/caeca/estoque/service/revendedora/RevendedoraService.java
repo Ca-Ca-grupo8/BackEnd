@@ -80,14 +80,19 @@ public class RevendedoraService {
         validarDadosDuplicados(request, id);
 
         Endereco endereco = enderecoService.buscarPorId(request.getEnderecoId());
+        String emailAnterior = revendedoraRepository.findById(id).map(Revendedora::getEmail).orElse(null);
+
         Revendedora entity = RevendedoraMapper.toEntity(request, endereco);
         entity.setId(id);
-        return revendedoraRepository.save(entity);
+        Revendedora salva = revendedoraRepository.save(entity);
+        sincronizarContatoAtualizado(salva, emailAnterior);
+        return salva;
     }
 
     public Revendedora atualizarParcialmente(Long id, RevendedoraPatchDto dto){
         Revendedora entity = revendedoraRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Revendedora com ID " + id + " não encontrada"));
+        String emailAnterior = entity.getEmail();
 
         if (dto.getNome() != null) {
             entity.setNome(dto.getNome());
@@ -111,7 +116,18 @@ public class RevendedoraService {
             entity.setDataNascimento(dto.getDataNascimento());
         }
 
-        return revendedoraRepository.save(entity);
+        Revendedora salva = revendedoraRepository.save(entity);
+        sincronizarContatoAtualizado(salva, emailAnterior);
+        return salva;
+    }
+
+    /** Falha no Brevo/RabbitMQ não desfaz a atualização da revendedora. */
+    private void sincronizarContatoAtualizado(Revendedora revendedora, String emailAnterior) {
+        try {
+            notificacaoBrevoService.atualizarContatoRevendedora(revendedora, emailAnterior);
+        } catch (RuntimeException e) {
+            log.error("Falha ao atualizar contato da revendedora {}. A atualizacao foi mantida.", revendedora.getId(), e);
+        }
     }
 
     private void validarDadosDuplicados(RevendedoraRequestDto request, Long id) {
