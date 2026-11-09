@@ -15,6 +15,7 @@ import com.caeca.estoque.service.NotificacaoBrevo.NotificacaoBrevoService;
 import com.caeca.estoque.service.endereco.EnderecoService;
 import com.caeca.estoque.service.notificacaoEnvio.NotificacaoEnvioService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class RevendedoraService {
 
@@ -55,12 +57,16 @@ public class RevendedoraService {
 
         Revendedora response =revendedoraRepository.save(RevendedoraMapper.toEntity(request, endereco));
 
-        if(notificacaoEnvioService.registrarEnvio(
+        if (notificacaoEnvioService.registrarEnvio(
                 TipoReferencia.REVENDEDORA,
                 response.getId(),
-                NotificacaoBrevoService.TEMPLATE_BOAS_VINDAS,
-                false)){
-            notificacaoBrevoService.notificacaoBoasVindas(request.getEmail(), request.getNome());
+                NotificacaoBrevoService.TEMPLATE_CONTATO_REVENDEDORA_CRIADA,
+                false)) {
+            try {
+                notificacaoBrevoService.criarContatoRevendedora(response);
+            } catch (RuntimeException e) {
+                log.error("Falha ao publicar criacao de contato da revendedora {}. O cadastro foi mantido.", response.getId(), e);
+            }
         }
 
         return response;

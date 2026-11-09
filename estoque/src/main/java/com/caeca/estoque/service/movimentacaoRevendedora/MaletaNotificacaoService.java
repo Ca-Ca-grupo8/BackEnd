@@ -18,21 +18,15 @@ public class MaletaNotificacaoService {
         this.notificacaoEnvioService = notificacaoEnvioService;
     }
 
-    public void notificarLoteEmConsignacao(MovimentacaoRevendedora maleta) {
-        if (registrarEnvio(maleta, NotificacaoBrevoService.TEMPLATE_LOTE_EM_CONSIGNACAO, true)) {
+    public void notificarLoteEmConsignacao(MovimentacaoRevendedora maleta, byte[] comprovante) {
+        if (registrarEnvio(maleta, NotificacaoBrevoService.TEMPLATE_LOTE_EM_CONSIGNACAO, false)) {
+            notificacaoBrevoService.notificacaoLoteEmConsignacao(maleta, comprovante);
+        }
+    }
+
+    public void sincronizarContatoLoteEmConsignacao(MovimentacaoRevendedora maleta) {
+        if (registrarEnvio(maleta, NotificacaoBrevoService.TEMPLATE_CONTATO_MALETA_EM_CONSIGNACAO, true)) {
             notificacaoBrevoService.sincronizarContatoMaletaEmConsignacao(maleta);
-        }
-    }
-
-    public void notificarAlertaVencimento(MovimentacaoRevendedora maleta, long diasRestantes) {
-        if (registrarEnvio(maleta, NotificacaoBrevoService.TEMPLATE_ALERTA_VENCIMENTO, false)) {
-            notificacaoBrevoService.notificacaoAlertaVencimento(maleta, diasRestantes);
-        }
-    }
-
-    public void notificarCobrancaAtraso(MovimentacaoRevendedora maleta) {
-        if (registrarEnvio(maleta, NotificacaoBrevoService.TEMPLATE_COBRANCA_ATRASO, false)) {
-            notificacaoBrevoService.notificacaoCobrancaAtraso(maleta);
         }
     }
 

@@ -31,12 +31,6 @@ public interface RevendedoraRepository extends JpaRepository<Revendedora, Long> 
 
     boolean existsByEnderecoIdAndIdNot(Long enderecoId, Long id);
 
-    @Query("SELECT r FROM Revendedora r WHERE r.dataNascimento IS NOT NULL "
-            + "AND day(r.dataNascimento) = :day AND month(r.dataNascimento) = :month")
-    List<Revendedora> findAniversariantes(int day, int month);
-
-    List<Revendedora> findByAtivoTrue();
-
     @Query("SELECT r FROM Revendedora r WHERE EXISTS ("
             + "SELECT 1 FROM MovimentacaoRevendedora m "
             + "WHERE m.revendedora = r AND m.status.nome NOT IN :statusFechados)")

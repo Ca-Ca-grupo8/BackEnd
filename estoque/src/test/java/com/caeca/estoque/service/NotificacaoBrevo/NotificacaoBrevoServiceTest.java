@@ -4,6 +4,7 @@ import com.caeca.estoque.database.model.movimentacaoRevendedora.MovimentacaoReve
 import com.caeca.estoque.database.model.revendedora.Revendedora;
 import com.caeca.estoque.database.model.statusMaleta.StatusMaleta;
 import com.caeca.estoque.database.model.statusMaleta.StatusMaletaEnum;
+import com.caeca.estoque.dto.brevo.NotificacaoEventoDto;
 import com.caeca.estoque.producer.interfaceProducer.ContatoProducer;
 import com.caeca.estoque.producer.interfaceProducer.NotificacaoProducer;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +51,47 @@ class NotificacaoBrevoServiceTest {
     }
 
     @Nested
+    @DisplayName("notificacaoLoteEmConsignacao")
+    class notificacaoLoteEmConsignacao {
+
+        @Test
+        @DisplayName("Deve enviar o template 3 com o comprovante em PDF anexado (Base64)")
+        void deveEnviarTemplateTresComAnexo() {
+            MovimentacaoRevendedora maleta = maleta();
+            maleta.setIdMovimentacaoRevendedora(9L);
+            byte[] comprovante = new byte[]{1, 2, 3};
+
+            notificacaoBrevoService.notificacaoLoteEmConsignacao(maleta, comprovante);
+
+            verify(notificacaoProducer, times(1)).enviarExternoComAnexos(
+                    "joias@exemplo.com",
+                    "Joias Silva",
+                    3L,
+                    Map.of("nomeRevendedora", "Joias Silva", "dataVencimento", "15/01/2026"),
+                    List.of(new NotificacaoEventoDto.Anexo(
+                            "comprovante-maleta-9.pdf",
+                            java.util.Base64.getEncoder().encodeToString(comprovante))));
+            verifyNoInteractions(contatoProducer);
+        }
+
+        @Test
+        @DisplayName("Deve enviar o template 3 sem anexos quando o comprovante for nulo")
+        void deveEnviarSemAnexoQuandoComprovanteNulo() {
+            MovimentacaoRevendedora maleta = maleta();
+            maleta.setIdMovimentacaoRevendedora(9L);
+
+            notificacaoBrevoService.notificacaoLoteEmConsignacao(maleta, null);
+
+            verify(notificacaoProducer, times(1)).enviarExternoComAnexos(
+                    "joias@exemplo.com",
+                    "Joias Silva",
+                    3L,
+                    Map.of("nomeRevendedora", "Joias Silva", "dataVencimento", "15/01/2026"),
+                    List.of());
+        }
+    }
+
+    @Nested
     @DisplayName("sincronizarContatoMaletaEmConsignacao")
     class sincronizarContatoMaletaEmConsignacao {
 
@@ -56,60 +99,39 @@ class NotificacaoBrevoServiceTest {
         @DisplayName("Deve publicar os atributos da maleta para sincronizar o contato")
         void devePublicarAtributosDaMaleta() {
             MovimentacaoRevendedora maleta = maleta();
+            maleta.getRevendedora().setId(42L);
             maleta.setIdMovimentacaoRevendedora(9L);
             maleta.setStatus(new StatusMaleta(2L, StatusMaletaEnum.EM_CONSIGNACAO));
 
             notificacaoBrevoService.sincronizarContatoMaletaEmConsignacao(maleta);
 
-            verify(contatoProducer, times(1)).sincronizarContatoMaletaEmConsignacao(Map.of(
+            verify(contatoProducer, times(1)).atualizarContatoMaleta(42L, Map.of(
                     "ID_ULTIMA_MALETA", 9L,
-                    "NOME", "Joias Silva",
-                    "EMAIL", "joias@exemplo.com",
                     "STATUS_MALETA", "EM_CONSIGNACAO",
-                    "DATA_VENCIMENTO", "2026-01-15",
+                    "DATA_VENCIMENTO_MALETA", "2026-01-15",
                     "CREATION_DATE", "2025-01-10"));
             verifyNoInteractions(notificacaoProducer);
         }
     }
 
     @Nested
-    @DisplayName("notificacaoAlertaVencimento")
-    class notificacaoAlertaVencimento {
+    @DisplayName("criarContatoRevendedora")
+    class criarContatoRevendedora {
 
         @Test
-        @DisplayName("Deve enviar o template 4 com dias restantes e data de vencimento")
-        void deveEnviarTemplateQuatro() {
-            notificacaoBrevoService.notificacaoAlertaVencimento(maleta(), 7L);
+        @DisplayName("Deve publicar a criação do contato com id, nome, email e data de nascimento")
+        void devePublicarCriacaoDaRevendedora() {
+            Revendedora revendedora = new Revendedora();
+            revendedora.setId(42L);
+            revendedora.setNome("Joias Silva");
+            revendedora.setEmail("joias@exemplo.com");
+            revendedora.setDataNascimento(LocalDate.of(1990, 3, 7));
 
-            verify(notificacaoProducer, times(1)).enviarExterno(
-                    "joias@exemplo.com",
-                    "Joias Silva",
-                    4L,
-                    Map.of(
-                            "nomeRevendedora", "Joias Silva",
-                            "diasRestantes", "7",
-                            "dataVencimento", "15/01/2026"
-                    ));
-        }
-    }
+            notificacaoBrevoService.criarContatoRevendedora(revendedora);
 
-    @Nested
-    @DisplayName("notificacaoCobrancaAtraso")
-    class notificacaoCobrancaAtraso {
-
-        @Test
-        @DisplayName("Deve enviar o template 5 com nome e data de vencimento")
-        void deveEnviarTemplateCinco() {
-            notificacaoBrevoService.notificacaoCobrancaAtraso(maleta());
-
-            verify(notificacaoProducer, times(1)).enviarExterno(
-                    "joias@exemplo.com",
-                    "Joias Silva",
-                    5L,
-                    Map.of(
-                            "nomeRevendedora", "Joias Silva",
-                            "dataVencimento", "15/01/2026"
-                    ));
+            verify(contatoProducer, times(1)).criarContatoRevendedora(
+                    42L, "Joias Silva", "joias@exemplo.com", LocalDate.of(1990, 3, 7));
+            verifyNoInteractions(notificacaoProducer);
         }
     }
 
@@ -143,23 +165,6 @@ class NotificacaoBrevoServiceTest {
                     "Joias Silva",
                     6L,
                     params);
-        }
-    }
-
-    @Nested
-    @DisplayName("notificacaoBoasVindas")
-    class notificacaoBoasVindas {
-
-        @Test
-        @DisplayName("Deve enviar o template 2 mantendo o comportamento existente")
-        void deveEnviarTemplateDois() {
-            notificacaoBrevoService.notificacaoBoasVindas("nova@exemplo.com", "Revendedora Nova");
-
-            verify(notificacaoProducer, times(1)).enviarExterno(
-                    "nova@exemplo.com",
-                    "Revendedora Nova",
-                    2L,
-                    Map.of("nomeRevendedora", "Revendedora Nova"));
         }
     }
 }

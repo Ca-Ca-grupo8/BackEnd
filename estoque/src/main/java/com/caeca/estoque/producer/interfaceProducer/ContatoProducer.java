@@ -1,13 +1,21 @@
 package com.caeca.estoque.producer.interfaceProducer;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 public interface ContatoProducer {
 
     /**
-     * Publica a sincronização do contato da maleta na lista de consignação do Brevo.
-     *
-     * @param atributos atributos do contato; o chave {@code EMAIL} identifica o contato
+     * Publica a criação do contato da revendedora na lista de revendedoras do Brevo.
+     * O id da revendedora vira o {@code ext_id} do contato.
      */
-    void sincronizarContatoMaletaEmConsignacao(Map<String, Object> atributos);
+    void criarContatoRevendedora(Long idRevendedora, String nome, String email, LocalDate dataNascimento);
+
+    /**
+     * Publica a atualização dos atributos da maleta no contato da revendedora (localizado por {@code ext_id}).
+     *
+     * @param idRevendedora id da revendedora, usado para localizar o contato
+     * @param atributos     apenas os atributos que mudaram com a maleta
+     */
+    void atualizarContatoMaleta(Long idRevendedora, Map<String, Object> atributos);
 }

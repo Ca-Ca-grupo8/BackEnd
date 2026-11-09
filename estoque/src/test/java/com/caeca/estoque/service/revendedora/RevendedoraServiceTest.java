@@ -133,6 +133,81 @@ class RevendedoraServiceTest {
         Assertions.assertEquals("Ana", resultado.getNome());
     }
 
+    private Revendedora prepararCadastroAna() {
+        RevendedoraRequestDto dto = new RevendedoraRequestDto();
+        dto.setNome("Ana");
+        dto.setEmail("ana@email.com");
+        dto.setTelefone("11999999999");
+        dto.setEnderecoId(1L);
+
+        Endereco endereco = new Endereco();
+        endereco.setId(1L);
+
+        Revendedora revendedora = new Revendedora();
+        revendedora.setId(1L);
+        revendedora.setNome("Ana");
+        revendedora.setEmail("ana@email.com");
+
+        Mockito.when(revendedoraRepository.existsByEmail(dto.getEmail())).thenReturn(false);
+        Mockito.when(revendedoraRepository.existsByTelefone(dto.getTelefone())).thenReturn(false);
+        Mockito.when(revendedoraRepository.existsByEnderecoId(dto.getEnderecoId())).thenReturn(false);
+        Mockito.when(enderecoService.buscarPorId(1L)).thenReturn(endereco);
+        Mockito.when(revendedoraRepository.save(Mockito.any(Revendedora.class))).thenReturn(revendedora);
+
+        return revendedora;
+    }
+
+    /** Registra como ainda não enviado só o template de criação de contato (13); o boas-vindas (2) já foi enviado. */
+    private void registrarSomenteCriacaoDeContatoPendente() {
+        Mockito.when(notificacaoEnvioService.registrarEnvio(Mockito.any(), Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
+                .thenAnswer(inv -> NotificacaoBrevoService.TEMPLATE_CONTATO_REVENDEDORA_CRIADA == inv.<Long>getArgument(2));
+    }
+
+    private RevendedoraRequestDto dtoAna() {
+        RevendedoraRequestDto dto = new RevendedoraRequestDto();
+        dto.setNome("Ana");
+        dto.setEmail("ana@email.com");
+        dto.setTelefone("11999999999");
+        dto.setEnderecoId(1L);
+        return dto;
+    }
+
+    @Test
+    @DisplayName("Deve criar o contato da revendedora na lista do Brevo ao cadastrar")
+    void deveCriarContatoAoCadastrar() {
+        Revendedora revendedora = prepararCadastroAna();
+        registrarSomenteCriacaoDeContatoPendente();
+
+        revendedoraService.cadastrar(dtoAna());
+
+        Mockito.verify(notificacaoBrevoService).criarContatoRevendedora(revendedora);
+    }
+
+    @Test
+    @DisplayName("Nao deve criar o contato de novo quando o registro de criacao ja existe")
+    void naoDeveCriarContatoQuandoJaRegistrado() {
+        prepararCadastroAna();
+        Mockito.when(notificacaoEnvioService.registrarEnvio(Mockito.any(), Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
+                .thenReturn(false);
+
+        revendedoraService.cadastrar(dtoAna());
+
+        Mockito.verify(notificacaoBrevoService, Mockito.never()).criarContatoRevendedora(Mockito.any());
+    }
+
+    @Test
+    @DisplayName("Falha ao publicar o contato nao deve desfazer o cadastro da revendedora")
+    void falhaNoContatoNaoQuebraCadastro() {
+        Revendedora revendedora = prepararCadastroAna();
+        registrarSomenteCriacaoDeContatoPendente();
+        Mockito.doThrow(new RuntimeException("RabbitMQ indisponivel"))
+                .when(notificacaoBrevoService).criarContatoRevendedora(Mockito.any());
+
+        Revendedora resultado = revendedoraService.cadastrar(dtoAna());
+
+        Assertions.assertEquals(revendedora.getId(), resultado.getId());
+    }
+
     @Test
     @DisplayName("Deve lançar exceção ao cadastrar email duplicado")
     void deveLancarExcecaoAoCadastrarEmailDuplicado() {

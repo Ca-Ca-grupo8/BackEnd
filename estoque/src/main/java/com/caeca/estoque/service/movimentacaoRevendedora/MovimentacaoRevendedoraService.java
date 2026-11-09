@@ -202,11 +202,30 @@ public class MovimentacaoRevendedoraService {
         return new MaletaResumoDto(maletas.size(), porStatus, proximos);
     }
 
+    private byte[] gerarComprovantePdfSeguro(MovimentacaoRevendedora maleta) {
+        try {
+            return gerarComprovantePdf(maleta);
+        } catch (RuntimeException e) {
+            log.error("Falha ao gerar comprovante da maleta {}. O e-mail será enviado sem anexo.", maleta.getIdMovimentacaoRevendedora(), e);
+            return null;
+        }
+    }
+
     private void notificarMudancaDeStatus(MovimentacaoRevendedora maleta) {
         StatusMaletaEnum status = maleta.getStatus() != null ? maleta.getStatus().getNome() : null;
 
         if (status == StatusMaletaEnum.EM_CONSIGNACAO) {
-            maletaNotificacaoService.notificarLoteEmConsignacao(maleta);
+            // Mensagens independentes: a falha de uma não impede a outra.
+            try {
+                maletaNotificacaoService.notificarLoteEmConsignacao(maleta, gerarComprovantePdfSeguro(maleta));
+            } catch (RuntimeException e) {
+                log.error("Falha ao publicar e-mail de consignação da maleta {}.", maleta.getIdMovimentacaoRevendedora(), e);
+            }
+            try {
+                maletaNotificacaoService.sincronizarContatoLoteEmConsignacao(maleta);
+            } catch (RuntimeException e) {
+                log.error("Falha ao publicar sync de contato da maleta {}.", maleta.getIdMovimentacaoRevendedora(), e);
+            }
             return;
         }
 

@@ -11,16 +11,10 @@ import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabas
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Exercita a query de aniversario contra o H2 de verdade, porque JPQL so e validado
- * na primeira invocacao. Um teste com repository mockado nao pegaria query invalida.
- */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestPropertySource(properties =
@@ -32,48 +26,6 @@ class RevendedoraRepositoryTest {
 
     @Autowired
     private EnderecoRepository enderecoRepository;
-
-    @Test
-    @DisplayName("Deve retornar somente a revendedora que faz aniversário no dia e mês informados")
-    void deveRetornarSomenteARevendedoraQueFazAniversarioNoDiaEMesInformados() {
-        Revendedora aniversariante = revendedora("Aniversariante", LocalDate.of(1990, 9, 15));
-        revendedora("Outro dia", LocalDate.of(1990, 9, 16));
-        revendedora("Outro mes", LocalDate.of(1990, 10, 15));
-        revendedora("Sem data", null);
-
-        List<Revendedora> encontradas = revendedoraRepository.findAniversariantes(15, 9);
-
-        assertEquals(List.of(aniversariante), encontradas);
-    }
-
-    @Test
-    @DisplayName("Deve retornar todos os aniversariantes do dia, ignorando o ano de nascimento")
-    void deveRetornarTodosOsAniversariantesDoDiaIgnorandoOAnoDeNascimento() {
-        Revendedora antiga = revendedora("Antiga", LocalDate.of(1970, 9, 15));
-        Revendedora recente = revendedora("Recente", LocalDate.of(2005, 9, 15));
-
-        List<Revendedora> encontradas = revendedoraRepository.findAniversariantes(15, 9);
-
-        assertEquals(2, encontradas.size());
-        assertTrue(encontradas.contains(antiga));
-        assertTrue(encontradas.contains(recente));
-    }
-
-    @Test
-    @DisplayName("Deve retornar lista vazia quando ninguém faz aniversário no dia")
-    void deveRetornarListaVaziaQuandoNinguemFazAniversarioNoDia() {
-        revendedora("Outra data", LocalDate.of(1990, 9, 20));
-
-        assertTrue(revendedoraRepository.findAniversariantes(15, 9).isEmpty());
-    }
-
-    @Test
-    @DisplayName("Deve ignorar revendedoras sem data de nascimento")
-    void deveIgnorarRevendedorasSemDataDeNascimento() {
-        revendedora("Sem data", null);
-
-        assertTrue(revendedoraRepository.findAniversariantes(15, 9).isEmpty());
-    }
 
     @Test
     @DisplayName("Deve preencher data de cadastro ao criar a revendedora")
