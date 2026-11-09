@@ -40,10 +40,6 @@ public class EstoqueNotificacaoService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    /**
-     * Alerta de estoque baixo: um e-mail para cada usuário ativo. O registro de envio é por joia,
-     * então o alerta não é repetido para a mesma joia, mesmo com vários destinatários.
-     */
     public void notificarEstoqueBaixo(Joia joia) {
         if (!registrarEnvioEstoque(joia, NotificacaoBrevoService.TEMPLATE_ESTOQUE_BAIXO, true)) {
             return;
