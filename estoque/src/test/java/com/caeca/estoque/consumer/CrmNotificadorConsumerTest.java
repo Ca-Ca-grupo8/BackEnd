@@ -14,8 +14,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -62,12 +62,12 @@ class CrmNotificadorConsumerTest {
     }
 
     @Test
-    @DisplayName("Deve absorver a falha do Brevo sem propagar a excecao")
-    void deveAbsorverFalhaDoBrevo() {
+    @DisplayName("Deve relancar a falha do Brevo para o RabbitMQ aplicar o retry")
+    void deveRelancarFalhaDoBrevo() {
         doThrow(new RuntimeException("Brevo fora do ar")).when(brevoClient)
                 .enviarEmailTransacional(any(), any());
 
-        assertDoesNotThrow(() -> consumer().processarNotificacao(evento()));
+        assertThrows(RuntimeException.class, () -> consumer().processarNotificacao(evento()));
 
         verify(brevoClient, times(1)).enviarEmailTransacional(any(), any());
     }

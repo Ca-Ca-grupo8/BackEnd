@@ -18,10 +18,10 @@ import java.util.logging.Logger;
 /**
  * Consome os eventos de notificação e dispara o envio no Brevo.
  *
- * <p>O envio é fire-and-forget: a notificação é um efeito colateral do fluxo de
- * negócio e nunca pode derrubar o request que a originou. Por isso a chamada ao
- * Feign fica dentro de um try/catch que registra a falha no log em vez de propagar
- * a exceção.
+ * <p>Falhas no envio são registradas no log e relançadas. A exceção é o que faz o
+ * RabbitMQ aplicar o retry (filas {@code .retry}) e, esgotadas as tentativas, mandar a
+ * mensagem para o parking, via {@code NotificacaoMessageRecoverer}. Engolir a exceção
+ * aqui faria uma notificação perdida nunca ser reenviada.
  */
 @Slf4j
 @Component
