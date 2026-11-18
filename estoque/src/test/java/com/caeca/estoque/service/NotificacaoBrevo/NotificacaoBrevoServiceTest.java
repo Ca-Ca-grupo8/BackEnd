@@ -134,7 +134,6 @@ class NotificacaoBrevoServiceTest {
 
             notificacaoBrevoService.criarContatoRevendedora(revendedora);
 
-            // Sem maleta ainda: a data usada pela automação de inatividade é a de cadastro.
             verify(contatoProducer, times(1)).criarContatoRevendedora(
                     42L, "Joias Silva", "joias@exemplo.com", "11987654321", true,
                     LocalDate.of(1990, 3, 7), LocalDate.of(2025, 2, 1));

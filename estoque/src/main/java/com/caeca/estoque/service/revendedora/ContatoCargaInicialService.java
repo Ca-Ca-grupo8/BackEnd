@@ -13,14 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
-/**
- * Envia para o Brevo os contatos de todas as revendedoras já existentes, para que a automação de
- * inatividade enxergue quem foi cadastrado antes da sincronização.
- *
- * <p>Roda uma única vez, na inicialização, quando {@code app.contatos.carga-inicial.enabled=true}.
- * Depois da execução, desligue a flag. Cada revendedora é publicada como CRIAR, que faz upsert
- * por {@code ext_id}: cria o contato se não existir e atualiza se já existir.
- */
 @Slf4j
 @Component
 @ConditionalOnProperty(name = "app.contatos.carga-inicial.enabled", havingValue = "true")
@@ -60,7 +52,6 @@ public class ContatoCargaInicialService implements ApplicationRunner {
         log.info("Carga inicial de contatos concluida. publicadas={} falhas={}", publicadas, falhas);
     }
 
-    /** Mesma regra da automação: data da última maleta; sem maleta, a data de cadastro. */
     private LocalDate dataUltimaMaleta(Revendedora revendedora) {
         MovimentacaoRevendedora ultima = movimentacaoRepository
                 .findFirstByRevendedoraIdOrderByIdMovimentacaoRevendedoraDesc(revendedora.getId());

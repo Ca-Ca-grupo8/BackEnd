@@ -15,14 +15,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Consome os eventos de notificação e dispara o envio no Brevo.
- *
- * <p>Falhas no envio são registradas no log e relançadas. A exceção é o que faz o
- * RabbitMQ aplicar o retry (filas {@code .retry}) e, esgotadas as tentativas, mandar a
- * mensagem para o parking, via {@code NotificacaoMessageRecoverer}. Engolir a exceção
- * aqui faria uma notificação perdida nunca ser reenviada.
- */
 @Slf4j
 @Component
 public class CrmNotificadorConsumer {

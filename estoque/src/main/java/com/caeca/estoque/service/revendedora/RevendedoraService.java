@@ -33,7 +33,6 @@ public class RevendedoraService {
     private final NotificacaoBrevoService notificacaoBrevoService;
     private final NotificacaoEnvioService notificacaoEnvioService;
 
-
     public RevendedoraService(RevendedoraRepository revendedoraRepository, EnderecoService enderecoService, NotificacaoBrevoService notificacaoBrevoService, NotificacaoEnvioService notificacaoEnvioService) {
         this.revendedoraRepository = revendedoraRepository;
         this.enderecoService = enderecoService;

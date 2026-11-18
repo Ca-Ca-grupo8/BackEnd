@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-/** Lista do Brevo que recebe as revendedoras cadastradas. */
 @Slf4j
 @Component
 public class CrmContatoConsumer {

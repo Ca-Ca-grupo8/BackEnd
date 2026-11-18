@@ -10,6 +10,5 @@ public interface ContatoProducer {
 
     void atualizarContatoRevendedora(Long idRevendedora, String emailNovo, Map<String, Object> atributos);
 
-
     void atualizarContatoMaleta(Long idRevendedora, Map<String, Object> atributos);
 }

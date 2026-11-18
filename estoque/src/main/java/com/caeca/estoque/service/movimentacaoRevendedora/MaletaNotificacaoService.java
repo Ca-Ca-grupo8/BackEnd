@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class MaletaNotificacaoService {
 
-
     private final NotificacaoBrevoService notificacaoBrevoService;
     private final NotificacaoEnvioService notificacaoEnvioService;
 

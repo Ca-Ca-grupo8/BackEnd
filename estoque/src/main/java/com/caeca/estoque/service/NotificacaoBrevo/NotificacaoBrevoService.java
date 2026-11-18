@@ -86,10 +86,6 @@ public class NotificacaoBrevoService {
         );
     }
 
-    /**
-     * Mantém no contato a última maleta da revendedora: id, status e data. Chamado na criação e em
-     * toda mudança de status da maleta mais recente.
-     */
     public void atualizarUltimaMaleta(MovimentacaoRevendedora maleta) {
         var atributos = new HashMap<String, Object>();
         atributos.put("ID_ULTIMA_MALETA", maleta.getIdMovimentacaoRevendedora());

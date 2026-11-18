@@ -157,7 +157,6 @@ class RevendedoraServiceTest {
         return revendedora;
     }
 
-    /** Registra como ainda não enviado só o template de criação de contato (13); o boas-vindas (2) já foi enviado. */
     private void registrarSomenteCriacaoDeContatoPendente() {
         Mockito.when(notificacaoEnvioService.registrarEnvio(Mockito.any(), Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
                 .thenAnswer(inv -> NotificacaoBrevoService.TEMPLATE_CONTATO_REVENDEDORA_CRIADA == inv.<Long>getArgument(2));

@@ -59,7 +59,6 @@ public class MovimentacaoRevendedoraService {
     private final MaletaNotificacaoService maletaNotificacaoService;
     private final MaletaMetaService maletaMetaService;
 
-
     public MovimentacaoRevendedoraService(MovimentacaoRevendedoraRepository mrRepository, MovimentacaoRepository movimentacaoRepository, RevendedoraService revendedoraService, StatusMaletaService statusMaletaService, MaletaNotificacaoService maletaNotificacaoService, MaletaMetaService maletaMetaService) {
         this.mrRepository = mrRepository;
         this.movimentacaoRepository = movimentacaoRepository;
@@ -182,10 +181,6 @@ public class MovimentacaoRevendedoraService {
         return salva;
     }
 
-    /**
-     * Atualiza no contato a última maleta da revendedora. Só vale para a maleta mais recente: mudar o
-     * status de uma maleta antiga não deve sobrescrever os dados da atual. Falha no Brevo não desfaz a operação.
-     */
     private void sincronizarUltimaMaletaNoContato(MovimentacaoRevendedora maleta) {
         try {
             MovimentacaoRevendedora ultima = mrRepository
@@ -239,7 +234,6 @@ public class MovimentacaoRevendedoraService {
         StatusMaletaEnum status = maleta.getStatus() != null ? maleta.getStatus().getNome() : null;
 
         if (status == StatusMaletaEnum.EM_CONSIGNACAO) {
-            // Mensagens independentes: a falha de uma não impede a outra.
             try {
                 maletaNotificacaoService.notificarLoteEmConsignacao(maleta, gerarComprovantePdfSeguro(maleta));
             } catch (RuntimeException e) {
