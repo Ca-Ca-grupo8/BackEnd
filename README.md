@@ -9,7 +9,7 @@ API REST para gestão de estoque de semijoias, feita com **Spring Boot 4** e **J
 | Framework | Spring Boot 4.0.5 (Spring MVC, Spring Security 7, Spring Data JPA) |
 | Linguagem | Java 21 |
 | Build | Maven (módulo único: `estoque/`) |
-| Banco | MySQL (`ddl-auto=update`, Flyway com migrações Java) |
+| Banco | MySQL (`ddl-auto=update`; carga inicial via dump, aplicada pelo Terraform) |
 | Auth | JWT stateless (JJWT 0.12.6), cookie HttpOnly `authToken` ou header `Authorization: Bearer` |
 | Storage | AWS S3 (SDK v2) via Strategy |
 | Filas | RabbitMQ (produção/consumo de notificações) |
