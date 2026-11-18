@@ -15,14 +15,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Consome os eventos de notificação e dispara o envio no Brevo.
- *
- * <p>O envio é fire-and-forget: a notificação é um efeito colateral do fluxo de
- * negócio e nunca pode derrubar o request que a originou. Por isso a chamada ao
- * Feign fica dentro de um try/catch que registra a falha no log em vez de propagar
- * a exceção.
- */
 @Slf4j
 @Component
 public class CrmNotificadorConsumer {

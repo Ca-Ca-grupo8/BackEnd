@@ -15,6 +15,7 @@ import com.caeca.estoque.service.NotificacaoBrevo.NotificacaoBrevoService;
 import com.caeca.estoque.service.endereco.EnderecoService;
 import com.caeca.estoque.service.notificacaoEnvio.NotificacaoEnvioService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class RevendedoraService {
 
@@ -30,7 +32,6 @@ public class RevendedoraService {
     private final EnderecoService enderecoService;
     private final NotificacaoBrevoService notificacaoBrevoService;
     private final NotificacaoEnvioService notificacaoEnvioService;
-
 
     public RevendedoraService(RevendedoraRepository revendedoraRepository, EnderecoService enderecoService, NotificacaoBrevoService notificacaoBrevoService, NotificacaoEnvioService notificacaoEnvioService) {
         this.revendedoraRepository = revendedoraRepository;
@@ -55,12 +56,16 @@ public class RevendedoraService {
 
         Revendedora response =revendedoraRepository.save(RevendedoraMapper.toEntity(request, endereco));
 
-        if(notificacaoEnvioService.registrarEnvio(
+        if (notificacaoEnvioService.registrarEnvio(
                 TipoReferencia.REVENDEDORA,
                 response.getId(),
-                NotificacaoBrevoService.TEMPLATE_BOAS_VINDAS,
-                false)){
-            notificacaoBrevoService.notificacaoBoasVindas(request.getEmail(), request.getNome());
+                NotificacaoBrevoService.TEMPLATE_CONTATO_REVENDEDORA_CRIADA,
+                false)) {
+            try {
+                notificacaoBrevoService.criarContatoRevendedora(response);
+            } catch (RuntimeException e) {
+                log.error("Falha ao publicar criacao de contato da revendedora {}. O cadastro foi mantido.", response.getId(), e);
+            }
         }
 
         return response;
@@ -74,14 +79,19 @@ public class RevendedoraService {
         validarDadosDuplicados(request, id);
 
         Endereco endereco = enderecoService.buscarPorId(request.getEnderecoId());
+        String emailAnterior = revendedoraRepository.findById(id).map(Revendedora::getEmail).orElse(null);
+
         Revendedora entity = RevendedoraMapper.toEntity(request, endereco);
         entity.setId(id);
-        return revendedoraRepository.save(entity);
+        Revendedora salva = revendedoraRepository.save(entity);
+        sincronizarContatoAtualizado(salva, emailAnterior);
+        return salva;
     }
 
     public Revendedora atualizarParcialmente(Long id, RevendedoraPatchDto dto){
         Revendedora entity = revendedoraRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Revendedora com ID " + id + " não encontrada"));
+        String emailAnterior = entity.getEmail();
 
         if (dto.getNome() != null) {
             entity.setNome(dto.getNome());
@@ -105,7 +115,17 @@ public class RevendedoraService {
             entity.setDataNascimento(dto.getDataNascimento());
         }
 
-        return revendedoraRepository.save(entity);
+        Revendedora salva = revendedoraRepository.save(entity);
+        sincronizarContatoAtualizado(salva, emailAnterior);
+        return salva;
+    }
+
+    private void sincronizarContatoAtualizado(Revendedora revendedora, String emailAnterior) {
+        try {
+            notificacaoBrevoService.atualizarContatoRevendedora(revendedora, emailAnterior);
+        } catch (RuntimeException e) {
+            log.error("Falha ao atualizar contato da revendedora {}. A atualizacao foi mantida.", revendedora.getId(), e);
+        }
     }
 
     private void validarDadosDuplicados(RevendedoraRequestDto request, Long id) {

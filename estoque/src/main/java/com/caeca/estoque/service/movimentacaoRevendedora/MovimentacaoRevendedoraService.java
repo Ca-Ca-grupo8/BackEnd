@@ -59,7 +59,6 @@ public class MovimentacaoRevendedoraService {
     private final MaletaNotificacaoService maletaNotificacaoService;
     private final MaletaMetaService maletaMetaService;
 
-
     public MovimentacaoRevendedoraService(MovimentacaoRevendedoraRepository mrRepository, MovimentacaoRepository movimentacaoRepository, RevendedoraService revendedoraService, StatusMaletaService statusMaletaService, MaletaNotificacaoService maletaNotificacaoService, MaletaMetaService maletaMetaService) {
         this.mrRepository = mrRepository;
         this.movimentacaoRepository = movimentacaoRepository;
@@ -89,7 +88,7 @@ public class MovimentacaoRevendedoraService {
                             + "-" + MESES[LocalDate.now().getMonthValue() - 1]
                             + "-" + LocalDate.now().getYear()
                             + "-" + rand).toLowerCase().strip());
-                    return mrRepository.save(movimentacaoRevendedora);
+                    return salvarMaleta(movimentacaoRevendedora);
                 });
     }
 
@@ -164,6 +163,7 @@ public class MovimentacaoRevendedoraService {
         mrRepository.save(response);
 
         notificarMudancaDeStatus(response);
+        sincronizarUltimaMaletaNoContato(response);
 
         return response;
     }
@@ -172,7 +172,26 @@ public class MovimentacaoRevendedoraService {
         MovimentacaoRevendedora entity = MovimentacaoRevendedoraMapper.toEntity(dto);
         entity.setRevendedora(revendedoraService.buscarPorId(dto.getIdRevendedora()));
         entity.setStatus(statusMaletaService.buscarPorNome(StatusMaletaEnum.EM_PREPARACAO));
-        return mrRepository.save(entity);
+        return salvarMaleta(entity);
+    }
+
+    private MovimentacaoRevendedora salvarMaleta(MovimentacaoRevendedora maleta) {
+        MovimentacaoRevendedora salva = mrRepository.save(maleta);
+        sincronizarUltimaMaletaNoContato(salva);
+        return salva;
+    }
+
+    private void sincronizarUltimaMaletaNoContato(MovimentacaoRevendedora maleta) {
+        try {
+            MovimentacaoRevendedora ultima = mrRepository
+                    .findFirstByRevendedoraIdOrderByIdMovimentacaoRevendedoraDesc(maleta.getRevendedora().getId());
+            if (ultima == null || !ultima.getIdMovimentacaoRevendedora().equals(maleta.getIdMovimentacaoRevendedora())) {
+                return;
+            }
+            maletaNotificacaoService.atualizarUltimaMaleta(maleta);
+        } catch (RuntimeException e) {
+            log.error("Falha ao atualizar a ultima maleta no contato.", e);
+        }
     }
 
     public Page<MovimentacaoRevendedoraResponseDto> listarTodas(Pageable pageable) {
@@ -215,7 +234,16 @@ public class MovimentacaoRevendedoraService {
         StatusMaletaEnum status = maleta.getStatus() != null ? maleta.getStatus().getNome() : null;
 
         if (status == StatusMaletaEnum.EM_CONSIGNACAO) {
-            maletaNotificacaoService.notificarLoteEmConsignacao(maleta, gerarComprovantePdfSeguro(maleta));
+            try {
+                maletaNotificacaoService.notificarLoteEmConsignacao(maleta, gerarComprovantePdfSeguro(maleta));
+            } catch (RuntimeException e) {
+                log.error("Falha ao publicar e-mail de consignação da maleta {}.", maleta.getIdMovimentacaoRevendedora(), e);
+            }
+            try {
+                maletaNotificacaoService.sincronizarContatoLoteEmConsignacao(maleta);
+            } catch (RuntimeException e) {
+                log.error("Falha ao publicar sync de contato da maleta {}.", maleta.getIdMovimentacaoRevendedora(), e);
+            }
             return;
         }
 

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class MaletaNotificacaoService {
 
-
     private final NotificacaoBrevoService notificacaoBrevoService;
     private final NotificacaoEnvioService notificacaoEnvioService;
 
@@ -24,16 +23,14 @@ public class MaletaNotificacaoService {
         }
     }
 
-    public void notificarAlertaVencimento(MovimentacaoRevendedora maleta, long diasRestantes) {
-        if (registrarEnvio(maleta, NotificacaoBrevoService.TEMPLATE_ALERTA_VENCIMENTO, false)) {
-            notificacaoBrevoService.notificacaoAlertaVencimento(maleta, diasRestantes);
+    public void sincronizarContatoLoteEmConsignacao(MovimentacaoRevendedora maleta) {
+        if (registrarEnvio(maleta, NotificacaoBrevoService.TEMPLATE_CONTATO_MALETA_EM_CONSIGNACAO, true)) {
+            notificacaoBrevoService.sincronizarContatoMaletaEmConsignacao(maleta);
         }
     }
 
-    public void notificarCobrancaAtraso(MovimentacaoRevendedora maleta) {
-        if (registrarEnvio(maleta, NotificacaoBrevoService.TEMPLATE_COBRANCA_ATRASO, false)) {
-            notificacaoBrevoService.notificacaoCobrancaAtraso(maleta);
-        }
+    public void atualizarUltimaMaleta(MovimentacaoRevendedora maleta) {
+        notificacaoBrevoService.atualizarUltimaMaleta(maleta);
     }
 
     public void notificarFechamentoLote(MovimentacaoRevendedora maleta, java.util.Map<String, String> params, boolean metaAtingida) {

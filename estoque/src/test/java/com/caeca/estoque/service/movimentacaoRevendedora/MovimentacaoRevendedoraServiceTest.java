@@ -369,28 +369,9 @@ class MovimentacaoRevendedoraServiceTest {
             movimentacaoRevendedoraService.atualizarStatus(1L,
                     new MovimentacaoRevendedoraStatusPatchDto(2L));
 
-            verify(maletaNotificacaoService, times(1)).notificarLoteEmConsignacao(eq(movimentacao), any(byte[].class));
+            verify(maletaNotificacaoService, times(1)).notificarLoteEmConsignacao(eq(movimentacao), any());
+            verify(maletaNotificacaoService, times(1)).sincronizarContatoLoteEmConsignacao(eq(movimentacao));
             verify(maletaNotificacaoService, never()).notificarFechamentoLote(any(), anyMap(), anyBoolean());
-        }
-
-        @Test
-        @DisplayName("Deve notificar sem anexo quando a geracao do comprovante falhar")
-        void deveNotificarSemAnexoQuandoComprovanteFalhar() {
-            MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
-            movimentacao.setIdMovimentacaoRevendedora(7L);
-            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
-
-            StatusMaleta emConsignacao = new StatusMaleta(2L, StatusMaletaEnum.EM_CONSIGNACAO);
-
-            when(mrRepository.findById(1L)).thenReturn(Optional.of(movimentacao));
-            when(statusMaletaService.buscarPorId(2L)).thenReturn(emConsignacao);
-            when(mrRepository.save(any(MovimentacaoRevendedora.class))).thenReturn(movimentacao);
-            when(movimentacaoRepository.buscarJoiasComSaidaNaMaleta(7L)).thenThrow(new RuntimeException("Banco indisponivel"));
-
-            movimentacaoRevendedoraService.atualizarStatus(1L,
-                    new MovimentacaoRevendedoraStatusPatchDto(2L));
-
-            verify(maletaNotificacaoService, times(1)).notificarLoteEmConsignacao(movimentacao, null);
         }
 
         @Test
@@ -411,6 +392,53 @@ class MovimentacaoRevendedoraServiceTest {
 
             verify(maletaNotificacaoService, times(1)).notificarFechamentoLote(eq(movimentacao), any(), anyBoolean());
             verify(maletaNotificacaoService, never()).notificarLoteEmConsignacao(any(), any());
+            verify(maletaNotificacaoService, never()).sincronizarContatoLoteEmConsignacao(any());
+        }
+
+        @Test
+        @DisplayName("Deve atualizar o status da última maleta no contato, mesmo sem regra de e-mail")
+        void deveAtualizarStatusDaUltimaMaletaNoContato() {
+            Revendedora revendedora = new Revendedora();
+            revendedora.setId(5L);
+            MovimentacaoRevendedora movimentacao = new MovimentacaoRevendedora();
+            movimentacao.setIdMovimentacaoRevendedora(9L);
+            movimentacao.setRevendedora(revendedora);
+            movimentacao.setStatus(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
+
+            StatusMaleta emAcerto = new StatusMaleta(4L, StatusMaletaEnum.EM_ACERTO);
+
+            when(mrRepository.findById(1L)).thenReturn(Optional.of(movimentacao));
+            when(statusMaletaService.buscarPorId(4L)).thenReturn(emAcerto);
+            when(mrRepository.save(any(MovimentacaoRevendedora.class))).thenReturn(movimentacao);
+            when(mrRepository.findFirstByRevendedoraIdOrderByIdMovimentacaoRevendedoraDesc(5L)).thenReturn(movimentacao);
+
+            movimentacaoRevendedoraService.atualizarStatus(1L, new MovimentacaoRevendedoraStatusPatchDto(4L));
+
+            verify(maletaNotificacaoService, times(1)).atualizarUltimaMaleta(movimentacao);
+        }
+
+        @Test
+        @DisplayName("Não deve atualizar o contato quando a maleta alterada não for a mais recente")
+        void naoDeveAtualizarContatoQuandoMaletaNaoForAUltima() {
+            Revendedora revendedora = new Revendedora();
+            revendedora.setId(5L);
+            MovimentacaoRevendedora antiga = new MovimentacaoRevendedora();
+            antiga.setIdMovimentacaoRevendedora(3L);
+            antiga.setRevendedora(revendedora);
+            antiga.setStatus(new StatusMaleta(1L, StatusMaletaEnum.EM_PREPARACAO));
+            MovimentacaoRevendedora ultima = new MovimentacaoRevendedora();
+            ultima.setIdMovimentacaoRevendedora(9L);
+
+            StatusMaleta emAcerto = new StatusMaleta(4L, StatusMaletaEnum.EM_ACERTO);
+
+            when(mrRepository.findById(1L)).thenReturn(Optional.of(antiga));
+            when(statusMaletaService.buscarPorId(4L)).thenReturn(emAcerto);
+            when(mrRepository.save(any(MovimentacaoRevendedora.class))).thenReturn(antiga);
+            when(mrRepository.findFirstByRevendedoraIdOrderByIdMovimentacaoRevendedoraDesc(5L)).thenReturn(ultima);
+
+            movimentacaoRevendedoraService.atualizarStatus(1L, new MovimentacaoRevendedoraStatusPatchDto(4L));
+
+            verify(maletaNotificacaoService, never()).atualizarUltimaMaleta(any());
         }
 
         @Test
@@ -430,6 +458,7 @@ class MovimentacaoRevendedoraServiceTest {
                     new MovimentacaoRevendedoraStatusPatchDto(4L));
 
             verify(maletaNotificacaoService, never()).notificarLoteEmConsignacao(any(), any());
+            verify(maletaNotificacaoService, never()).sincronizarContatoLoteEmConsignacao(any());
             verify(maletaNotificacaoService, never()).notificarFechamentoLote(any(), anyMap(), anyBoolean());
         }
     }
